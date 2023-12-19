@@ -28,8 +28,8 @@ function* fetchSupplierListSaga() {
 
 function* searchSupplierSaga() {
     yield takeEvery(actions.SEARCH_SUPPLIER_START, function* ( payload ) {
+        // console.log('payload saga',payload);
         try {
-            // Lấy dữ liệu từ localStorage
             const response = yield call(() =>
                 factories.searchSupplierList(payload)
             );

@@ -18,14 +18,6 @@ const SupplierReducer = (state = initialState, action) => {
             return {
                 ...state,
                 supplierList: action.payload,
-                optionSearchStatus: Array.from(new Set(action.payload.map(item => item.status))).map(status => ({
-                    value: status,
-                    label: status == 1 ? 'Giao dịch' : 'Tạm dừng'
-                })),
-                optionAddress: Array.from(new Set(action.payload.map(item => item.address))).map(address => ({
-                    value: address,
-                    label: address
-                })),
             };
         case SupplierAction.DELETE_SUPPLIER_SUCCESS:
             return {

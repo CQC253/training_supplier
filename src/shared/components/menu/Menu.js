@@ -11,7 +11,7 @@ import { MenuIcon6 } from '../icons/MenuIcon6';
 import styles from './Menu.module.scss'
 // import Navbar from '../nav-bar/Navbar.js'
 
-function Menu(props) {
+function Menu() {
     //Click Link
     const location = useLocation();
     const [activeLink, setActiveLink] = useState('');
@@ -63,7 +63,7 @@ function Menu(props) {
     // Click Link (Kiểm tra xem URL hiện tại có trùng với 'linkTo' hay không)
     useEffect(() => {
         const currentPath = location.pathname;
-        console.log(currentPath);
+        // console.log(currentPath);
 
         const matchedLink = menu.find(item => item.linkTo == currentPath);
         // console.log(matchedLink, currentPath);

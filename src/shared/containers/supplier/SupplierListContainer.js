@@ -118,6 +118,7 @@ export default function SupplierContainer() {
 
     //Reset button
     const handleReset = () => {
+        // window.location.reload()
         setInputValue('');
         dispatch({ type: supplierActions.RESET_SUPPLIER_START})
     };

@@ -9,7 +9,7 @@ const SupplierFactory = {
         };
     },
     searchSupplierList: (payload) => {
-        // console.log(payload);
+        // console.log('payload factory', payload);
         const supplierList = getLocalStorageData('supplierList');
 
         // Lọc các phần tử trong filteredList  dựa trên giá trị tìm kiếm
@@ -25,26 +25,20 @@ const SupplierFactory = {
                 item.address,
                 item.status
             ];
-            // return searchFields.some(field => typeof field === 'string' && field.toLowerCase().includes(searchValue.toLowerCase()));
-
-            // Sử dụng '^' và '$' để tìm kiếm chính xác từ đầu đến cuối
-            // const regex = new RegExp(`^${}$`);
-
-            // return searchFields.some(field => regex.test(field));
 
             // Kiểm tra giá trị tìm kiếm
-            const isInputValueMatch = payload.inputValue ? searchFields.some(field => {
-                const regex = new RegExp(`^${payload.inputValue}$`, 'i'); // 'i' để không phân biệt chữ hoa/chữ thường
+            const isInputValueMatch = payload.payload.inputValue ? searchFields.some(field => {
+                const regex = new RegExp(`^${payload.payload.inputValue}$`, 'i'); // 'i' để không phân biệt chữ hoa/chữ thường
                 return regex.test(field);
             }) : true;
-            const isStatusValueMatch = payload.statusValue ? item.status === payload.statusValue : true;
-            const isAddressValueMatch = payload.addressValue ? item.address === payload.addressValue : true;
+            const isStatusValueMatch = payload.payload.statusValue ? item.status === payload.payload.statusValue : true;
+            const isAddressValueMatch = payload.payload.addressValue ? item.address === payload.payload.addressValue : true;
 
             return isInputValueMatch && isStatusValueMatch && isAddressValueMatch;
         });
 
         // Cập nhật supplierListRedux với danh sách đã lọc
-
+        // console.log('filteredList', filteredList);
         return {
             Data: filteredList
         };
@@ -56,7 +50,7 @@ const SupplierFactory = {
         const value = payload.payload.event.value;
 
         const supplierList = getLocalStorageData('supplierList');
-        console.log(supplierList)
+        // console.log(supplierList)
         const updateList = supplierList.map(item => {
 
             if (item.id == id) {
