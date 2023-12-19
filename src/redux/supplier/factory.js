@@ -8,7 +8,7 @@ const SupplierFactory = {
             Data: supplierList
         };
     },
-    searchSupplierList: (payload) => {
+    searchInputSupplierList: (payload) => {
         // console.log('payload factory', payload);
         const supplierList = getLocalStorageData('supplierList');
 
@@ -28,13 +28,47 @@ const SupplierFactory = {
 
             // Kiểm tra giá trị tìm kiếm
             const isInputValueMatch = payload.payload.inputValue ? searchFields.some(field => {
-                const regex = new RegExp(`^${payload.payload.inputValue}$`, 'i'); // 'i' để không phân biệt chữ hoa/chữ thường
+                const regex = new RegExp(`${payload.payload.inputValue}`, 'i'); // 'i' để không phân biệt chữ hoa/chữ thường
                 return regex.test(field);
             }) : true;
+
+            return isInputValueMatch;
+        });
+
+        // Cập nhật supplierListRedux với danh sách đã lọc
+        // console.log('filteredList', filteredList);
+        return {
+            Data: filteredList
+        };
+    },
+    searchStatusSupplierList: (payload) => {
+        // console.log('payload factory', payload);
+        const supplierList = getLocalStorageData('supplierList');
+
+        // Lọc các phần tử trong filteredList  dựa trên giá trị tìm kiếm
+        const filteredList = supplierList.filter(item => {
+            // Kiểm tra giá trị tìm kiếm
             const isStatusValueMatch = payload.payload.statusValue ? item.status === payload.payload.statusValue : true;
+
+            return isStatusValueMatch;
+        });
+
+        // Cập nhật supplierListRedux với danh sách đã lọc
+        // console.log('filteredList', filteredList);
+        return {
+            Data: filteredList
+        };
+    },
+    searchAddressSupplierList: (payload) => {
+        // console.log('payload factory', payload);
+        const supplierList = getLocalStorageData('supplierList');
+
+        // Lọc các phần tử trong filteredList  dựa trên giá trị tìm kiếm
+        const filteredList = supplierList.filter(item => {
+            // Kiểm tra giá trị tìm kiếm
             const isAddressValueMatch = payload.payload.addressValue ? item.address === payload.payload.addressValue : true;
 
-            return isInputValueMatch && isStatusValueMatch && isAddressValueMatch;
+            return isAddressValueMatch;
         });
 
         // Cập nhật supplierListRedux với danh sách đã lọc
@@ -66,6 +100,8 @@ const SupplierFactory = {
         return {
             Data: updateList
         };
+
+        
     },
     resetSupplierList: () => {
         const supplierList = getLocalStorageData('supplierList');

@@ -11,6 +11,10 @@ export default function Breadcrumbs() {
 
     function mapCrumb(crumb, index, array) {
         switch (crumb) {
+            case 'overview':
+                return 'Tổng quan'
+            case 'category':
+                return 'Loại nhà cung cấp'
             case 'supplier':
                 return 'Nhà cung cấp';
             case 'list':
@@ -18,6 +22,12 @@ export default function Breadcrumbs() {
                     return 'Danh sách NCC';
                 }
                 return 'Danh sách nhà cung cấp';
+            case 'order_history':
+                return 'Lịch sử đặt hàng'
+            case 'quotation':
+                return 'Bảng báo giá'
+            case 'tracking_history':
+                return 'Lịch sử theo dõi'
             default:
                 return crumb;
         }

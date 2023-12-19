@@ -26,20 +26,64 @@ function* fetchSupplierListSaga() {
     });
 }
 
-function* searchSupplierSaga() {
-    yield takeEvery(actions.SEARCH_SUPPLIER_START, function* ( payload ) {
-        // console.log('payload saga',payload);
+function* searchInputSupplierSaga() {
+    yield takeEvery(actions.SEARCH_SUPPLIER_INPUT_START, function* ( payload ) {
+        console.log('payload saga',payload);
         try {
             const response = yield call(() =>
-                factories.searchSupplierList(payload)
+                factories.searchInputSupplierList(payload)
             );
             yield put({
-                type: actions.SEARCH_SUPPLIER_SUCCESS,
+                type: actions.SEARCH_SUPPLIER_INPUT_SUCCESS,
                 payload: response.Data
             });
         } catch (error) {
             yield put({
-                type: actions.SEARCH_SUPPLIER_ERROR,
+                type: actions.SEARCH_SUPPLIER_INPUT_ERROR,
+                payload: error
+            });
+        } finally {
+
+        }
+    });
+}
+
+function* searchStatusSupplierSaga() {
+    yield takeEvery(actions.SEARCH_SUPPLIER_STATUS_START, function* ( payload ) {
+        // console.log('payload saga',payload);
+        try {
+            const response = yield call(() =>
+                factories.searchStatusSupplierList(payload)
+            );
+            yield put({
+                type: actions.SEARCH_SUPPLIER_STATUS_SUCCESS,
+                payload: response.Data
+            });
+        } catch (error) {
+            yield put({
+                type: actions.SEARCH_SUPPLIER_STATUS_ERROR,
+                payload: error
+            });
+        } finally {
+
+        }
+    });
+}
+
+function* searchAddressSupplierSaga() {
+    yield takeEvery(actions.SEARCH_SUPPLIER_ADDRESS_START, function* ( payload ) {
+        // console.log('payload saga',payload);
+        try {
+            const response = yield call(() =>
+                factories.searchAddressSupplierList(payload)
+            );
+            yield put({
+                type: actions.SEARCH_SUPPLIER_ADDRESS_SUCCESS,
+                payload: response.Data
+            });
+        } catch (error) {
+            yield put({
+                type: actions.SEARCH_SUPPLIER_ADDRESS_ERROR,
                 payload: error
             });
         } finally {
@@ -68,6 +112,7 @@ function* updateSupplierSaga() {
                 payload: response.Data
             })
         } catch (error) {
+            // console.error(error);
             yield put({
                 type: actions.UPDATE_SUPPLIER_ERROR,
                 payload: error
@@ -105,10 +150,12 @@ function* resetSupplierSaga() {
 export default function* SupplierSaga() {
     yield all([
         fork(fetchSupplierListSaga),
+        fork(searchInputSupplierSaga),
+        fork(searchStatusSupplierSaga),
+        fork(searchAddressSupplierSaga),
+        fork(deleteSupplierSaga),
         fork(createSupplierSaga),
         fork(updateSupplierSaga),
-        fork(deleteSupplierSaga),
-        fork(searchSupplierSaga),
         fork(resetSupplierSaga),
     ]);
 }

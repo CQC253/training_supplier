@@ -18,30 +18,39 @@ import SupplierIconPrev from '../icons/SupplierIconPrev'
 import SupplierIconArrow from '../icons/SupplierIconArrow';
 import { useDispatch, useSelector } from 'react-redux';
 import supplierActions from "redux/supplier/action"
+import { getLocalStorageData } from 'redux/supplier/localStorageUtils';
+import { useLocation, useHistory } from 'react-router-dom';
 
 export default function SupplierContainer() {
     // supplierListRedux
     const dispatch = useDispatch();
     const { supplierList: supplierListRedux } = useSelector((state) => state.SupplierReducer);
 
+    //Search button
+    const location = useLocation();
+    const history = useHistory();
+    const queryParams = new URLSearchParams(location.search);
+    const [searchParams, setSearchParams] = useState({
+        keyword: queryParams.get('keyword') || '',
+        name: queryParams.get('name') || '',
+    });
+
     //inputValue
     const [inputValue, setInputValue] = useState('');
 
     //statusValue
-    const [statusValue, setStatusValue] = useState('');
-    const optionSearchStatus = Array.from(new Set(supplierListRedux.map(item => item.status))).map(status => ({
+    const optionSearchStatus = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.status))).map(status => ({
         value: status,
         label: status == 1 ? 'Giao dịch' : 'Tạm dừng'
     }));
+    const [statusValue, setStatusValue] = useState('')
 
     //addressValue
-    const [addressValue, setAddressValue] = useState('');
-    const optionAddress = Array.from(new Set(supplierListRedux.map(item => item.address))).map(address => ({
+    const optionAddress = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.address))).map(address => ({
         value: address,
         label: address
     }));
-
-    //Search button
+    const [addressValue, setAddressValue] = useState('')
 
     //Reset button 
 
@@ -50,7 +59,7 @@ export default function SupplierContainer() {
     const [selectedItems, setSelectedItems] = useState([]);
 
     //changeStatus
-    const optionStatus = Array.from(new Set(supplierListRedux.map(item => item.status))).map(status => ({
+    const optionStatus = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.status))).map(status => ({
         value: status,
         label: status == 1 ? 'Giao dịch' : 'Tạm dừng'
     }));
@@ -94,24 +103,51 @@ export default function SupplierContainer() {
 
     //statusValue
     const handleSearchStatus = (event) => {
-        setStatusValue(event.value);
-        // console.log(event);
+        setStatusValue(event.value == 1 ? "Giao dịch" : "Tạm dừng")
+        dispatch({
+            type: supplierActions.SEARCH_SUPPLIER_STATUS_START,
+            payload: {
+                statusValue: event.value,
+            }
+        })
     };
 
     //addressValue
     const handleAddress = (event) => {
-        setAddressValue(event.value);
-        // console.log(event);
+        setAddressValue(event.value)
+        dispatch({
+            type: supplierActions.SEARCH_SUPPLIER_ADDRESS_START,
+            payload: {
+                addressValue: event.value,
+            }
+        })
     };
 
     //Search button
+    useEffect(() => {
+        // Gọi hàm thực hiện tìm kiếm hoặc xử lý dữ liệu ở đây dựa trên searchParams
+        performSearch();
+        // setSearchParams({ ...searchParams, keyword: 'ads'})
+        handleSearchHistory()
+    }, [searchParams]);
+
+    const performSearch = () => {
+        // Thực hiện tìm kiếm hoặc xử lý dữ liệu ở đây dựa trên searchParams
+        console.log('Performing search with parameters:', searchParams);
+    };
+
+    const handleSearchHistory = () => {
+        // Cập nhật URL mà không làm tải lại trang
+        const searchParamsString = new URLSearchParams(searchParams).toString();
+        history.push(`${location.pathname}?${searchParamsString}`);
+    };
+
     const handleSearch = () => {
+        setSearchParams({ ...searchParams, keyword: inputValue })
         dispatch({
-            type: supplierActions.SEARCH_SUPPLIER_START,
+            type: supplierActions.SEARCH_SUPPLIER_INPUT_START,
             payload: {
                 inputValue: inputValue,
-                statusValue: statusValue,
-                addressValue: addressValue
             }
         })
     };
@@ -120,7 +156,9 @@ export default function SupplierContainer() {
     const handleReset = () => {
         // window.location.reload()
         setInputValue('');
-        dispatch({ type: supplierActions.RESET_SUPPLIER_START})
+        setStatusValue('')
+        setAddressValue('')
+        dispatch({ type: supplierActions.RESET_SUPPLIER_START })
     };
 
     //selectAll
@@ -148,6 +186,7 @@ export default function SupplierContainer() {
     //changeStatus
     const handleOptionChange = (id, event) => {
         dispatch({ type: supplierActions.UPDATE_SUPPLIER_START, payload: { id, event } })
+
     };
 
     //action
@@ -226,6 +265,7 @@ export default function SupplierContainer() {
                         <DropdownSelect
                             options={optionSearchStatus}
                             onChange={handleSearchStatus}
+                            value={statusValue}
                             placeholder={'Trạng thái'}
                             arrowOpen={<SupplierIcon2 />}
                             arrowClosed={<SupplierIcon2 />}
@@ -238,6 +278,7 @@ export default function SupplierContainer() {
                     <div className={styles['input-address']}>
                         <DropdownSelect
                             options={optionAddress}
+                            value={addressValue}
                             onChange={handleAddress}
                             placeholder={'Địa chỉ'}
                             arrowOpen={<SupplierIcon2 />}
@@ -362,7 +403,7 @@ export default function SupplierContainer() {
                                                 <div className={styles['action-button']}>
                                                     <SupplierIconAction
                                                         onClick={() => handleAction(index)}
-                                                        onBlur={() => handleBlur(index)}
+                                                    // onBlur={() => handleBlur(index)}
                                                     />
 
                                                     {action[index] &&
