@@ -1,0 +1,162 @@
+.header {
+    display: flex;
+    min-height: 50px;
+    max-height: 52px;
+    width: 100%;
+    // flex-shrink: 0;
+    background: var(--default-white, #fff);
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+
+    .header-left {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        width: 70%;
+        min-width: 600px;
+        max-width: 600px;
+        box-sizing: border-box;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        .dropdown-button {
+            display: flex;
+            margin: auto 30px;
+
+            .custom-button {
+                position: relative;
+                border: none;
+                background-color: #fff;
+
+                .custom-button-icon1 {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                }
+
+                .custom-button-icon2 {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    padding: 7px;
+                    border-radius: 100px;
+                    background: var(--sematics-success-2, #138300);
+                    width: 14px;
+                    height: 14px;
+                }
+            }
+
+            .dropdown-list {
+                position: absolute;
+                top: 40px;
+                left: 250px;
+                padding: 10px;
+                border-radius: 3px;
+                border-top: 2px solid var(--other-1, #def8e2);
+                background: var(--default-white, #fff);
+                box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.15),
+                    0px 2px 6px 0px rgba(0, 0, 0, 0.05),
+                    0px 4px 12px 0px rgba(0, 0, 0, 0.08);
+
+                .dropdown-item {
+                    display: flex;
+                    padding: 10px;
+                    align-items: center;
+                    gap: 10px;
+                    border-radius: 3px;
+                    background: var(--neutral-1-f-6, #f6f6f6);
+                    transition: all 0.4s cubic-bezier(0.93, 0.88, 0.1, 0.8);
+
+                    a {
+                        text-decoration: none;
+                        width: 150px;
+                        color: var(--neutral-8-text, #333);
+                        font-family: Roboto;
+                        font-size: 16px;
+                        font-style: normal;
+                        font-weight: 400;
+                        line-height: 20px;
+                        letter-spacing: 0.14px;
+                    }
+                }
+
+                .dropdown-item:hover {
+                    transform: scale(1.05);
+                    background-color: var(--neutral-2-f-7, #f2f2f2);
+                }
+            }
+        }
+
+        .div-sell {
+            display: flex;
+            align-items: center;
+
+            .a-sell {
+                box-sizing: border-box;
+                color: var(--neutral-8-text, #333);
+                font-family: Roboto;
+                font-size: 20px;
+                font-style: normal;
+                font-weight: 600;
+                line-height: normal;
+                letter-spacing: 0.24px;
+                text-transform: uppercase;
+                text-decoration: none;
+            }
+
+            .custom-header-icon1 {
+                padding: 0 5px;
+            }
+        }
+
+        .div-breadcrums {
+            display: flex;
+            align-items: center;
+        }
+    }
+
+    .header-right {
+        display: flex;
+        gap: 25px;
+        width: 15%;
+        min-width: 200px;
+        max-width: 210px;
+        align-items: center;
+        height: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        .div-icon {
+            display: flex;
+            gap: 0 8px;
+        }
+
+        .div-account {
+            display: flex;
+
+            .icon-account {
+                position: relative;
+                border: none;
+                background-color: #fff;
+
+                .custom-icon-account1 {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                }
+
+                .custom-icon-account2 {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                }
+            }
+        }
+    }
+}

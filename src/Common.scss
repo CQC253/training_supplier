@@ -1,0 +1,113 @@
+$red: red;
+$blue: blue;
+$gray: #707070;
+$white: #ffffff;
+$gray-light: #f2f2f2;
+$gray-light-400: #d8d7d7;
+$success-color: #138300;
+$danger-color: #ff2c00;
+$main-color: #FFCD29;
+$green-light: #D2F2CC;
+$yellow-light: #FFF2B3;
+$gray-litght: #D8D7D7;
+$green-select: #008A5A;
+$black: black;
+$progressBarColor-info: #3078F1;
+$text-success-color: #1BA103;
+// $fontFamily:Roboto;
+$roboto-medium-font: 'Roboto-Medium';
+$roboto-medium-font-path: 'assets/fonts/Roboto-Medium.woff2';
+$roboto-regular-font: 'Roboto-Regular';
+$roboto-regular-font-path: 'assets/fonts/Roboto-Regular.woff2';
+$roboto-light-font: 'Roboto-Light';
+$roboto-light-font-path: 'assets/fonts/Roboto-Light.woff2';
+
+@font-face {
+    font-family: 'Roboto-Regular';
+    src: url($roboto-regular-font-path) format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+$fontBold: 700;
+$fontMedium: 500;
+$fontNormal: 400;
+$fontLight: 300;
+
+$fontSizeSmall: 14px;
+$fontSizeNormal: 16px;
+$fontSizeLarge: 18px;
+
+$mainColor: #FFD500;
+$successColor: #138300;
+$dangerColor: red;
+$textColor: black;
+$tableHeaderBacgroundColor: #f2f2f2;
+
+$mainBg: #F8F9FB;
+$lineColor: #D8D7D7;
+
+$headerZIndex: 1050;
+$modalZIndex: 1055;
+$backdropZIndex: 1053;
+$dropdownZIndex: 1052;
+$tooltipZIndex: 1053;
+$modalZIndex: 1054;
+
+$largeFontSize: 18px;
+$normalFontSize: 16px;
+$smallFontSize: 14px;
+
+$border-radius-5: 3px;
+$border-input-width: 0.5px;
+
+$buttonHeight: 36.5px;
+$inputHeight: 32px;
+
+$font-weight-table: 500;
+$font-weight-thead: 600;
+
+
+$margin: 10px;
+$padding: 20px;
+$padding-x-10: 10px;
+$inputWidthSm: 164px;
+$inputWidthMd: 302px;
+$inputWidthLg: 346px;
+$inputWidthXLg: 574px;
+$icon-size-32: 32px;
+$cell-padding: 15px;
+
+$input-border-color: #ACACAC;
+$select-color: #F85555;
+
+//transition
+$transition-time: 0.2s;
+
+body {
+    font-family: $roboto-regular-font;
+    font-size: $fontSizeSmall;
+    font-weight: $fontNormal;
+    line-height: 20px;
+    letter-spacing: 0.168px;
+    color: $textColor;
+    margin: 0;
+    padding: 0;
+    // overflow-x: hidden;
+}
+
+a {
+    list-style: none;
+    color: unset;
+}
+
+a:hover {
+    list-style: none;
+    color: unset;
+    text-decoration: none;
+}
+
+button {
+    cursor: pointer;
+}

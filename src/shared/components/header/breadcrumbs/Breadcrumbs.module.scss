@@ -1,0 +1,23 @@
+.breadcrumbs {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    
+    .crumb {
+        color: var(--neutral-8-text, #333);
+        font-family: Roboto;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 20px;
+        letter-spacing: 0.192px;
+
+        a {
+            text-decoration: none;
+        }
+    }
+
+    .first-crumb {
+        font-size: 18px;
+    }
+}
