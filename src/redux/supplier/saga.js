@@ -2,44 +2,20 @@ import { all, call, fork, put, takeEvery } from '@redux-saga/core/effects';
 import actions from './action';
 import factories from './factory'
 
-function* fetchSupplierListSaga() {
-    yield takeEvery(actions.FETCH_SUPPLIER_LIST, function* () {
-        // console.log('payload', payload);
-        try {
-            // Lấy dữ liệu từ localStorage
-            const supplierList = yield call(() =>
-                factories.fetchSupplierList()
-            );
-            // console.log('supplierList', supplierList);
-            yield put({
-                type: actions.FETCH_SUPPLIER_SUCCESS,
-                payload: supplierList.Data
-            });
-        } catch (error) {
-            yield put({
-                type: actions.FETCH_SUPPLIER_ERROR,
-                payload: error
-            });
-        } finally {
-
-        }
-    });
-}
-
-function* searchInputSupplierSaga() {
-    yield takeEvery(actions.SEARCH_SUPPLIER_INPUT_START, function* ( payload ) {
-        console.log('payload saga',payload);
+function* fetchSearchSupplierListSaga() {
+    yield takeEvery(actions.FETCH_SEARCH_SUPPLIER_LIST, function* (payload) {
+        console.log('payload', payload);
         try {
             const response = yield call(() =>
-                factories.searchInputSupplierList(payload)
+                factories.fetchAndSearchData(payload)
             );
             yield put({
-                type: actions.SEARCH_SUPPLIER_INPUT_SUCCESS,
+                type: actions.FETCH_SEARCH_SUPPLIER_SUCCESS,
                 payload: response.Data
             });
         } catch (error) {
             yield put({
-                type: actions.SEARCH_SUPPLIER_INPUT_ERROR,
+                type: actions.FETCH_SEARCH_SUPPLIER_ERROR,
                 payload: error
             });
         } finally {
@@ -149,8 +125,7 @@ function* resetSupplierSaga() {
 
 export default function* SupplierSaga() {
     yield all([
-        fork(fetchSupplierListSaga),
-        fork(searchInputSupplierSaga),
+        fork(fetchSearchSupplierListSaga),
         fork(searchStatusSupplierSaga),
         fork(searchAddressSupplierSaga),
         fork(deleteSupplierSaga),

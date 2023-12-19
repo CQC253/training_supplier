@@ -1,42 +1,39 @@
 import { getLocalStorageData, setLocalStorageData } from "./localStorageUtils";
 
 const SupplierFactory = {
-    fetchSupplierList: () => {
+    fetchAndSearchData: (payload) => {
         const supplierList = getLocalStorageData('supplierList');
-
-        return {
-            Data: supplierList
-        };
-    },
-    searchInputSupplierList: (payload) => {
-        // console.log('payload factory', payload);
-        const supplierList = getLocalStorageData('supplierList');
-
+        let filteredList = supplierList;
+        console.log('payload factory', payload);
         // Lọc các phần tử trong filteredList  dựa trên giá trị tìm kiếm
-        const filteredList = supplierList.filter(item => {
-            const searchFields = [
-                item.supplierCode,
-                item.supplierName,
-                item.category,
-                item.code,
-                item.deptCode,
-                item.phone,
-                item.email,
-                item.address,
-                item.status
-            ];
+        if (payload.payload) {
+            console.log('payload factory', payload);
 
-            // Kiểm tra giá trị tìm kiếm
-            const isInputValueMatch = payload.payload.inputValue ? searchFields.some(field => {
-                const regex = new RegExp(`${payload.payload.inputValue}`, 'i'); // 'i' để không phân biệt chữ hoa/chữ thường
-                return regex.test(field);
-            }) : true;
+            console.log(filteredList);
+            filteredList = supplierList.filter(item => {
+                const searchFields = [
+                    item.supplierCode,
+                    item.supplierName,
+                    item.category,
+                    item.code,
+                    item.deptCode,
+                    item.phone,
+                    item.email,
+                    item.address,
+                    item.status
+                ];
 
-            return isInputValueMatch;
-        });
+                // Kiểm tra giá trị tìm kiếm
+                const isInputValueMatch = searchFields.some(field => {
+                    const regex = new RegExp(`${payload.payload.inputValue}`, 'i'); // 'i' để không phân biệt chữ hoa/chữ thường
+                    return regex.test(field);
+                });
 
+                return isInputValueMatch;
+            });
+        }
+        console.log(filteredList);
         // Cập nhật supplierListRedux với danh sách đã lọc
-        // console.log('filteredList', filteredList);
         return {
             Data: filteredList
         };
@@ -101,7 +98,7 @@ const SupplierFactory = {
             Data: updateList
         };
 
-        
+
     },
     resetSupplierList: () => {
         const supplierList = getLocalStorageData('supplierList');

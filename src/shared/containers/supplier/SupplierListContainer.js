@@ -31,8 +31,9 @@ export default function SupplierContainer() {
     const history = useHistory();
     const queryParams = new URLSearchParams(location.search);
     const [searchParams, setSearchParams] = useState({
-        keyword: queryParams.get('keyword') || '',
-        name: queryParams.get('name') || '',
+        input: queryParams.get('input') || '',
+        status: queryParams.get('status') || '',
+        address: queryParams.get('address') || '',
     });
 
     //inputValue
@@ -92,8 +93,9 @@ export default function SupplierContainer() {
 
     // get data from LocalStorage
     useEffect(() => {
-        // const storedData = getLocalStorageData('supplierList');
-        dispatch({ type: supplierActions.FETCH_SUPPLIER_LIST })
+        dispatch({
+            type: supplierActions.FETCH_SEARCH_SUPPLIER_LIST,
+        });
     }, []);
 
     //inputValue
@@ -104,6 +106,7 @@ export default function SupplierContainer() {
     //statusValue
     const handleSearchStatus = (event) => {
         setStatusValue(event.value == 1 ? "Giao dịch" : "Tạm dừng")
+        setSearchParams({ ...searchParams, status: statusValue })
         dispatch({
             type: supplierActions.SEARCH_SUPPLIER_STATUS_START,
             payload: {
@@ -115,6 +118,7 @@ export default function SupplierContainer() {
     //addressValue
     const handleAddress = (event) => {
         setAddressValue(event.value)
+        setSearchParams({ ...searchParams, address: addressValue })
         dispatch({
             type: supplierActions.SEARCH_SUPPLIER_ADDRESS_START,
             payload: {
@@ -125,16 +129,8 @@ export default function SupplierContainer() {
 
     //Search button
     useEffect(() => {
-        // Gọi hàm thực hiện tìm kiếm hoặc xử lý dữ liệu ở đây dựa trên searchParams
-        performSearch();
-        // setSearchParams({ ...searchParams, keyword: 'ads'})
         handleSearchHistory()
     }, [searchParams]);
-
-    const performSearch = () => {
-        // Thực hiện tìm kiếm hoặc xử lý dữ liệu ở đây dựa trên searchParams
-        console.log('Performing search with parameters:', searchParams);
-    };
 
     const handleSearchHistory = () => {
         // Cập nhật URL mà không làm tải lại trang
@@ -143,9 +139,9 @@ export default function SupplierContainer() {
     };
 
     const handleSearch = () => {
-        setSearchParams({ ...searchParams, keyword: inputValue })
+        setSearchParams({ ...searchParams, input: inputValue })
         dispatch({
-            type: supplierActions.SEARCH_SUPPLIER_INPUT_START,
+            type: supplierActions.FETCH_SEARCH_SUPPLIER_LIST,
             payload: {
                 inputValue: inputValue,
             }
