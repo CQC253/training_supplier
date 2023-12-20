@@ -13,27 +13,16 @@ const SupplierReducer = (state = initialState, action) => {
                 ...state,
                 supplierList: action.payload
             };
-        case SupplierAction.SEARCH_SUPPLIER_STATUS_SUCCESS:
-            // console.log('action', action);
-            return {
-                ...state,
-                supplierList: action.payload,
-            };
-        case SupplierAction.SEARCH_SUPPLIER_ADDRESS_SUCCESS:
-            // console.log('action', action);
-            return {
-                ...state,
-                supplierList: action.payload,
-            };
         case SupplierAction.DELETE_SUPPLIER_SUCCESS:
             return {
                 ...state,
+                supplierList: action.payload
             };
         case SupplierAction.CREATE_SUPPLIER_SUCCESS:
             return {
                 ...state,
             };
-        case SupplierAction.UPDATE_SUPPLIER_SUCCESS:
+        case SupplierAction.CHANGE_STATUS_SUPPLIER_SUCCESS:
             return {
                 ...state,
                 supplierList: action.payload

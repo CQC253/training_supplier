@@ -4,7 +4,7 @@ import factories from './factory'
 
 function* fetchSearchSupplierListSaga() {
     yield takeEvery(actions.FETCH_SEARCH_SUPPLIER_LIST, function* (payload) {
-        console.log('payload', payload);
+        // console.log('payload saga', payload);
         try {
             const response = yield call(() =>
                 factories.fetchAndSearchData(payload)
@@ -24,79 +24,102 @@ function* fetchSearchSupplierListSaga() {
     });
 }
 
-function* searchStatusSupplierSaga() {
-    yield takeEvery(actions.SEARCH_SUPPLIER_STATUS_START, function* ( payload ) {
-        // console.log('payload saga',payload);
-        try {
-            const response = yield call(() =>
-                factories.searchStatusSupplierList(payload)
-            );
-            yield put({
-                type: actions.SEARCH_SUPPLIER_STATUS_SUCCESS,
-                payload: response.Data
-            });
-        } catch (error) {
-            yield put({
-                type: actions.SEARCH_SUPPLIER_STATUS_ERROR,
-                payload: error
-            });
-        } finally {
-
-        }
-    });
-}
-
-function* searchAddressSupplierSaga() {
-    yield takeEvery(actions.SEARCH_SUPPLIER_ADDRESS_START, function* ( payload ) {
-        // console.log('payload saga',payload);
-        try {
-            const response = yield call(() =>
-                factories.searchAddressSupplierList(payload)
-            );
-            yield put({
-                type: actions.SEARCH_SUPPLIER_ADDRESS_SUCCESS,
-                payload: response.Data
-            });
-        } catch (error) {
-            yield put({
-                type: actions.SEARCH_SUPPLIER_ADDRESS_ERROR,
-                payload: error
-            });
-        } finally {
-
-        }
-    });
-}
-
 function* deleteSupplierSaga() {
+    yield takeEvery(actions.DELETE_SUPPLIER_START, function* (payload) {
+        console.log('payload saga', payload);
+        const shouldSearch = payload.payload.shouldSearch;
+        try {
+            const response = yield call(() =>
+                factories.deleteSupplierList(payload)
+            );
+            yield put({
+                type: actions.DELETE_SUPPLIER_SUCCESS,
+                payload: response.Data
+            });
 
+            if (shouldSearch) {
+                // Lấy giá trị từ URL query params
+                const queryParams = new URLSearchParams(location.search);
+                const inputValue = queryParams.get('input') || '';
+                const statusValue = queryParams.get('status') ? (queryParams.get('status') == 'Giao dịch' ? 1 : 2) : '' || '';
+                const addressValue = queryParams.get('address') || '';
+
+                payload = {
+                    payload: {
+                        inputValue: inputValue,
+                        statusValue: statusValue,
+                        addressValue: addressValue
+                    }
+                }
+                const response = yield call(() =>
+                    factories.fetchAndSearchData(payload)
+                );
+                yield put({
+                    type: actions.FETCH_SEARCH_SUPPLIER_SUCCESS,
+                    payload: response.Data
+                });
+            }
+        } catch (error) {
+            yield put({
+                type: actions.DELETE_SUPPLIER_ERROR,
+                payload: error
+            });
+        } finally {
+
+        }
+    });
 }
 
 function* createSupplierSaga() {
 
 }
 
-function* updateSupplierSaga() {
-    yield takeEvery(actions.UPDATE_SUPPLIER_START, function* (payload) {
-
+function* changeStatusSupplierSaga() {
+    yield takeEvery(actions.CHANGE_STATUS_SUPPLIER_START, function* (payload) {
+        // console.log('payload saga 1st', payload);
+        const shouldSearch = payload.payload.shouldSearch;
         try {
             const response = yield call(() =>
-                factories.updateSupplierList(payload)
+                factories.changeStatusSupplierList(payload)
             );
             yield put({
-                type: actions.UPDATE_SUPPLIER_SUCCESS,
+                type: actions.CHANGE_STATUS_SUPPLIER_SUCCESS,
                 payload: response.Data
-            })
+            });
+            // console.log('response saga 1nd', response);
+            // console.log('payload response saga 1nd', payload);
+
+            if (shouldSearch) {
+                // Lấy giá trị từ URL query params
+                const queryParams = new URLSearchParams(location.search);
+                const inputValue = queryParams.get('input') || '';
+                const statusValue = queryParams.get('status') ? (queryParams.get('status') == 'Giao dịch' ? 1 : 2) : '' || '';
+                const addressValue = queryParams.get('address') || '';
+
+                payload = {
+                    payload: {
+                        inputValue: inputValue,
+                        statusValue: statusValue,
+                        addressValue: addressValue
+                    }
+                }
+                // console.log('payload saga 2nd', payload);
+                const response = yield call(() =>
+                    factories.fetchAndSearchData(payload)
+                );
+                // console.log('response saga 2nd', response);
+                yield put({
+                    type: actions.FETCH_SEARCH_SUPPLIER_SUCCESS,
+                    payload: response.Data
+                });
+            }
         } catch (error) {
-            // console.error(error);
             yield put({
-                type: actions.UPDATE_SUPPLIER_ERROR,
+                type: actions.CHANGE_STATUS_SUPPLIER_ERROR,
                 payload: error
             });
-        } finally {
-
         }
-    })
+    });
 }
 
 function* resetSupplierSaga() {
@@ -126,11 +149,9 @@ function* resetSupplierSaga() {
 export default function* SupplierSaga() {
     yield all([
         fork(fetchSearchSupplierListSaga),
-        fork(searchStatusSupplierSaga),
-        fork(searchAddressSupplierSaga),
         fork(deleteSupplierSaga),
         fork(createSupplierSaga),
-        fork(updateSupplierSaga),
+        fork(changeStatusSupplierSaga),
         fork(resetSupplierSaga),
     ]);
 }

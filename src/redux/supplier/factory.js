@@ -2,14 +2,14 @@ import { getLocalStorageData, setLocalStorageData } from "./localStorageUtils";
 
 const SupplierFactory = {
     fetchAndSearchData: (payload) => {
+        // console.log('payload factory', payload);
         const supplierList = getLocalStorageData('supplierList');
         let filteredList = supplierList;
-        console.log('payload factory', payload);
+        // console.log('payload factory', payload);
+
         // Lọc các phần tử trong filteredList  dựa trên giá trị tìm kiếm
         if (payload.payload) {
-            console.log('payload factory', payload);
-
-            console.log(filteredList);
+            // console.log('payload factory', payload.payload.statusValue);
             filteredList = supplierList.filter(item => {
                 const searchFields = [
                     item.supplierCode,
@@ -24,57 +24,39 @@ const SupplierFactory = {
                 ];
 
                 // Kiểm tra giá trị tìm kiếm
-                const isInputValueMatch = searchFields.some(field => {
+                const isInputValueMatch = payload.payload.inputValue ? searchFields.some(field => {
                     const regex = new RegExp(`${payload.payload.inputValue}`, 'i'); // 'i' để không phân biệt chữ hoa/chữ thường
                     return regex.test(field);
-                });
+                }) : true;
+                const isStatusValueMatch = payload.payload.statusValue ? item.status === payload.payload.statusValue : true;
+                const isAddressValueMatch = payload.payload.addressValue ? item.address === payload.payload.addressValue : true;
 
-                return isInputValueMatch;
+                return isInputValueMatch && isStatusValueMatch && isAddressValueMatch;
             });
         }
-        console.log(filteredList);
+
         // Cập nhật supplierListRedux với danh sách đã lọc
         return {
             Data: filteredList
         };
     },
-    searchStatusSupplierList: (payload) => {
-        // console.log('payload factory', payload);
+    deleteSupplierList: (payload) => {
+        const supplierList = getLocalStorageData('supplierList');
+        const updatedList = supplierList.filter((item) => item.id !== payload.payload.id);
+        setLocalStorageData("supplierList", updatedList);
+        
+        return {
+            Data: updatedList
+        };
+    },
+    createSupplierList: () => {
         const supplierList = getLocalStorageData('supplierList');
 
-        // Lọc các phần tử trong filteredList  dựa trên giá trị tìm kiếm
-        const filteredList = supplierList.filter(item => {
-            // Kiểm tra giá trị tìm kiếm
-            const isStatusValueMatch = payload.payload.statusValue ? item.status === payload.payload.statusValue : true;
-
-            return isStatusValueMatch;
-        });
-
-        // Cập nhật supplierListRedux với danh sách đã lọc
-        // console.log('filteredList', filteredList);
         return {
-            Data: filteredList
+            Data: supplierList
         };
     },
-    searchAddressSupplierList: (payload) => {
-        // console.log('payload factory', payload);
-        const supplierList = getLocalStorageData('supplierList');
-
-        // Lọc các phần tử trong filteredList  dựa trên giá trị tìm kiếm
-        const filteredList = supplierList.filter(item => {
-            // Kiểm tra giá trị tìm kiếm
-            const isAddressValueMatch = payload.payload.addressValue ? item.address === payload.payload.addressValue : true;
-
-            return isAddressValueMatch;
-        });
-
-        // Cập nhật supplierListRedux với danh sách đã lọc
-        // console.log('filteredList', filteredList);
-        return {
-            Data: filteredList
-        };
-    },
-    updateSupplierList: (payload) => {
+    changeStatusSupplierList: (payload) => {
 
         const id = payload.payload.id;
 
@@ -97,8 +79,6 @@ const SupplierFactory = {
         return {
             Data: updateList
         };
-
-
     },
     resetSupplierList: () => {
         const supplierList = getLocalStorageData('supplierList');

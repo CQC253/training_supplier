@@ -16,10 +16,14 @@ import SupplierIconDelete from '../icons/SupplierIconDelete'
 import SupplierIconNext from '../icons/SupplierIconNext'
 import SupplierIconPrev from '../icons/SupplierIconPrev'
 import SupplierIconArrow from '../icons/SupplierIconArrow';
+import SupplierIconInfo from '../icons/SuppliericonInfo';
+
 import { useDispatch, useSelector } from 'react-redux';
 import supplierActions from "redux/supplier/action"
 import { getLocalStorageData } from 'redux/supplier/localStorageUtils';
 import { useLocation, useHistory } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function SupplierContainer() {
     // supplierListRedux
@@ -40,18 +44,18 @@ export default function SupplierContainer() {
     const [inputValue, setInputValue] = useState('');
 
     //statusValue
+    const [statusValue, setStatusValue] = useState('')
     const optionSearchStatus = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.status))).map(status => ({
         value: status,
         label: status == 1 ? 'Giao dịch' : 'Tạm dừng'
     }));
-    const [statusValue, setStatusValue] = useState('')
 
     //addressValue
+    const [addressValue, setAddressValue] = useState('')
     const optionAddress = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.address))).map(address => ({
         value: address,
         label: address
     }));
-    const [addressValue, setAddressValue] = useState('')
 
     //Reset button 
 
@@ -67,6 +71,7 @@ export default function SupplierContainer() {
 
     //action
     const [action, setAction] = useState([])
+    const [isDeleting, setIsDeleting] = useState(true);
 
     //Paginate
     const [currentPage, setCurrentPage] = useState(0);
@@ -98,36 +103,53 @@ export default function SupplierContainer() {
         });
     }, []);
 
-    //inputValue
+    //search inputValue
     const handleInputValueChange = (event) => {
         setInputValue(event.target.value);
     };
 
-    //statusValue
+    //search statusValue
     const handleSearchStatus = (event) => {
         setStatusValue(event.value == 1 ? "Giao dịch" : "Tạm dừng")
-        setSearchParams({ ...searchParams, status: statusValue })
+        const queryParams = new URLSearchParams(location.search);
+        const inputValue = queryParams.get('input') || '';
+        const addressValue = queryParams.get('address') || '';
         dispatch({
-            type: supplierActions.SEARCH_SUPPLIER_STATUS_START,
+            type: supplierActions.FETCH_SEARCH_SUPPLIER_LIST,
             payload: {
                 statusValue: event.value,
+                inputValue: inputValue,
+                addressValue: addressValue
             }
         })
     };
 
-    //addressValue
+    useEffect(() => {
+        setSearchParams({ ...searchParams, status: statusValue })
+    }, [statusValue])
+
+    //search addressValue
     const handleAddress = (event) => {
         setAddressValue(event.value)
-        setSearchParams({ ...searchParams, address: addressValue })
+        const queryParams = new URLSearchParams(location.search);
+        const inputValue = queryParams.get('input') || '';
+        const statusValue = queryParams.get('status') ? (queryParams.get('status') == 'Giao dịch' ? 1 : 2) : '' || '';
+        console.log();
         dispatch({
-            type: supplierActions.SEARCH_SUPPLIER_ADDRESS_START,
+            type: supplierActions.FETCH_SEARCH_SUPPLIER_LIST,
             payload: {
                 addressValue: event.value,
+                inputValue: inputValue,
+                statusValue: statusValue
             }
         })
     };
 
-    //Search button
+    useEffect(() => {
+        setSearchParams({ ...searchParams, address: addressValue })
+    }, [addressValue])
+
+    //Search all (button)
     useEffect(() => {
         handleSearchHistory()
     }, [searchParams]);
@@ -140,20 +162,31 @@ export default function SupplierContainer() {
 
     const handleSearch = () => {
         setSearchParams({ ...searchParams, input: inputValue })
+        const queryParams = new URLSearchParams(location.search);
+        const statusValue = queryParams.get('status') ? (queryParams.get('status') == 'Giao dịch' ? 1 : 2) : '' || '';
+        console.log(statusValue);
+        const addressValue = queryParams.get('address') || '';
         dispatch({
             type: supplierActions.FETCH_SEARCH_SUPPLIER_LIST,
             payload: {
                 inputValue: inputValue,
+                statusValue: statusValue,
+                addressValue: addressValue,
+                test: 1
             }
         })
     };
 
     //Reset button
     const handleReset = () => {
-        // window.location.reload()
         setInputValue('');
         setStatusValue('')
         setAddressValue('')
+        setSearchParams({
+            input: '',
+            status: '',
+            address: '',
+        })
         dispatch({ type: supplierActions.RESET_SUPPLIER_START })
     };
 
@@ -179,10 +212,17 @@ export default function SupplierContainer() {
         }
     };
 
-    //changeStatus
-    const handleOptionChange = (id, event) => {
-        dispatch({ type: supplierActions.UPDATE_SUPPLIER_START, payload: { id, event } })
-
+    //changeStatus 
+    const handleChangeStatus = (id, event) => {
+        const queryParams = new URLSearchParams(location.search);
+        const inputValue = queryParams.get('input') || '';
+        const statusValue = queryParams.get('status') || '';
+        const addressValue = queryParams.get('address') || '';
+        if (inputValue || statusValue || addressValue) {
+            dispatch({ type: supplierActions.CHANGE_STATUS_SUPPLIER_START, payload: { id, event, shouldSearch: true } });
+        } else {
+            dispatch({ type: supplierActions.CHANGE_STATUS_SUPPLIER_START, payload: { id, event, shouldSearch: false } });
+        }
     };
 
     //action
@@ -200,6 +240,55 @@ export default function SupplierContainer() {
             const updatedAction = [...prevAction];
             updatedAction[index] = false;
             return updatedAction;
+        });
+    };
+
+    const handleDelete = (id) => {
+        console.log(id);
+        const queryParams = new URLSearchParams(location.search);
+        const inputValue = queryParams.get('input') || '';
+        const statusValue = queryParams.get('status') || '';
+        const addressValue = queryParams.get('address') || '';
+        if (inputValue || statusValue || addressValue) {
+            dispatch({ type: supplierActions.DELETE_SUPPLIER_START, payload: { id: id, shouldSearch: true } })
+        } else {
+            dispatch({ type: supplierActions.DELETE_SUPPLIER_START, payload: { id: id, shouldSearch: false } })
+        }
+
+        setIsDeleting(true);
+        toast.info(
+            isDeleting && (
+                <div className={styles['div-undo']}>
+                    <p>Đang xóa nhà cung cấp</p>
+                    <button onClick={() => handleUndo()}>Hoàn tác</button>
+                </div>
+            ),
+            {
+                position: "top-right",
+                autoClose: 100000,
+                hideProgressBar: false,
+                closeButton: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                icon: <SupplierIconInfo />,
+            },
+        );
+    }
+
+    const handleUndo = () => {
+        setIsDeleting(false);
+        toast.success("Hoàn tác", {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
         });
     };
 
@@ -242,6 +331,19 @@ export default function SupplierContainer() {
 
     return (
         <div className={styles['div-supplier']}>
+            <ToastContainer
+                position="top-right"
+                className={styles['custom-toast-container']}
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+            />
 
             <div className={styles['form-search-setting']}>
                 <div className={styles['form-search']}>
@@ -386,7 +488,7 @@ export default function SupplierContainer() {
                                                 <div className={styles['div-select']}>
                                                     <DropdownSelect
                                                         options={filteredOptions}
-                                                        onChange={(event) => handleOptionChange(item.id, event)}
+                                                        onChange={(event) => handleChangeStatus(item.id, event)}
                                                         placeholder={item.status == 1 ? 'Giao dịch' : item.status == 2 ? 'Tạm dừng' : ''}
                                                         arrowOpen={<SupplierIconArrow />}
                                                         arrowClosed={<SupplierIconArrow />}
@@ -399,20 +501,28 @@ export default function SupplierContainer() {
                                                 <div className={styles['action-button']}>
                                                     <SupplierIconAction
                                                         onClick={() => handleAction(index)}
-                                                    // onBlur={() => handleBlur(index)}
                                                     />
 
                                                     {action[index] &&
-                                                        <ul className={styles['action-list']}>
+                                                        <ul
+                                                            className={styles['action-list']}
+                                                            onBlur={() => handleBlur(index)}
+                                                        >
                                                             <li className={styles['action-item']}>
-                                                                <SupplierIconEdit />
                                                                 <button className={styles['btn-edit']}>
+                                                                    <SupplierIconEdit />
                                                                     Sửa
                                                                 </button>
                                                             </li>
                                                             <li className={styles['action-item']}>
-                                                                <SupplierIconDelete />
-                                                                <button className={styles['btn-delete']}>
+                                                                <button
+                                                                    className={styles['btn-delete']}
+                                                                    onClick={() => {
+                                                                        handleDelete(item.id)
+                                                                        console.log(123)
+                                                                    }}
+                                                                >
+                                                                    <SupplierIconDelete />
                                                                     Xóa
                                                                 </button>
                                                             </li>

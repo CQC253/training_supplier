@@ -3,6 +3,42 @@
     flex-direction: column;
     align-items: flex-start;
     width: 100%;
+
+    .custom-toast-container {
+        top: 53px;
+
+        .div-undo {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            p {
+                color: var(--Neutral-9, #131313);
+                font-family: Roboto;
+                font-size: 15px;
+                font-style: normal;
+                font-weight: 400;
+                line-height: 16px;
+                letter-spacing: 0.144px;
+            }
+
+            button {
+                padding: 8px;
+                border: none;
+                border-radius: 3px;
+                background: var(--neutral-4-line, #d8d7d7);
+                color: var(--neutral-8-text, #333);
+                text-align: center;
+                font-family: Roboto;
+                font-size: 15px;
+                font-style: normal;
+                font-weight: 600;
+                line-height: 16px;
+                letter-spacing: 0.144px;
+            }
+        }
+    }
+
     .form-search-setting {
         display: flex;
         padding: 20px;
@@ -310,7 +346,6 @@
                             }
                         }
                         .td11 {
-                            position: relative;
                             justify-items: center;
                             max-width: 100%;
                             min-width: 100%;
@@ -349,7 +384,6 @@
 
                                 .action-item {
                                     display: flex;
-                                    padding: 5px;
                                     align-items: center;
                                     align-self: stretch;
                                     border-radius: 3px;
@@ -359,6 +393,12 @@
                                         cubic-bezier(0.93, 0.88, 0.1, 0.8);
 
                                     .btn-edit {
+                                        width: 100%;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: flex-start;
+                                        padding: 5px;
+                                        gap: 10px;
                                         color: var(
                                             --sematics-success-2,
                                             #138300
@@ -376,6 +416,12 @@
                                         );
                                     }
                                     .btn-delete {
+                                        width: 100%;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: flex-start;
+                                        padding: 5px;
+                                        gap: 10px;
                                         color: var(
                                             --sematics-danger-2,
                                             #ff3434
