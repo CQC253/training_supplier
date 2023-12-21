@@ -135,27 +135,26 @@
             gap: 0 8px;
         }
 
-        .div-account {
+        .icon-account {
             display: flex;
+            width: 40px;
+            position: relative;
+            border: none;
+            background-color: #fff;
 
-            .icon-account {
-                position: relative;
-                border: none;
-                background-color: #fff;
+            .custom-icon-account1 {
+                flex-grow: 1;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
 
-                .custom-icon-account1 {
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                }
-
-                .custom-icon-account2 {
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                }
+            .custom-icon-account2 {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
             }
         }
     }

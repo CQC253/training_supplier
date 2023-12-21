@@ -1,7 +1,7 @@
 import React from 'react'
 import styles from '../header/Header.module.scss'
 
-export default function HeaderIcon5() {
+export default function HeaderIconRight3() {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"

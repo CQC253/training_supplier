@@ -71,7 +71,7 @@ export default function SupplierContainer() {
 
     //action
     const [action, setAction] = useState([])
-    const [isDeleting, setIsDeleting] = useState(true);
+    let deletedSupplier = null;
 
     //Paginate
     const [currentPage, setCurrentPage] = useState(0);
@@ -160,11 +160,18 @@ export default function SupplierContainer() {
         history.push(`${location.pathname}?${searchParamsString}`);
     };
 
+    useEffect(() => {
+        setSearchParams({
+            input: '',
+            status: '',
+            address: '',
+        })
+    }, [])
     const handleSearch = () => {
         setSearchParams({ ...searchParams, input: inputValue })
         const queryParams = new URLSearchParams(location.search);
         const statusValue = queryParams.get('status') ? (queryParams.get('status') == 'Giao dịch' ? 1 : 2) : '' || '';
-        console.log(statusValue);
+        // console.log(statusValue);
         const addressValue = queryParams.get('address') || '';
         dispatch({
             type: supplierActions.FETCH_SEARCH_SUPPLIER_LIST,
@@ -244,20 +251,24 @@ export default function SupplierContainer() {
     };
 
     const handleDelete = (id) => {
-        console.log(id);
+        const supplierList = getLocalStorageData('supplierList');
+        deletedSupplier = supplierList.find(item => item.id === id);
+        // console.log('deletedSupplier', deletedSupplier);
+
         const queryParams = new URLSearchParams(location.search);
         const inputValue = queryParams.get('input') || '';
         const statusValue = queryParams.get('status') || '';
         const addressValue = queryParams.get('address') || '';
+
         if (inputValue || statusValue || addressValue) {
             dispatch({ type: supplierActions.DELETE_SUPPLIER_START, payload: { id: id, shouldSearch: true } })
         } else {
             dispatch({ type: supplierActions.DELETE_SUPPLIER_START, payload: { id: id, shouldSearch: false } })
         }
 
-        setIsDeleting(true);
+
         toast.info(
-            isDeleting && (
+            (
                 <div className={styles['div-undo']}>
                     <p>Đang xóa nhà cung cấp</p>
                     <button onClick={() => handleUndo()}>Hoàn tác</button>
@@ -265,10 +276,10 @@ export default function SupplierContainer() {
             ),
             {
                 position: "top-right",
-                autoClose: 100000,
+                autoClose: 5000,
                 hideProgressBar: false,
                 closeButton: false,
-                closeOnClick: false,
+                closeOnClick: true,
                 pauseOnHover: true,
                 draggable: true,
                 progress: undefined,
@@ -279,7 +290,17 @@ export default function SupplierContainer() {
     }
 
     const handleUndo = () => {
-        setIsDeleting(false);
+        const queryParams = new URLSearchParams(location.search);
+        const inputValue = queryParams.get('input') || '';
+        const statusValue = queryParams.get('status') || '';
+        const addressValue = queryParams.get('address') || '';
+
+        if (inputValue || statusValue || addressValue) {
+            dispatch({ type: supplierActions.UNDO_SUPPLIER_START, payload: { deletedSupplier: deletedSupplier, shouldSearch: true } })
+        } else {
+            dispatch({ type: supplierActions.UNDO_SUPPLIER_START, payload: { deletedSupplier: deletedSupplier, shouldSearch: false } })
+        }
+
         toast.success("Hoàn tác", {
             position: "top-right",
             autoClose: 3000,
@@ -519,7 +540,6 @@ export default function SupplierContainer() {
                                                                     className={styles['btn-delete']}
                                                                     onClick={() => {
                                                                         handleDelete(item.id)
-                                                                        console.log(123)
                                                                     }}
                                                                 >
                                                                     <SupplierIconDelete />

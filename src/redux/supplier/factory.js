@@ -44,6 +44,15 @@ const SupplierFactory = {
         const supplierList = getLocalStorageData('supplierList');
         const updatedList = supplierList.filter((item) => item.id !== payload.payload.id);
         setLocalStorageData("supplierList", updatedList);
+
+        return {
+            Data: updatedList
+        };
+    },
+    undoSupplierList: (payload) => {
+        const supplierList = getLocalStorageData('supplierList');
+        const updatedList = [...supplierList, payload.payload.deletedSupplier];
+        setLocalStorageData("supplierList", updatedList);
         
         return {
             Data: updatedList

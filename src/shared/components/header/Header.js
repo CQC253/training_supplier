@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import styles from './Header.module.scss'
 import HeaderButtonCreate from '../icons/HeaderButtonCreate'
-import HeaderIcon1 from '../icons/HeaderIcon1'
-import HeaderIcon2 from '../icons/HeaderIcon2'
-import HeaderIcon3 from '../icons/HeaderIcon3'
-import HeaderIcon4 from '../icons/HeaderIcon4'
-import HeaderIcon5 from '../icons/HeaderIcon5'
-import HeaderIcon6 from '../icons/HeaderIcon6'
-import HeaderIcon7 from '../icons/HeaderIcon7'
+import HeaderIconSell from '../icons/HeaderIconSell'
+import HeaderIconRight1 from '../icons/HeaderIconRight1'
+import HeaderIconRight2 from '../icons/HeaderIconRight2'
+import HeaderIconRight3 from '../icons/HeaderIconRight3'
+import HeaderIconRight4 from '../icons/HeaderIconRight4'
+import HeaderIconRight5 from '../icons/HeaderIconRight5'
 import HeaderIconAccount from '../icons/HeaderIconAccount'
 import Breadcrumbs from './breadcrumbs/Breadcrumbs';
 
@@ -43,7 +42,7 @@ export default function Header() {
 
                 <div className={styles['div-sell']}>
                     <a href='/' className={styles['a-sell']}>BÁN HÀNG</a>
-                    <HeaderIcon1 />
+                    <HeaderIconSell />
                 </div>
 
                 <div className={styles['div-breadcrums']}>
@@ -53,14 +52,11 @@ export default function Header() {
 
             <div className={styles['header-right']}>
                 <div className={styles['div-icon']}>
-                    <HeaderIcon3 />
-                    <HeaderIcon4 />
-                    <HeaderIcon5 />
-                    <HeaderIcon6 />
-                    <HeaderIcon7 />
-                </div>
-
-                <div className={styles['div-account']}>
+                    <HeaderIconRight1 />
+                    <HeaderIconRight2 />
+                    <HeaderIconRight3 />
+                    <HeaderIconRight4 />
+                    <HeaderIconRight5 />
                     <HeaderIconAccount />
                 </div>
             </div>

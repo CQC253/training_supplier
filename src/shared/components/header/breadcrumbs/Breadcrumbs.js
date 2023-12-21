@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import styles from './Breadcrumbs.module.scss'
-import HeaderIcon2 from '../../icons/HeaderIcon2'
+import HeaderIconBreadcrumb from '../../icons/HeaderIconBreadcrumb'
 
 export default function Breadcrumbs() {
     const location = useLocation()
@@ -41,7 +41,7 @@ export default function Breadcrumbs() {
             const modifiedCrumb = mapCrumb(crumb, index, array);
             return (
                 <React.Fragment key={crumb}>
-                    {index !== 0 && <HeaderIcon2 />}
+                    {index !== 0 && <HeaderIconBreadcrumb />}
                     <div className={`${styles['crumb']} ${isFirstChild ? styles['first-crumb'] : ''}`}>
                         <Link to={currLink}>{modifiedCrumb}</Link>
                     </div>
