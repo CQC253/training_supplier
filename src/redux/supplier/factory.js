@@ -51,9 +51,15 @@ const SupplierFactory = {
     },
     undoSupplierList: (payload) => {
         const supplierList = getLocalStorageData('supplierList');
-        const updatedList = [...supplierList, payload.payload.deletedSupplier];
-        setLocalStorageData("supplierList", updatedList);
-        
+        const updatedList = [...supplierList];
+        const deletedSupplier = payload.payload.deletedSupplier
+        const deletedIndex = payload.payload.deletedIndex
+        // Thêm lại mục đã xóa vào danh sách tại vị trí đã xóa trước đó
+        if (deletedSupplier !== null && deletedIndex !== null && deletedIndex >= 0 && deletedIndex < updatedList.length) {
+            updatedList.splice(deletedIndex, 0, deletedSupplier);
+            setLocalStorageData("supplierList", updatedList);
+        }
+
         return {
             Data: updatedList
         };

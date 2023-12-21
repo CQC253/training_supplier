@@ -52,7 +52,7 @@ export default function SupplierContainer() {
 
     //addressValue
     const [addressValue, setAddressValue] = useState('')
-    const optionAddress = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.address))).map(address => ({
+    const optionAddress = Array.from(getLocalStorageData('supplierList').map(item => item.address)).map(address => ({
         value: address,
         label: address
     }));
@@ -72,6 +72,7 @@ export default function SupplierContainer() {
     //action
     const [action, setAction] = useState([])
     let deletedSupplier = null;
+    let deletedIndex = null;
 
     //Paginate
     const [currentPage, setCurrentPage] = useState(0);
@@ -250,9 +251,10 @@ export default function SupplierContainer() {
         });
     };
 
-    const handleDelete = (id) => {
+    const handleDelete = (id, index) => {
         const supplierList = getLocalStorageData('supplierList');
         deletedSupplier = supplierList.find(item => item.id === id);
+        deletedIndex = index;
         // console.log('deletedSupplier', deletedSupplier);
 
         const queryParams = new URLSearchParams(location.search);
@@ -296,9 +298,23 @@ export default function SupplierContainer() {
         const addressValue = queryParams.get('address') || '';
 
         if (inputValue || statusValue || addressValue) {
-            dispatch({ type: supplierActions.UNDO_SUPPLIER_START, payload: { deletedSupplier: deletedSupplier, shouldSearch: true } })
+            dispatch({
+                type: supplierActions.UNDO_SUPPLIER_START, 
+                payload: {
+                    deletedSupplier: deletedSupplier,
+                    deletedIndex: deletedIndex,
+                    shouldSearch: true
+                }
+            })
         } else {
-            dispatch({ type: supplierActions.UNDO_SUPPLIER_START, payload: { deletedSupplier: deletedSupplier, shouldSearch: false } })
+            dispatch({ 
+                type: supplierActions.UNDO_SUPPLIER_START, 
+                payload: { 
+                    deletedSupplier: deletedSupplier, 
+                    deletedIndex: deletedIndex, 
+                    shouldSearch: false 
+                } 
+            })
         }
 
         toast.success("Hoàn tác", {
@@ -325,7 +341,6 @@ export default function SupplierContainer() {
     }, [supplierListRedux, itemsPerPage]);
 
     const handlePageChange = (selectedPage) => {
-        // console.log(selectedPage);
         setCurrentPage(selectedPage.selected);
         const startIndex = selectedPage.selected * itemsPerPage;
         const endIndex = (selectedPage.selected + 1) * itemsPerPage;
@@ -340,7 +355,7 @@ export default function SupplierContainer() {
 
     const calculateIndexes = () => {
         const firstIndex = currentPage * itemsPerPage + 1;
-        const lastIndex = Math.min((currentPage + 1) * itemsPerPage, displayedSupplierList.length);
+        const lastIndex = Math.min((currentPage + 1) * itemsPerPage, supplierListRedux.length);
         setFirstItemIndex(firstIndex);
         setLastItemIndex(lastIndex);
     };
@@ -539,7 +554,7 @@ export default function SupplierContainer() {
                                                                 <button
                                                                     className={styles['btn-delete']}
                                                                     onClick={() => {
-                                                                        handleDelete(item.id)
+                                                                        handleDelete(item.id, index)
                                                                     }}
                                                                 >
                                                                     <SupplierIconDelete />

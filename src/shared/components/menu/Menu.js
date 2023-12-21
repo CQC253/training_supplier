@@ -88,7 +88,6 @@ function Menu() {
                         <Link
                             to={item.linkTo}
                             key={index}
-                            // className={styles['link-icon-title']}
                             className={`${styles['link-icon-title']} ${activeLink == item.linkTo ? styles['active-link'] : ''}`}
                             onClick={() => handleLinkClick(item.linkTo)}
                         >

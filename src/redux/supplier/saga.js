@@ -72,7 +72,7 @@ function* deleteSupplierSaga() {
 
 function* undoSupplierSaga() {
     yield takeEvery(actions.UNDO_SUPPLIER_START, function* (payload) {
-        console.log('payload saga', payload);
+        // console.log('payload saga', payload);
         const shouldSearch = payload.payload.shouldSearch;
         try {
             const response = yield call(() =>

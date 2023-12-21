@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom'
 import styles from './Header.module.scss'
 import HeaderButtonCreate from '../icons/HeaderButtonCreate'
 import HeaderIconSell from '../icons/HeaderIconSell'
@@ -28,14 +29,28 @@ export default function Header() {
                 <div className={styles['dropdown-button']}>
                     <HeaderButtonCreate
                         onClick={handleClickCreate}
-                        onBlur={handleBlur}
+                    // onBlur={handleBlur}
                     />
 
                     {isDropdown &&
                         <ul className={styles['dropdown-list']}>
-                            <li className={styles['dropdown-item']}>
-                                <a href="#">Tạo nhà cung cấp</a>
-                            </li>
+                            <Link
+                            // to={ }
+                            // onClick={() => handleLinkClick(item.linkTo)}
+                            >
+                                <li className={styles['dropdown-item']}>
+                                    <p>Tạo nhà danh mục</p>
+                                </li>
+                            </Link>
+                            <Link
+                            // to={ }
+                            // onClick={() => handleLinkClick(item.linkTo)
+                            >
+                                <li className={styles['dropdown-item']}>
+                                    <p>Tạo nhà cung cấp</p>
+                                </li>
+                            </Link>
+
                         </ul>
                     }
                 </div>
@@ -61,6 +76,6 @@ export default function Header() {
                 </div>
             </div>
 
-        </div>
+        </div >
     )
 }
