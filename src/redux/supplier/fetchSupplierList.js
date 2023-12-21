@@ -53,4 +53,4 @@ export const supplierList = [
     { "id": 50, "supplierCode": "PT", "supplierName": "Portugal", "category": "Lad: A Dog", "code": 305, "deptCode": "560222880488139403", "phone": "887 285 4540", "email": "bcorns1d@irs.gov", "address": "6 Alpine Park", "status": 2 }
 ]
 
-// setLocalStorageData('supplierList', supplierList);
+setLocalStorageData('supplierList', supplierList);

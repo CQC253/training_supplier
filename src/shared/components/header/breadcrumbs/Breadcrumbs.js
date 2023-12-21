@@ -8,7 +8,6 @@ export default function Breadcrumbs() {
     // console.log(location);
 
     let currLink = ''
-
     function mapCrumb(crumb, index, array) {
         switch (crumb) {
             case 'overview':
@@ -28,6 +27,8 @@ export default function Breadcrumbs() {
                 return 'Bảng báo giá'
             case 'tracking_history':
                 return 'Lịch sử theo dõi'
+            case 'detail':
+                return 'Chi tiết thông tin'
             default:
                 return crumb;
         }

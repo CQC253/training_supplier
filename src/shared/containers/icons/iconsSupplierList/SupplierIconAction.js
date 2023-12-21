@@ -1,12 +1,11 @@
 import React from 'react'
-import styles from '../supplier/SupplierListContainer.module.scss'
+import styles from 'shared/containers/supplier/SupplierListContainer.module.scss'
 
-export default function SupplierIconAction({ onClick, onBlur }) {
+export default function SupplierIconAction({ onClick }) {
     return (
         <button
             className={styles['custom-action-button']}
             onClick={onClick}
-            onBlur={onBlur}
         >
             <svg
                 xmlns="http://www.w3.org/2000/svg"

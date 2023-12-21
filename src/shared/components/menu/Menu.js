@@ -11,7 +11,7 @@ import { MenuIcon6 } from '../icons/MenuIcon6';
 import styles from './Menu.module.scss'
 // import Navbar from '../nav-bar/Navbar.js'
 
-function Menu() {
+function Menu({linkPath}) {
     //Click Link
     const location = useLocation();
     const [activeLink, setActiveLink] = useState('');
@@ -88,7 +88,7 @@ function Menu() {
                         <Link
                             to={item.linkTo}
                             key={index}
-                            className={`${styles['link-icon-title']} ${activeLink == item.linkTo ? styles['active-link'] : ''}`}
+                            className={`${styles['link-icon-title']} ${activeLink == item.linkTo ? styles['active-link'] : ''} ${linkPath ? styles['active-link'] : ''}` }
                             onClick={() => handleLinkClick(item.linkTo)}
                         >
                             <span>{item.icon}</span>

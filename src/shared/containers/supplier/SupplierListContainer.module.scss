@@ -328,7 +328,11 @@
                             }
                         }
                         .td2 {
-                            color: var(--other-link, #0054e1);
+                            a {
+                                text-decoration: none;
+                                color: var(--other-link, #0054e1);
+                            }
+                            
                         }
                         .td6 {
                             color: var(--other-link, #0054e1);

@@ -6,26 +6,29 @@ import ReactPaginate from 'react-paginate';
 import DropdownSelect from './dropdown/Dropdown';
 
 import styles from './SupplierListContainer.module.scss'
-import SupplierIcon1 from '../icons/SupplierIcon1'
-import SupplierIcon2 from '../icons/SupplierIcon2'
-import SupplierIconOperate from '../icons/SupplierIconOperate'
-import SupplierIconSetting from '../icons/SupplierIconSetting'
-import SupplierIconAction from '../icons/SupplierIconAction'
-import SupplierIconEdit from '../icons/SupplierIconEdit'
-import SupplierIconDelete from '../icons/SupplierIconDelete'
-import SupplierIconNext from '../icons/SupplierIconNext'
-import SupplierIconPrev from '../icons/SupplierIconPrev'
-import SupplierIconArrow from '../icons/SupplierIconArrow';
-import SupplierIconInfo from '../icons/SuppliericonInfo';
+import SupplierIcon1 from '../icons/iconsSupplierList/SupplierIcon1'
+import SupplierIcon2 from '../icons/iconsSupplierList/SupplierIcon2'
+import SupplierIconOperate from '../icons/iconsSupplierList/SupplierIconOperate'
+import SupplierIconSetting from '../icons/iconsSupplierList/SupplierIconSetting'
+import SupplierIconAction from '../icons/iconsSupplierList/SupplierIconAction'
+import SupplierIconEdit from '../icons/iconsSupplierList/SupplierIconEdit'
+import SupplierIconDelete from '../icons/iconsSupplierList/SupplierIconDelete'
+import SupplierIconNext from '../icons/iconsSupplierList/SupplierIconNext'
+import SupplierIconPrev from '../icons/iconsSupplierList/SupplierIconPrev'
+import SupplierIconArrow from '../icons/iconsSupplierList/SupplierIconArrow';
+import SupplierIconInfo from '../icons/iconsSupplierList/SuppliericonInfo';
 
 import { useDispatch, useSelector } from 'react-redux';
 import supplierActions from "redux/supplier/action"
 import { getLocalStorageData } from 'redux/supplier/localStorageUtils';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useLocation, useHistory, Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+// import {supplierList as List} from 'redux/supplier/fetchSupplierList'
 
 export default function SupplierContainer() {
+    // setLocalStorageData('supplierList', List);
+
     // supplierListRedux
     const dispatch = useDispatch();
     const { supplierList: supplierListRedux } = useSelector((state) => state.SupplierReducer);
@@ -247,11 +250,12 @@ export default function SupplierContainer() {
         setAction((prevAction) => {
             const updatedAction = [...prevAction];
             updatedAction[index] = false;
+            // console.log(updatedAction);
             return updatedAction;
         });
     };
 
-    const handleDelete = (id, index) => {
+    const handleDelete = (id, index, event) => {
         const supplierList = getLocalStorageData('supplierList');
         deletedSupplier = supplierList.find(item => item.id === id);
         deletedIndex = index;
@@ -299,7 +303,7 @@ export default function SupplierContainer() {
 
         if (inputValue || statusValue || addressValue) {
             dispatch({
-                type: supplierActions.UNDO_SUPPLIER_START, 
+                type: supplierActions.UNDO_SUPPLIER_START,
                 payload: {
                     deletedSupplier: deletedSupplier,
                     deletedIndex: deletedIndex,
@@ -307,13 +311,13 @@ export default function SupplierContainer() {
                 }
             })
         } else {
-            dispatch({ 
-                type: supplierActions.UNDO_SUPPLIER_START, 
-                payload: { 
-                    deletedSupplier: deletedSupplier, 
-                    deletedIndex: deletedIndex, 
-                    shouldSearch: false 
-                } 
+            dispatch({
+                type: supplierActions.UNDO_SUPPLIER_START,
+                payload: {
+                    deletedSupplier: deletedSupplier,
+                    deletedIndex: deletedIndex,
+                    shouldSearch: false
+                }
             })
         }
 
@@ -505,7 +509,14 @@ export default function SupplierContainer() {
                                                     onChange={() => handleSelect(item.id)}
                                                 />
                                             </td>
-                                            <td className={styles['td2']}>{item.supplierCode}</td>
+                                            <td className={styles['td2']}>
+                                                <Link
+                                                    to={'/supplier/list/detail'}
+                                                >
+                                                    {item.supplierCode}
+                                                </Link>
+
+                                            </td>
                                             <td className={styles['td3']}>{item.supplierName}</td>
                                             <td className={styles['td4']}>{item.category}</td>
                                             <td className={styles['td5']}>{item.code}</td>
@@ -534,7 +545,10 @@ export default function SupplierContainer() {
                                                 </div>
                                             </td>
                                             <td className={styles['td11']}>
-                                                <div className={styles['action-button']}>
+                                                <div
+                                                    className={styles['action-button']}
+                                                    onBlur={() => handleBlur(index)}
+                                                >
                                                     <SupplierIconAction
                                                         onClick={() => handleAction(index)}
                                                     />
@@ -542,7 +556,6 @@ export default function SupplierContainer() {
                                                     {action[index] &&
                                                         <ul
                                                             className={styles['action-list']}
-                                                            onBlur={() => handleBlur(index)}
                                                         >
                                                             <li className={styles['action-item']}>
                                                                 <button className={styles['btn-edit']}>
@@ -553,8 +566,9 @@ export default function SupplierContainer() {
                                                             <li className={styles['action-item']}>
                                                                 <button
                                                                     className={styles['btn-delete']}
-                                                                    onClick={() => {
-                                                                        handleDelete(item.id, index)
+                                                                    onMouseDown={(event) => {
+                                                                        event.preventDefault();
+                                                                        handleDelete(item.id, index);
                                                                     }}
                                                                 >
                                                                     <SupplierIconDelete />
@@ -619,6 +633,4 @@ export default function SupplierContainer() {
             </div>
         </div>
     );
-
-
 }
