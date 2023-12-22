@@ -5,7 +5,6 @@ const SupplierFactory = {
         // console.log('payload factory', payload);
         const supplierList = getLocalStorageData('supplierList');
         let filteredList = supplierList;
-        // console.log('payload factory', payload);
 
         // Lọc các phần tử trong filteredList  dựa trên giá trị tìm kiếm
         if (payload.payload) {
@@ -33,6 +32,9 @@ const SupplierFactory = {
 
                 return isInputValueMatch && isStatusValueMatch && isAddressValueMatch;
             });
+
+            // Sắp xếp danh sách đã lọc theo thứ tự tăng dần của ID
+            filteredList.sort((a, b) => a.id - b.id);
         }
 
         // Cập nhật supplierListRedux với danh sách đã lọc
@@ -41,6 +43,14 @@ const SupplierFactory = {
         };
     },
     deleteSupplierList: (payload) => {
+        const supplierList = getLocalStorageData('supplierList');
+        const updatedList = supplierList.filter((item) => item.id !== payload.payload.id);
+        setLocalStorageData("supplierList", updatedList);
+        return {
+            Data: updatedList
+        };
+    },
+    deleteSuppDetail: (payload) => {
         const supplierList = getLocalStorageData('supplierList');
         const updatedList = supplierList.filter((item) => item.id !== payload.payload.id);
         setLocalStorageData("supplierList", updatedList);
@@ -53,12 +63,13 @@ const SupplierFactory = {
         const supplierList = getLocalStorageData('supplierList');
         const updatedList = [...supplierList];
         const deletedSupplier = payload.payload.deletedSupplier
-        const deletedIndex = payload.payload.deletedIndex
-        // Thêm lại mục đã xóa vào danh sách tại vị trí đã xóa trước đó
-        if (deletedSupplier !== null && deletedIndex !== null && deletedIndex >= 0 && deletedIndex < updatedList.length) {
-            updatedList.splice(deletedIndex, 0, deletedSupplier);
-            setLocalStorageData("supplierList", updatedList);
+        // Thêm lại mục đã xóa vào danh sách
+        if (deletedSupplier) {
+            updatedList.push(deletedSupplier);
         }
+
+        // Cập nhật danh sách nhà cung cấp với mục đã được hoàn tác
+        setLocalStorageData('supplierList', updatedList);
 
         return {
             Data: updatedList
@@ -85,6 +96,30 @@ const SupplierFactory = {
                 return {
                     ...item,
                     status: value
+                }
+            }
+            return item
+        });
+        setLocalStorageData("supplierList", updateList);
+
+        return {
+            Data: updateList
+        };
+    },
+    updateStatusSuppDetail: (payload) => {
+
+        const id = payload.payload.id;
+
+        const status = payload.payload.status;
+
+        const supplierList = getLocalStorageData('supplierList');
+        // console.log(supplierList)
+        const updateList = supplierList.map(item => {
+
+            if (item.id == id) {
+                return {
+                    ...item,
+                    status: status
                 }
             }
             return item

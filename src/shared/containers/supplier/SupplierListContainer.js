@@ -20,19 +20,25 @@ import SupplierIconInfo from '../icons/iconsSupplierList/SuppliericonInfo';
 
 import { useDispatch, useSelector } from 'react-redux';
 import supplierActions from "redux/supplier/action"
-import { getLocalStorageData } from 'redux/supplier/localStorageUtils';
+import { getLocalStorageData, setLocalStorageData } from 'redux/supplier/localStorageUtils';
 import { useLocation, useHistory, Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-// import {supplierList as List} from 'redux/supplier/fetchSupplierList'
+// import { fetchSupplierList as List } from 'redux/supplier/fetchSupplierList'
 
 export default function SupplierContainer() {
-    // setLocalStorageData('supplierList', List);
+    //Set data lên local nếu chưa có
+    // useEffect(() => {
+    //     const existingSupplierList = getLocalStorageData('supplierList');
+    //     if (!existingSupplierList) {
+    //         setLocalStorageData('supplierList', List);
+    //     }
+    // }, []);
 
     // get data from LocalStorage
-    // get supplierList and : supplierListRedux
     const dispatch = useDispatch();
-    const { supplierList: supplierListRedux } = useSelector((state) => state.SupplierReducer);   
+    const { supplierList: supplierListRedux } = useSelector((state) => state.SupplierReducer); // get supplierList and : supplierListRedux
+
     useEffect(() => {
         dispatch({
             type: supplierActions.FETCH_SEARCH_SUPPLIER_LIST,
@@ -81,7 +87,6 @@ export default function SupplierContainer() {
     //action
     const [action, setAction] = useState([])
     let deletedSupplier = null;
-    let deletedIndex = null;
 
     //Paginate
     const [currentPage, setCurrentPage] = useState(0);
@@ -182,7 +187,6 @@ export default function SupplierContainer() {
                 inputValue: inputValue,
                 statusValue: statusValue,
                 addressValue: addressValue,
-                test: 1
             }
         })
     };
@@ -254,23 +258,12 @@ export default function SupplierContainer() {
         });
     };
 
-    const handleDelete = (id, index, event) => {
+    const handleDelete = (id) => {
         const supplierList = getLocalStorageData('supplierList');
         deletedSupplier = supplierList.find(item => item.id === id);
-        deletedIndex = index;
         // console.log('deletedSupplier', deletedSupplier);
 
-        const queryParams = new URLSearchParams(location.search);
-        const inputValue = queryParams.get('input') || '';
-        const statusValue = queryParams.get('status') || '';
-        const addressValue = queryParams.get('address') || '';
-
-        if (inputValue || statusValue || addressValue) {
-            dispatch({ type: supplierActions.DELETE_SUPPLIER_START, payload: { id: id, shouldSearch: true } })
-        } else {
-            dispatch({ type: supplierActions.DELETE_SUPPLIER_START, payload: { id: id, shouldSearch: false } })
-        }
-
+        dispatch({ type: supplierActions.DELETE_SUPPLIER_START, payload: { id: id } })
 
         toast.info(
             (
@@ -295,30 +288,12 @@ export default function SupplierContainer() {
     }
 
     const handleUndo = () => {
-        const queryParams = new URLSearchParams(location.search);
-        const inputValue = queryParams.get('input') || '';
-        const statusValue = queryParams.get('status') || '';
-        const addressValue = queryParams.get('address') || '';
-
-        if (inputValue || statusValue || addressValue) {
-            dispatch({
-                type: supplierActions.UNDO_SUPPLIER_START,
-                payload: {
-                    deletedSupplier: deletedSupplier,
-                    deletedIndex: deletedIndex,
-                    shouldSearch: true
-                }
-            })
-        } else {
-            dispatch({
-                type: supplierActions.UNDO_SUPPLIER_START,
-                payload: {
-                    deletedSupplier: deletedSupplier,
-                    deletedIndex: deletedIndex,
-                    shouldSearch: false
-                }
-            })
-        }
+        dispatch({
+            type: supplierActions.UNDO_SUPPLIER_START,
+            payload: {
+                deletedSupplier: deletedSupplier,
+            }
+        })
 
         toast.success("Hoàn tác", {
             position: "top-right",
@@ -514,7 +489,6 @@ export default function SupplierContainer() {
                                                 >
                                                     {item.supplierCode}
                                                 </Link>
-
                                             </td>
                                             <td className={styles['td3']}>{item.supplierName}</td>
                                             <td className={styles['td4']}>{item.category}</td>
@@ -567,7 +541,7 @@ export default function SupplierContainer() {
                                                                     className={styles['btn-delete']}
                                                                     onMouseDown={(event) => {
                                                                         event.preventDefault();
-                                                                        handleDelete(item.id, index);
+                                                                        handleDelete(item.id);
                                                                     }}
                                                                 >
                                                                     <SupplierIconDelete />

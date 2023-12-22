@@ -1,6 +1,6 @@
 import { setLocalStorageData } from "./localStorageUtils";
 
-export const supplierList = [
+export const fetchSupplierList = [
     { "id": 1, "supplierCode": "KG", "supplierName": "Kyrgyzstan", "category": "Beyond the Mind's Eye", "code": 398, "deptCode": "3542982931980542", "phone": "505 517 6488", "email": "lmcmurrugh0@psu.edu", "address": "83 Eastlawn Trail", "status": 2 },
     { "id": 2, "supplierCode": "PL", "supplierName": "Poland", "category": "Fire Down Below", "code": 340, "deptCode": "633431727110990954", "phone": "362 606 8036", "email": "mcullingworth1@over-blog.com", "address": "35 Nevada Drive", "status": 2 },
     { "id": 3, "supplierCode": "PE", "supplierName": "Peru", "category": "Wrongfully Accused", "code": 375, "deptCode": "5100148786278924", "phone": "161 277 1668", "email": "gmohun2@aboutads.info", "address": "7 Butternut Junction", "status": 1 },
@@ -53,4 +53,4 @@ export const supplierList = [
     { "id": 50, "supplierCode": "PT", "supplierName": "Portugal", "category": "Lad: A Dog", "code": 305, "deptCode": "560222880488139403", "phone": "887 285 4540", "email": "bcorns1d@irs.gov", "address": "6 Alpine Park", "status": 2 }
 ]
 
-setLocalStorageData('supplierList', supplierList);
+setLocalStorageData('supplierList', fetchSupplierList);

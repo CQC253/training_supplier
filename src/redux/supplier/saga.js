@@ -27,7 +27,6 @@ function* fetchSearchSupplierListSaga() {
 function* deleteSupplierSaga() {
     yield takeEvery(actions.DELETE_SUPPLIER_START, function* (payload) {
         // console.log('payload saga', payload);
-        const shouldSearch = payload.payload.shouldSearch;
         try {
             const response = yield call(() =>
                 factories.deleteSupplierList(payload)
@@ -37,28 +36,26 @@ function* deleteSupplierSaga() {
                 payload: response.Data
             });
 
-            if (shouldSearch) {
-                // Lấy giá trị từ URL query params
-                const queryParams = new URLSearchParams(location.search);
-                const inputValue = queryParams.get('input') || '';
-                const statusValue = queryParams.get('status') ? (queryParams.get('status') == 'Giao dịch' ? 1 : 2) : '' || '';
-                const addressValue = queryParams.get('address') || '';
+            // Lấy giá trị từ URL query params
+            const queryParams = new URLSearchParams(location.search);
+            const inputValue = queryParams.get('input') || '';
+            const statusValue = queryParams.get('status') ? (queryParams.get('status') == 'Giao dịch' ? 1 : 2) : '' || '';
+            const addressValue = queryParams.get('address') || '';
 
-                payload = {
-                    payload: {
-                        inputValue: inputValue,
-                        statusValue: statusValue,
-                        addressValue: addressValue
-                    }
+            payload = {
+                payload: {
+                    inputValue: inputValue,
+                    statusValue: statusValue,
+                    addressValue: addressValue
                 }
-                const response = yield call(() =>
-                    factories.fetchAndSearchData(payload)
-                );
-                yield put({
-                    type: actions.FETCH_SEARCH_SUPPLIER_SUCCESS,
-                    payload: response.Data
-                });
-            }
+            };
+            const search = yield call(() =>
+                factories.fetchAndSearchData(payload)
+            );
+            yield put({
+                type: actions.FETCH_SEARCH_SUPPLIER_SUCCESS,
+                payload: search.Data
+            });
         } catch (error) {
             yield put({
                 type: actions.DELETE_SUPPLIER_ERROR,
@@ -70,9 +67,51 @@ function* deleteSupplierSaga() {
     });
 }
 
+function* deleteSuppDetailSaga() {
+    yield takeEvery(actions.DELETE_SUPP_DETAIL_START, function* (payload) {
+        // console.log('payload saga', payload);
+        try {
+            const response = yield call(() =>
+                factories.deleteSuppDetail(payload)
+            );
+            yield put({
+                type: actions.DELETE_SUPP_DETAIL_SUCCESS,
+                payload: response.Data
+            });
+
+            // Lấy giá trị từ URL query params
+            const queryParams = new URLSearchParams(location.search);
+            const inputValue = queryParams.get('input') || '';
+            const statusValue = queryParams.get('status') ? (queryParams.get('status') == 'Giao dịch' ? 1 : 2) : '' || '';
+            const addressValue = queryParams.get('address') || '';
+
+            payload = {
+                payload: {
+                    inputValue: inputValue,
+                    statusValue: statusValue,
+                    addressValue: addressValue
+                }
+            }
+            const search = yield call(() =>
+                factories.fetchAndSearchData(payload)
+            );
+            yield put({
+                type: actions.FETCH_SEARCH_SUPPLIER_SUCCESS,
+                payload: search.Data
+            });
+        } catch (error) {
+            yield put({
+                type: actions.DELETE_SUPP_DETAIL_ERROR,
+                payload: error
+            });
+        } finally {
+
+        }
+    });
+}
+
 function* undoSupplierSaga() {
     yield takeEvery(actions.UNDO_SUPPLIER_START, function* (payload) {
-        const shouldSearch = payload.payload.shouldSearch;
         try {
             const response = yield call(() =>
                 factories.undoSupplierList(payload)
@@ -82,28 +121,26 @@ function* undoSupplierSaga() {
                 payload: response.Data
             });
 
-            if (shouldSearch) {
-                // Lấy giá trị từ URL query params
-                const queryParams = new URLSearchParams(location.search);
-                const inputValue = queryParams.get('input') || '';
-                const statusValue = queryParams.get('status') ? (queryParams.get('status') == 'Giao dịch' ? 1 : 2) : '' || '';
-                const addressValue = queryParams.get('address') || '';
+            // Lấy giá trị từ URL query params
+            const queryParams = new URLSearchParams(location.search);
+            const inputValue = queryParams.get('input') || '';
+            const statusValue = queryParams.get('status') ? (queryParams.get('status') == 'Giao dịch' ? 1 : 2) : '' || '';
+            const addressValue = queryParams.get('address') || '';
 
-                payload = {
-                    payload: {
-                        inputValue: inputValue,
-                        statusValue: statusValue,
-                        addressValue: addressValue
-                    }
+            payload = {
+                payload: {
+                    inputValue: inputValue,
+                    statusValue: statusValue,
+                    addressValue: addressValue
                 }
-                const response = yield call(() =>
-                    factories.fetchAndSearchData(payload)
-                );
-                yield put({
-                    type: actions.FETCH_SEARCH_SUPPLIER_SUCCESS,
-                    payload: response.Data
-                });
             }
+            const search = yield call(() =>
+                factories.fetchAndSearchData(payload)
+            );
+            yield put({
+                type: actions.FETCH_SEARCH_SUPPLIER_SUCCESS,
+                payload: search.Data
+            });
         } catch (error) {
             yield put({
                 type: actions.UNDO_SUPPLIER_ERROR,
@@ -167,6 +204,25 @@ function* changeStatusSupplierSaga() {
     });
 }
 
+function* updateStatusSuppDetailSaga() {
+    yield takeEvery(actions.UPDATE_STATUS_SUPP_DETAIL_START, function* (payload) {
+        try {
+            const response = yield call(() =>
+                factories.updateStatusSuppDetail(payload)
+            );
+            yield put({
+                type: actions.UPDATE_STATUS_SUPP_DETAIL_SUCCESS,
+                payload: response.Data
+            });
+        } catch (error) {
+            yield put({
+                type: actions.UPDATE_STATUS_SUPP_DETAIL_ERROR,
+                payload: error
+            });
+        }
+    });
+}
+
 function* resetSupplierSaga() {
     yield takeEvery(actions.RESET_SUPPLIER_START, function* () {
         // console.log('payload', payload);
@@ -195,9 +251,11 @@ export default function* SupplierSaga() {
     yield all([
         fork(fetchSearchSupplierListSaga),
         fork(deleteSupplierSaga),
+        fork(deleteSuppDetailSaga),
         fork(undoSupplierSaga),
         fork(createSupplierSaga),
         fork(changeStatusSupplierSaga),
+        fork(updateStatusSuppDetailSaga),
         fork(resetSupplierSaga),
     ]);
 }
