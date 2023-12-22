@@ -29,9 +29,15 @@ import 'react-toastify/dist/ReactToastify.css';
 export default function SupplierContainer() {
     // setLocalStorageData('supplierList', List);
 
-    // supplierListRedux
+    // get data from LocalStorage
+    // get supplierList and : supplierListRedux
     const dispatch = useDispatch();
-    const { supplierList: supplierListRedux } = useSelector((state) => state.SupplierReducer);
+    const { supplierList: supplierListRedux } = useSelector((state) => state.SupplierReducer);   
+    useEffect(() => {
+        dispatch({
+            type: supplierActions.FETCH_SEARCH_SUPPLIER_LIST,
+        });
+    }, []);
 
     //Search button
     const location = useLocation();
@@ -99,13 +105,6 @@ export default function SupplierContainer() {
     }));
 
     //---------------------------------------------------
-
-    // get data from LocalStorage
-    useEffect(() => {
-        dispatch({
-            type: supplierActions.FETCH_SEARCH_SUPPLIER_LIST,
-        });
-    }, []);
 
     //search inputValue
     const handleInputValueChange = (event) => {
@@ -511,7 +510,7 @@ export default function SupplierContainer() {
                                             </td>
                                             <td className={styles['td2']}>
                                                 <Link
-                                                    to={'/supplier/list/detail'}
+                                                    to={`/supplier/list/detail/${item.id}`}
                                                 >
                                                     {item.supplierCode}
                                                 </Link>

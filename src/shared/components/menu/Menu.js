@@ -11,7 +11,7 @@ import { MenuIcon6 } from '../icons/MenuIcon6';
 import styles from './Menu.module.scss'
 // import Navbar from '../nav-bar/Navbar.js'
 
-function Menu({linkPath}) {
+function Menu() {
     //Click Link
     const location = useLocation();
     const [activeLink, setActiveLink] = useState('');
@@ -63,10 +63,9 @@ function Menu({linkPath}) {
     // Click Link (Kiểm tra xem URL hiện tại có trùng với 'linkTo' hay không)
     useEffect(() => {
         const currentPath = location.pathname;
-        // console.log(currentPath);
 
-        const matchedLink = menu.find(item => item.linkTo == currentPath);
-        // console.log(matchedLink, currentPath);
+        const matchedLink = menu.find(item => currentPath.startsWith(item.linkTo));
+        
         if (matchedLink) {
             setActiveLink(matchedLink.linkTo);
         } else {
@@ -88,7 +87,7 @@ function Menu({linkPath}) {
                         <Link
                             to={item.linkTo}
                             key={index}
-                            className={`${styles['link-icon-title']} ${activeLink == item.linkTo ? styles['active-link'] : ''} ${linkPath ? styles['active-link'] : ''}` }
+                            className={`${styles['link-icon-title']} ${activeLink.startsWith(item.linkTo) ? styles['active-link'] : ''}` }
                             onClick={() => handleLinkClick(item.linkTo)}
                         >
                             <span>{item.icon}</span>

@@ -37,6 +37,9 @@ export default function Breadcrumbs() {
     const crumbs = location.pathname.split('/')
         .filter(crumb => crumb !== '')
         .map((crumb, index, array) => {
+            if (!isNaN(crumb)) {
+                return null;
+            }
             currLink += `/${crumb}`
             const isFirstChild = index === 0;
             const modifiedCrumb = mapCrumb(crumb, index, array);
@@ -53,7 +56,7 @@ export default function Breadcrumbs() {
     return (
         <div className={styles['breadcrumbs']}>
             {/* {console.log(crumbs)} */}
-            {crumbs}
+            {crumbs.filter(crumb => crumb !== null)}
         </div>
     )
 }
