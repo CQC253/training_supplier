@@ -14,6 +14,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 export default function SupplierListDetail() {
     // Lấy id từ URL
     const { id } = useParams();
+
     //get supplierList
     const { supplierList: supplierListRedux } = useSelector((state) => state.SupplierReducer);
 
@@ -74,8 +75,8 @@ export default function SupplierListDetail() {
     const history = useHistory();
 
     const handleDelete = () => {
+        dispatch({ type: supplierActions.DELETE_SUPPLIER_START, payload: { id: id } })
         history.push('/supplier/list');
-        dispatch({ type: supplierActions.DELETE_SUPP_DETAIL_START, payload: { id: id } })
     }
 
     return (

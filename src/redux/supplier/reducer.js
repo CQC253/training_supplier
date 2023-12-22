@@ -18,11 +18,6 @@ const SupplierReducer = (state = initialState, action) => {
                 ...state,
                 supplierList: action.payload
             };
-        case SupplierAction.DELETE_SUPP_DETAIL_SUCCESS:
-            return {
-                ...state,
-                supplierList: action.payload
-            };
         case SupplierAction.UNDO_SUPPLIER_SUCCESS:
             return {
                 ...state,
