@@ -6,7 +6,8 @@ import { AdminGuard } from "./guards/AdminGuard";
 import { GuestGuard } from "./guards/GuestGuard";
 import LoginPage from "pages/login/LoginPage";
 import SupplierListPage from "pages/supplier/SupplierListPage";
-import SupplierListDetail from "shared/containers/supplier_detail/SupplierListDetail";
+import SupplierListDetail from "shared/containers/supplierDetail/SupplierListDetail";
+import SupplierCreate from "shared/containers/supplierCreate/SupplierCreate"
 /**
 * ****************************************************************************
 * DUNGNT ADD
@@ -106,6 +107,19 @@ const Routes = [
                 id: 'SUPPLIER_LIST_DETAIL',
                 guards: [GuestGuard],
                 component: <SupplierListDetail />,
+                fallback: () => {
+                    return null;
+                }
+            }
+        ]
+    },
+    {
+        layout: MainLayout,
+        routes: [
+            {
+                id: 'SUPPLIER_LIST_CREATE',
+                guards: [GuestGuard],
+                component: <SupplierCreate />,
                 fallback: () => {
                     return null;
                 }

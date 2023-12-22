@@ -35,16 +35,14 @@ export default function Header() {
                     {isDropdown &&
                         <ul className={styles['dropdown-list']}>
                             <Link
-                            // to={ }
-                            // onClick={() => handleLinkClick(item.linkTo)}
+                                to={'/supplier/list/create'}
                             >
                                 <li className={styles['dropdown-item']}>
-                                    <p>Tạo nhà danh mục</p>
+                                    <p>Tạo danh mục</p>
                                 </li>
                             </Link>
                             <Link
-                            // to={ }
-                            // onClick={() => handleLinkClick(item.linkTo)
+                                to={'/supplier/list/create'}
                             >
                                 <li className={styles['dropdown-item']}>
                                     <p>Tạo nhà cung cấp</p>

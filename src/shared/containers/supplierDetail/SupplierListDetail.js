@@ -4,7 +4,7 @@ import IconStatus from '../icons/iconsSupplierListDetail/IconStatus'
 import IconBack from '../icons/iconsSupplierListDetail/IconBack';
 import { useSelector, useDispatch } from 'react-redux';
 import supplierActions from "redux/supplier/action"
-import { useLocation, useParams, Link, useHistory  } from 'react-router-dom';
+import { useLocation, useParams, Link, useHistory } from 'react-router-dom';
 
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -165,22 +165,19 @@ export default function SupplierListDetail() {
                             <div className={styles['custom-p-span']}>
                                 <p>Tỉnh/Thành phố</p>
                                 <span>
-                                    : update later
-                                    {/* {supplier ? supplier.city : ''} */}
+                                    : {supplier ? supplier.city : ''}
                                 </span>
                             </div>
                             <div className={styles['custom-p-span']}>
                                 <p>Quận/Huyện</p>
                                 <span>
-                                    : update later
-                                    {/* {supplier ? supplier.district : ''} */}
+                                    : {supplier ? supplier.district : ''}
                                 </span>
                             </div>
                             <div className={styles['custom-p-span']}>
                                 <p>Phường/Xã</p>
                                 <span>
-                                    : update later
-                                    {/* {supplier ? supplier.ward : ''} */}
+                                    : {supplier ? supplier.ward : ''}
                                 </span>
                             </div>
                             <div className={styles['custom-p-span']}>
@@ -206,10 +203,15 @@ export default function SupplierListDetail() {
                 </Link>
 
                 <div className={styles['div-bottom-right']}>
-                    <button className={styles['btn-update']}>
-                        Sửa
-                    </button>
-
+                    <Link
+                        to={'/supplier/list'}
+                    >
+                        <button
+                            className={styles['btn-update']}
+                        >
+                            Sửa
+                        </button>
+                    </Link>
                     <button
                         className={styles['button-delete']}
                         onClick={handleClickOpen}

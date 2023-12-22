@@ -120,6 +120,8 @@
                 display: flex;
                 margin-top: 15px;
                 gap: 20px;
+                box-sizing: border-box;
+                overflow: hidden;
 
                 .div-detail-left {
                     display: flex;

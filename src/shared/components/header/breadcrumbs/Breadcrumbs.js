@@ -29,6 +29,8 @@ export default function Breadcrumbs() {
                 return 'Lịch sử theo dõi'
             case 'detail':
                 return 'Chi tiết thông tin'
+            case 'create':
+                return 'Tạo mới nhà cung cấp'
             default:
                 return crumb;
         }

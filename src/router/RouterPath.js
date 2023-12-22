@@ -25,6 +25,7 @@ export default class RouterPath {
     static SUPPLIER_CATEGORY = '/supplier/category'
     static SUPPLIER_LIST = '/supplier/list'
     static SUPPLIER_LIST_DETAIL = '/supplier/list/detail/:id'
+    static SUPPLIER_LIST_CREATE = '/supplier/list/create'
     static SUPPLIER_ORDER_HISTORY = '/supplier/order_history'
     static SUPPLIER_QUOTATION = '/supplier/quotation'
     static SUPPLIER_TRACKING_HISTORY = '/supplier/tracking_history'
