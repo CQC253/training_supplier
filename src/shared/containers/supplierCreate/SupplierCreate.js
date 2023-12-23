@@ -1,9 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useHistory } from 'react-router-dom';
 import styles from './SupplierCreate.module.scss'
-import IconBack from '../icons/iconsSupplierCreate/IconBack';
+import { useForm } from 'react-hook-form';
+
 import { useSelector, useDispatch } from 'react-redux';
 import supplierActions from "redux/supplier/action"
-import { useParams, useHistory } from 'react-router-dom';
+
+import DropdownSelect from './dropdown/Dropdown';
+import { getLocalStorageData } from 'redux/supplier/localStorageUtils';
+import IconBack from '../icons/iconsSupplierCreate/IconBack';
+import IconDropdown from '../icons/iconsSupplierCreate/IconDropdown'
+
 
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -11,14 +18,8 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
 
 export default function SupplierListDetail() {
-    // Lấy id từ URL
-    const { id } = useParams();
-
     //History
     const history = useHistory();
-
-    //get supplierList
-    const { supplierList: supplierListRedux } = useSelector((state) => state.SupplierReducer);
 
     //dispatch
     const dispatch = useDispatch();
@@ -30,40 +31,110 @@ export default function SupplierListDetail() {
         });
     }, []);
 
-    // Tìm NCC dựa trên id
-    const supplier = supplierListRedux.find((item) => item.id == id);
+    // get supplierList and : supplierListRedux
+    const { supplierList: supplierListRedux } = useSelector((state) => state.SupplierReducer);
 
-    //isDropdown
-    const [isDropdown, setIsDropdown] = useState(false)
-    const dropdownRef = useRef(null);
-    const handleStatus = () => {
-        setIsDropdown(!isDropdown);
+    const getNextId = () => {
+        if (supplierListRedux.length > 0) {
+            const lastId = supplierListRedux[supplierListRedux.length - 1].id;
+            return lastId + 1;
+        } else {
+            return 1;
+        }
     };
 
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setIsDropdown(false);
-            }
-        };
+    //use form
+    const { register, handleSubmit, watch, formState: { errors } } = useForm();
 
-        document.addEventListener('click', handleClickOutside);
+    //onSubmit
+    const onSubmit = (data) => {
+        console.log(data)
+    };
 
-        return () => {
-            document.removeEventListener('click', handleClickOutside);
-        };
-    }, []); //Xử lí blur
+    //cityValue
+    const [cityValue, setCityValue] = useState('')
+    const optionCity = Array.from(getLocalStorageData('supplierList').map(item => item.city)).map(city => ({
+        value: city,
+        label: city
+    }));
 
-    //handleChangeStatus
-    const handleChangeStatus = (id, status) => {
-        dispatch({
-            type: supplierActions.UPDATE_STATUS_SUPP_DETAIL_START,
-            payload: { id: id, status: status },
-        });
+    const handleCityValue = (event) => {
+        // console.log(event.value);
+        setCityValue(event.value)
+    };
+
+    //categoryValue
+    const [categoryValue, setCategoryValue] = useState('')
+    const optionCategory = Array.from(getLocalStorageData('supplierList').map(item => item.category)).map(category => ({
+        value: category,
+        label: category
+    }));
+
+    const handleCategoryValue = (event) => {
+        // console.log(event.value);
+        setCategoryValue(event.value)
+    };
+
+    //deptCodeValue
+    const [deptCodeValue, setDeptCodeValue] = useState('')
+    const optionDeptCode = Array.from(getLocalStorageData('supplierList').map(item => item.deptCode)).map(deptCode => ({
+        value: String(deptCode),
+        label: deptCode
+    }));
+
+    const handleDeptCodeValue = (event) => {
+        // console.log(event.value, typeof(event.value));
+        setDeptCodeValue(event.value)
+    };
+
+    //districtValue
+    const [districtValue, setDistrictValue] = useState('')
+    const optionDistrictValue = Array.from(
+        new Set(getLocalStorageData('supplierList').map(item => item.district))
+    ).map(district => ({
+        value: district,
+        label: district
+    }));
+
+    const handleDistrictValue = (event) => {
+        // console.log(event.value);
+        setDistrictValue(event.value)
+    };
+
+    //statusValue
+    const [statusValue, setStatusValue] = useState('')
+    const optionStatus = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.status))).map(status => ({
+        value: String(status),
+        label: status == 1 ? 'Giao dịch' : 'Tạm dừng'
+    }));
+
+    const handleStatusValue = (event) => {
+        // console.log(event.value, typeof(event.value));
+        setStatusValue(event.value)
+    };
+
+    //wardValue
+    const [wardValue, setWardValue] = useState('')
+    const optionWard = Array.from(
+        new Set(getLocalStorageData('supplierList').map(item => item.ward))
+    ).map(ward => ({
+        value: ward,
+        label: ward
+    }));
+
+    const handleWardValue = (event) => {
+        // console.log(event.value);
+        setWardValue(event.value)
+    };
+
+    //handleCreate
+    const handleCreate = () => {
+        // dispatch({ type: supplierActions.CREATE_SUPPLIER_START, payload: {} })
+        // history.goBack();
     }
 
     //dialog component
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -73,120 +144,186 @@ export default function SupplierListDetail() {
         setOpen(false);
     };
 
-    //handleDelete
-    const handleDelete = () => {
-        dispatch({ type: supplierActions.DELETE_SUPPLIER_START, payload: { id: id } })
-        history.push('/supplier/list');
-    }
-
+    //Back
     const handleGoBack = () => {
         history.goBack();
     };
 
     return (
         <div className={styles['div-supplier-create']}>
-            <div className={styles['div-top']}>
-                <div className={styles['div-create']}>
-                    <p className={styles['p-info']}>
-                        Thông tin nhà cung cấp
-                    </p>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <div className={styles['div-top']}>
+                    <div className={styles['div-create']}>
+                        <p className={styles['p-info']}>
+                            Thông tin nhà cung cấp
+                        </p>
 
-                    <div className={styles['div-info-supp']}>
-                        <div className={styles['div-create-left']}>
-                            <div className={styles['custom-p-input']}>
-                                <p>Tên nhà cung cấp</p>
-                                <input />
+                        <div className={styles['div-info-supp']}>
+                            <div className={styles['div-create-left']}>
+                                <div className={styles['custom-label-input']}>
+                                    <label>Tên nhà cung cấp<span className={styles['span-required']}>*</span></label>
+                                    <input
+                                        type="text"
+                                        {...register('supplierName', { required: true })}
+                                        placeholder="Nhập tên nhà cung cấp"
+                                    />
+                                    {errors.supplierName && <span className={styles['error-message']}>Tên nhà cung cấp là bắt buộc</span>}
+                                </div>
+                                <div className={styles['custom-label-input']}>
+                                    <label>Mã code<span className={styles['span-required']}>*</span></label>
+                                    <input
+                                        type="number"
+                                        {...register('code', {
+                                            required: 'Mã code là bắt buộc',
+                                            min: { value: 251, message: 'Mã code phải từ 251 đến 253' },
+                                            max: { value: 253, message: 'Mã code phải từ 251 đến 253' }
+                                        })}
+                                        placeholder="Nhập mã code"
+                                    />
+                                    {errors.code && <span className={styles['error-message']}>{errors.code.message}</span>}
+                                </div>
+                                <div className={styles['custom-label-input']}>
+                                    <label>Tỉnh/Thành phố<span className={styles['span-required']}>*</span></label>
+                                    <DropdownSelect
+                                        options={optionCity}
+                                        onChange={handleCityValue}
+                                        value={cityValue}
+                                        placeholder={'Tỉnh/Thành phố'}
+                                        arrowOpen={<IconDropdown />}
+                                        arrowClosed={<IconDropdown />}
+                                    />
+                                </div>
+                                <div className={styles['custom-label-input']}>
+                                    <label>Địa chỉ cụ thể<span className={styles['span-required']}>*</span></label>
+                                    <input
+                                        type="text"
+                                        {...register('address', { required: true })}
+                                        placeholder="Nhập địa chỉ cụ thể"
+                                    />
+                                    {errors.address && <span className={styles['error-message']}>Địa chỉ là bắt buộc</span>}
+                                </div>
                             </div>
-                            <div className={styles['custom-p-input']}>
-                                <p>Mã code</p>
-                                <input />
-                            </div>
-                            <div className={styles['custom-p-input']}>
-                                <p>Tỉnh/Thành phố</p>
-                                <input />
-                            </div>
-                            <div className={styles['custom-p-input']}>
-                                <p>Địa chỉ cụ thể</p>
-                                <input />
-                            </div>
-                        </div>
 
-                        <div className={styles['div-create-middle']}>
-                            <div className={styles['custom-p-input']}>
-                                <p>Danh mục</p>
-                                <input />
+                            <div className={styles['div-create-middle']}>
+                                <div className={styles['custom-label-input']}>
+                                    <label>Danh mục<span className={styles['span-required']}>*</span></label>
+                                    <DropdownSelect
+                                        options={optionCategory}
+                                        onChange={handleCategoryValue}
+                                        value={categoryValue}
+                                        placeholder={'Danh mục'}
+                                        arrowOpen={<IconDropdown />}
+                                        arrowClosed={<IconDropdown />}
+                                    />
+                                </div>
+                                <div className={styles['custom-label-input']}>
+                                    <label>Công nợ<span className={styles['span-required']}>*</span></label>
+                                    <DropdownSelect
+                                        options={optionDeptCode}
+                                        onChange={handleDeptCodeValue}
+                                        value={deptCodeValue}
+                                        placeholder={'Nhập mã công nợ'}
+                                        arrowOpen={<IconDropdown />}
+                                        arrowClosed={<IconDropdown />}
+                                    />
+                                </div>
+                                <div className={styles['custom-label-input']}>
+                                    <label>Quận/Huyện<span className={styles['span-required']}>*</span></label>
+                                    <DropdownSelect
+                                        options={optionDistrictValue}
+                                        onChange={handleDistrictValue}
+                                        value={districtValue}
+                                        placeholder={'Quận/Huyện'}
+                                        arrowOpen={<IconDropdown />}
+                                        arrowClosed={<IconDropdown />}
+                                    />
+                                </div>
+                                <div className={styles['custom-label-input']}>
+                                    <label>Trạng thái<span className={styles['span-required']}>*</span></label>
+                                    <DropdownSelect
+                                        options={optionStatus}
+                                        onChange={handleStatusValue}
+                                        value={statusValue}
+                                        placeholder={statusValue == '1' ? 'Giao dịch' : statusValue == '2' ? 'Tạm dừng' : 'Trạng thái'}
+                                        arrowOpen={<IconDropdown />}
+                                        arrowClosed={<IconDropdown />}
+                                    />
+                                </div>
                             </div>
-                            <div className={styles['custom-p-input']}>
-                                <p>Công nợ</p>
-                                <input />
-                            </div>
-                            <div className={styles['custom-p-input']}>
-                                <p>Quận/Huyện</p>
-                                <input />
-                            </div>
-                            <div className={styles['custom-p-input']}>
-                                <p>Trạng thái</p>
-                                <input />
-                            </div>
-                        </div>
 
-                        <div className={styles['div-create-right']}>
-                            <div className={styles['custom-p-input']}>
-                                <p>Phường/Xã</p>
-                                <input />
-                            </div>
-                            <div className={styles['custom-p-input']}>
-                                <p>Số Điện thoại</p>
-                                <input />
-                            </div>
-                            <div className={styles['custom-p-input']}>
-                                <p>Email</p>
-                                <input />
+                            <div className={styles['div-create-right']}>
+                                <div className={styles['custom-label-input']}>
+                                    <label>Số Điện thoại<span className={styles['span-required']}>*</span></label>
+                                    <input
+                                        type="tel"
+                                        {...register('phone', { required: true })}
+                                        placeholder="Nhập số điện thoại"
+                                    />
+                                    {errors.phone && <span className={styles['error-message']}>Số Điện thoại là bắt buộc</span>}
+                                </div>
+                                <div className={styles['custom-label-input']}>
+                                    <label>Email<span className={styles['span-required']}>*</span></label>
+                                    <input
+                                        type="email"
+                                        {...register('email', { required: true })}
+                                        placeholder="abc@gmail.com"
+                                    />
+                                    {errors.email && <span className={styles['error-message']}>Email là bắt buộc</span>}
+                                </div>
+                                <div className={styles['custom-label-input']}>
+                                    <label>Phường/Xã<span className={styles['span-required']}>*</span></label>
+                                    <DropdownSelect
+                                        options={optionWard}
+                                        onChange={handleWardValue}
+                                        value={wardValue}
+                                        placeholder={'Phường/Xã'}
+                                        arrowOpen={<IconDropdown />}
+                                        arrowClosed={<IconDropdown />}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
+                <div className={styles['div-bottom']}>
+                    <div className={styles['div-bottom-left']} onClick={handleGoBack}>
+                        <IconBack />
+                        <p>Quay lại</p>
+                    </div>
 
-            <div className={styles['div-bottom']}>
-                <div className={styles['div-bottom-left']} onClick={handleGoBack}>
-                    <IconBack />
-                    <p>Quay lại</p>
+                    <div className={styles['div-bottom-right']}>
+                        <button
+                            className={styles['btn-update']}
+                            onClick={handleClickOpen}
+                        >
+                            Lưu
+                        </button>
+                        <button
+                            className={styles['button-delete']}
+                            onClick={handleGoBack}
+                        >
+                            Hủy bỏ
+                        </button>
+                        <Dialog
+                            open={open}
+                            onClose={handleClose}
+                            aria-labelledby="alert-dialog-title"
+                            aria-describedby="alert-dialog-description"
+                        >
+                            <DialogTitle id="alert-dialog-title">
+                                {"Bạn có muốn tạo NCC không"}
+                            </DialogTitle>
+                            <DialogActions>
+                                <Button onClick={handleClose}>Hủy bỏ</Button>
+                                <Button type='submit' autoFocus>
+                                    Đồng ý
+                                </Button>
+                            </DialogActions>
+                        </Dialog>
+                    </div>
                 </div>
-
-                <div className={styles['div-bottom-right']}>
-                    <button
-                        className={styles['btn-update']}
-                        onClick={handleClickOpen}
-                    >
-                        Lưu
-                    </button>
-                    <button
-                        className={styles['button-delete']}
-                        onClick={handleGoBack}
-                    >
-                        Hủy bỏ
-                    </button>
-                    <Dialog
-                        open={open}
-                        onClose={handleClose}
-                        aria-labelledby="alert-dialog-title"
-                        aria-describedby="alert-dialog-description"
-                    >
-                        <DialogTitle id="alert-dialog-title">
-                            {"Bạn có muốn tạo NCC không"}
-                        </DialogTitle>
-                        <DialogActions>
-                            <Button onClick={handleClose}>Hủy bỏ</Button>
-                            <Button onClick={handleDelete} autoFocus>
-                                Đồng ý
-                            </Button>
-                        </DialogActions>
-                    </Dialog>
-
-                </div>
-            </div>
+            </form>
         </div>
     )
 }
