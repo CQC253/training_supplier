@@ -67,8 +67,15 @@ const SupplierFactory = {
             Data: updatedList
         };
     },
-    createSupplierList: () => {
+    createSupplierList: (payload) => {
+        console.log('payload factory', payload);
         const supplierList = getLocalStorageData('supplierList');
+
+        // Thêm nhà cung cấp mới vào danh sách
+        supplierList.push(payload.payload.info);
+
+        // Lưu danh sách đã cập nhật trở lại local storage
+        setLocalStorageData('supplierList', supplierList);
 
         return {
             Data: supplierList

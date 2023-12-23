@@ -110,7 +110,25 @@ function* undoSupplierSaga() {
 }
 
 function* createSupplierSaga() {
+    yield takeEvery(actions.CREATE_SUPPLIER_START, function* (payload) {
+        // console.log('payload saga', payload);
+        try {
+            const response = yield call(() =>
+                factories.createSupplierList(payload)
+            );
+            yield put({
+                type: actions.CREATE_SUPPLIER_SUCCESS,
+                payload: response.Data
+            });
+        } catch (error) {
+            yield put({
+                type: actions.CREATE_SUPPLIER_ERROR,
+                payload: error
+            });
+        } finally {
 
+        }
+    });
 }
 
 function* changeStatusSupplierSaga() {

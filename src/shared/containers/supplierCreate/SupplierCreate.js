@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useHistory } from 'react-router-dom';
 import styles from './SupplierCreate.module.scss'
 import { useForm } from 'react-hook-form';
@@ -46,14 +46,9 @@ export default function SupplierListDetail() {
     //use form
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
 
-    //onSubmit
-    const onSubmit = (data) => {
-        console.log(data)
-    };
-
     //cityValue
     const [cityValue, setCityValue] = useState('')
-    const optionCity = Array.from(getLocalStorageData('supplierList').map(item => item.city)).map(city => ({
+    const optionCity = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.city))).map(city => ({
         value: city,
         label: city
     }));
@@ -65,7 +60,7 @@ export default function SupplierListDetail() {
 
     //categoryValue
     const [categoryValue, setCategoryValue] = useState('')
-    const optionCategory = Array.from(getLocalStorageData('supplierList').map(item => item.category)).map(category => ({
+    const optionCategory = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.category))).map(category => ({
         value: category,
         label: category
     }));
@@ -77,7 +72,7 @@ export default function SupplierListDetail() {
 
     //deptCodeValue
     const [deptCodeValue, setDeptCodeValue] = useState('')
-    const optionDeptCode = Array.from(getLocalStorageData('supplierList').map(item => item.deptCode)).map(deptCode => ({
+    const optionDeptCode = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.deptCode))).map(deptCode => ({
         value: String(deptCode),
         label: deptCode
     }));
@@ -127,11 +122,43 @@ export default function SupplierListDetail() {
         setWardValue(event.value)
     };
 
-    //handleCreate
-    const handleCreate = () => {
-        // dispatch({ type: supplierActions.CREATE_SUPPLIER_START, payload: {} })
-        // history.goBack();
-    }
+    //supplierCodeValue
+    const [supplierCodeValue, setSupplierCodeValue] = useState('')
+    const optionSupplierCode = Array.from(
+        new Set(getLocalStorageData('supplierList').map(item => item.supplierCode))
+    ).map(supplierCode => ({
+        value: supplierCode,
+        label: supplierCode
+    }));
+
+    const handleSupplierCodeValue = (event) => {
+        // console.log(event.value);
+        setSupplierCodeValue(event.value)
+    };
+
+    //onSubmit
+    const [infoCreate, setInfoCreate] = useState(null)
+    const onSubmit = (data) => {
+        const id = getNextId()
+
+        const getInfo = {
+            id: parseInt(id),
+            supplierCode: supplierCodeValue,
+            supplierName: data.supplierName,
+            category: categoryValue,
+            code: parseInt(data.code),
+            deptCode: parseInt(deptCodeValue),
+            phone: data.phone,
+            email: data.email,
+            city: cityValue,
+            district: districtValue,
+            ward: wardValue,
+            address: data.address,
+            status: parseInt(statusValue),
+        }
+        // console.log('getInfo', getInfo);
+        setInfoCreate(getInfo)
+    };
 
     //dialog component
     const [open, setOpen] = useState(false);
@@ -147,6 +174,11 @@ export default function SupplierListDetail() {
     //Back
     const handleGoBack = () => {
         history.goBack();
+    };
+    //Back List supplier 
+    const handlAgree = () => {
+        dispatch({ type: supplierActions.CREATE_SUPPLIER_START, payload: { info: infoCreate } })
+        history.push('/supplier/list');
     };
 
     return (
@@ -192,6 +224,7 @@ export default function SupplierListDetail() {
                                         arrowOpen={<IconDropdown />}
                                         arrowClosed={<IconDropdown />}
                                     />
+                                    {errors.city && <span className={styles['error-message']}>{errors.city.message}</span>}
                                 </div>
                                 <div className={styles['custom-label-input']}>
                                     <label>Địa chỉ cụ thể<span className={styles['span-required']}>*</span></label>
@@ -281,6 +314,17 @@ export default function SupplierListDetail() {
                                         arrowClosed={<IconDropdown />}
                                     />
                                 </div>
+                                <div className={styles['custom-label-input']}>
+                                    <label>Mã nhà cung cấp<span className={styles['span-required']}>*</span></label>
+                                    <DropdownSelect
+                                        options={optionSupplierCode}
+                                        onChange={handleSupplierCodeValue}
+                                        value={supplierCodeValue}
+                                        placeholder={'Nhập mã nhà cung cấp'}
+                                        arrowOpen={<IconDropdown />}
+                                        arrowClosed={<IconDropdown />}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -295,6 +339,7 @@ export default function SupplierListDetail() {
                     <div className={styles['div-bottom-right']}>
                         <button
                             className={styles['btn-update']}
+                            type='submit'
                             onClick={handleClickOpen}
                         >
                             Lưu
@@ -305,22 +350,28 @@ export default function SupplierListDetail() {
                         >
                             Hủy bỏ
                         </button>
-                        <Dialog
-                            open={open}
-                            onClose={handleClose}
-                            aria-labelledby="alert-dialog-title"
-                            aria-describedby="alert-dialog-description"
-                        >
-                            <DialogTitle id="alert-dialog-title">
-                                {"Bạn có muốn tạo NCC không"}
-                            </DialogTitle>
-                            <DialogActions>
-                                <Button onClick={handleClose}>Hủy bỏ</Button>
-                                <Button type='submit' autoFocus>
-                                    Đồng ý
-                                </Button>
-                            </DialogActions>
-                        </Dialog>
+                        {
+                            !errors &&
+                            <Dialog
+                                open={open}
+                                onClose={handleClose}
+                                aria-labelledby="alert-dialog-title"
+                                aria-describedby="alert-dialog-description"
+                            >
+                                <DialogTitle id="alert-dialog-title">
+                                    {"Bạn có muốn tạo NCC không"}
+                                </DialogTitle>
+                                <DialogActions>
+                                    <Button onClick={handleClose}>Hủy bỏ</Button>
+                                    <Button
+                                        onClick={handlAgree}
+                                    >
+                                        Đồng ý
+                                    </Button>
+                                </DialogActions>
+                            </Dialog>
+                        }
+
                     </div>
                 </div>
             </form>
