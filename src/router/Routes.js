@@ -8,6 +8,7 @@ import LoginPage from "pages/login/LoginPage";
 import SupplierListPage from "pages/supplier/SupplierListPage";
 import SupplierListDetail from "shared/containers/supplierDetail/SupplierListDetail";
 import SupplierCreate from "shared/containers/supplierCreate/SupplierCreate"
+import SupplierCategory from "shared/containers/category/SupplierCategory"
 /**
 * ****************************************************************************
 * DUNGNT ADD
@@ -80,7 +81,7 @@ const Routes = [
             {
                 id: 'SUPPLIER_CATEGORY',
                 guards: [GuestGuard],
-                component: <HomePage />,
+                component: <SupplierCategory />,
                 fallback: () => {
                     return null;
                 }

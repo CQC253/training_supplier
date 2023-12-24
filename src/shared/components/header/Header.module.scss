@@ -19,35 +19,36 @@
         overflow: hidden;
         text-overflow: ellipsis;
 
-        .div-button {
-            display: flex;
-        }
         .dropdown-button {
             display: flex;
             margin: auto 30px;
 
-            .custom-button {
-                position: relative;
-                border: none;
-                background-color: #fff;
+            .div-button {
+                display: flex;
 
-                .custom-button-icon1 {
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                }
+                .custom-button {
+                    position: relative;
+                    border: none;
+                    background-color: #fff;
 
-                .custom-button-icon2 {
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    padding: 7px;
-                    border-radius: 100px;
-                    background: var(--sematics-success-2, #138300);
-                    width: 14px;
-                    height: 14px;
+                    .custom-button-icon1 {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                    }
+
+                    .custom-button-icon2 {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        padding: 5px;
+                        border-radius: 100px;
+                        background: var(--sematics-success-2, #138300);
+                        width: 28px;
+                        height: 28px;
+                    }
                 }
             }
 
@@ -66,7 +67,7 @@
                 box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.15),
                     0px 2px 6px 0px rgba(0, 0, 0, 0.05),
                     0px 4px 12px 0px rgba(0, 0, 0, 0.08);
-                    
+
                 //wait
                 a {
                     display: flex;

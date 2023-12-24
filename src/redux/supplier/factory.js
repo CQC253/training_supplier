@@ -68,7 +68,7 @@ const SupplierFactory = {
         };
     },
     createSupplierList: (payload) => {
-        console.log('payload factory', payload);
+        // console.log('payload factory', payload);
         const supplierList = getLocalStorageData('supplierList');
 
         // Thêm nhà cung cấp mới vào danh sách

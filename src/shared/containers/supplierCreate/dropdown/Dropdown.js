@@ -1,41 +1,34 @@
-import React from 'react';
-import Dropdown from 'react-dropdown';
-import 'react-dropdown/style.css';
-import styles from './Dropdown.module.scss'
+import React, { useState, forwardRef } from "react";
+import { Dropdown } from "primereact/dropdown";
+import 'primereact/resources/themes/lara-light-indigo/theme.css';
+import 'primeflex/primeflex.css';
+import 'primeicons/primeicons.css';
+import 'primereact/resources/primereact.css';
+import './Dropdown.css'
+import IconDropdown from 'shared/containers/icons/iconsSupplierCreate/IconDropdown'
 
-export default function DropdownSelect({
-    options,
-    onChange,
-    value,
-    defaultValue,
-    placeholder,
-    arrowOpen,
-    arrowClosed,
+const DropdownSelect = forwardRef(
+    ({ option, placeholder, ...rest }, ref) => {
+        const [selected, setSelected] = useState(null);
 
-    className = 'dropdown-root',
-    controlClassName = 'dropdown-control',
-    placeholderClassName = 'dropdown-placeholder',
-    menuClassName = 'dropdown-menu',
-}) {
-    
-    return (
-        <>
-            {/* {console.log(placeholder)} */}
+        const handleOnChange = (e) => {
+            setSelected(e.value);
+        };
+
+        return (
             <Dropdown
-                options={options}
-                onChange={onChange}
-                value={value}
-                defaultValue={defaultValue}
+                value={selected}
+                onChange={(e) => handleOnChange(e)}
+                options={option}
+                optionLabel="name"
                 placeholder={placeholder}
-                arrowOpen={<span className={styles['arrow-open']}>{arrowOpen}</span>}
-                arrowClosed={<span className={styles['arrow-closed']}>{arrowClosed}</span>}
-
-                className={styles[className]}
-                controlClassName={styles[controlClassName]}
-                placeholderClassName={styles[placeholderClassName]}
-                menuClassName={styles[menuClassName]}
+                className="dropdownSelect-primereact"
+                dropdownIcon={<IconDropdown />}
+                ref={ref}
+                {...rest}
             />
-        </>
-    )
-}
+        );
+    }
+);
 
+export default DropdownSelect;

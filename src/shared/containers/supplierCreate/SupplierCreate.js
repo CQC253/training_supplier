@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useHistory } from 'react-router-dom';
 import styles from './SupplierCreate.module.scss'
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 
 import { useSelector, useDispatch } from 'react-redux';
 import supplierActions from "redux/supplier/action"
@@ -9,8 +9,6 @@ import supplierActions from "redux/supplier/action"
 import DropdownSelect from './dropdown/Dropdown';
 import { getLocalStorageData } from 'redux/supplier/localStorageUtils';
 import IconBack from '../icons/iconsSupplierCreate/IconBack';
-import IconDropdown from '../icons/iconsSupplierCreate/IconDropdown'
-
 
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -44,119 +42,64 @@ export default function SupplierListDetail() {
     };
 
     //use form
-    const { register, handleSubmit, watch, formState: { errors } } = useForm();
+    const { register, handleSubmit, control, formState: { errors } } = useForm();
 
     //cityValue
-    const [cityValue, setCityValue] = useState('')
-    // const [cityError, setCityError] = useState(null);
     const optionCity = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.city))).map(city => ({
-        value: city,
-        label: city
+        name: city
     }));
-
-    const handleCityValue = (event) => {
-        // console.log(event.value);
-        setCityValue(event.value)
-        // setCityError(event.value ? null : 'Tỉnh/Thành phố là bắt buộc');
-    };
 
     //categoryValue
-    const [categoryValue, setCategoryValue] = useState('')
     const optionCategory = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.category))).map(category => ({
-        value: category,
-        label: category
+        name: category
     }));
-
-    const handleCategoryValue = (event) => {
-        // console.log(event.value);
-        setCategoryValue(event.value)
-    };
 
     //deptCodeValue
-    const [deptCodeValue, setDeptCodeValue] = useState('')
     const optionDeptCode = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.deptCode))).map(deptCode => ({
-        value: String(deptCode),
-        label: deptCode
+        name: deptCode,
     }));
-
-    const handleDeptCodeValue = (event) => {
-        // console.log(event.value, typeof(event.value));
-        setDeptCodeValue(event.value)
-    };
 
     //districtValue
-    const [districtValue, setDistrictValue] = useState('')
-    const optionDistrictValue = Array.from(
-        new Set(getLocalStorageData('supplierList').map(item => item.district))
+    const optionDistrict = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.district))
     ).map(district => ({
-        value: district,
-        label: district
+        name: district,
     }));
-
-    const handleDistrictValue = (event) => {
-        // console.log(event.value);
-        setDistrictValue(event.value)
-    };
 
     //statusValue
-    const [statusValue, setStatusValue] = useState('')
     const optionStatus = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.status))).map(status => ({
-        value: String(status),
-        label: status == 1 ? 'Giao dịch' : 'Tạm dừng'
+        name: status && status == 1 ? 'Giao dịch' : 'Tạm dừng'
     }));
-
-    const handleStatusValue = (event) => {
-        // console.log(event.value, typeof(event.value));
-        setStatusValue(event.value)
-    };
 
     //wardValue
-    const [wardValue, setWardValue] = useState('')
-    const optionWard = Array.from(
-        new Set(getLocalStorageData('supplierList').map(item => item.ward))
-    ).map(ward => ({
-        value: ward,
-        label: ward
+    const optionWard = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.ward))).map(ward => ({
+        name: ward
     }));
-
-    const handleWardValue = (event) => {
-        // console.log(event.value);
-        setWardValue(event.value)
-    };
 
     //supplierCodeValue
-    const [supplierCodeValue, setSupplierCodeValue] = useState('')
-    const optionSupplierCode = Array.from(
-        new Set(getLocalStorageData('supplierList').map(item => item.supplierCode))
-    ).map(supplierCode => ({
-        value: supplierCode,
-        label: supplierCode
+    const optionSupplierCode = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.supplierCode))).map(supplierCode => ({
+        name: supplierCode
     }));
-
-    const handleSupplierCodeValue = (event) => {
-        // console.log(event.value);
-        setSupplierCodeValue(event.value)
-    };
 
     //onSubmit
     const [infoCreate, setInfoCreate] = useState(null)
     const onSubmit = (data) => {
+        // console.log(data);
         const id = getNextId()
 
         const getInfo = {
             id: parseInt(id),
-            supplierCode: supplierCodeValue,
+            supplierCode: data.supplierCode.name,
             supplierName: data.supplierName,
-            category: categoryValue,
+            category: data.category.name,
             code: parseInt(data.code),
-            deptCode: parseInt(deptCodeValue),
+            deptCode: parseInt(data.deptCode.name),
             phone: data.phone,
             email: data.email,
-            city: cityValue,
-            district: districtValue,
-            ward: wardValue,
+            city: data.city.name,
+            district: data.district.name,
+            ward: data.ward.name,
             address: data.address,
-            status: parseInt(statusValue),
+            status: data.status.name && data.status.name == "Giao dịch" ? 1 : 2,
         }
         // console.log('getInfo', getInfo);
         setInfoCreate(getInfo)
@@ -166,6 +109,7 @@ export default function SupplierListDetail() {
     const [open, setOpen] = useState(false);
 
     const handleClickOpen = (length) => {
+        // console.log(length);
         if (length === 0) {
             setOpen(true);
         } else {
@@ -183,6 +127,7 @@ export default function SupplierListDetail() {
     };
     //Back List supplier 
     const handlAgree = () => {
+        // console.log(infoCreate);
         dispatch({ type: supplierActions.CREATE_SUPPLIER_START, payload: { info: infoCreate } })
         history.push('/supplier/list');
     };
@@ -222,15 +167,21 @@ export default function SupplierListDetail() {
                                 </div>
                                 <div className={styles['custom-label-input']}>
                                     <label>Tỉnh/Thành phố<span className={styles['span-required']}>*</span></label>
-                                    <DropdownSelect
-                                        options={optionCity}
-                                        onChange={handleCityValue}
-                                        value={cityValue}
-                                        placeholder={'Tỉnh/Thành phố'}
-                                        arrowOpen={<IconDropdown />}
-                                        arrowClosed={<IconDropdown />}
+                                    <Controller
+                                        control={control}
+                                        name="city"
+                                        rules={{ required: true }}
+                                        render={({ field }) => (
+                                            <>
+                                                <DropdownSelect
+                                                    {...field}
+                                                    option={optionCity}
+                                                    placeholder={'Tỉnh/Thành phố'}
+                                                />
+                                                {errors.city && <span className={styles['error-message']}>Vui lòng chọn Tỉnh/Thành phố</span>}
+                                            </>
+                                        )}
                                     />
-                                    {/* {cityError && <span className={styles['error-message']}>{cityError}</span>} */}
                                 </div>
                                 <div className={styles['custom-label-input']}>
                                     <label>Địa chỉ cụ thể<span className={styles['span-required']}>*</span></label>
@@ -246,46 +197,98 @@ export default function SupplierListDetail() {
                             <div className={styles['div-create-middle']}>
                                 <div className={styles['custom-label-input']}>
                                     <label>Danh mục<span className={styles['span-required']}>*</span></label>
-                                    <DropdownSelect
-                                        options={optionCategory}
-                                        onChange={handleCategoryValue}
-                                        value={categoryValue}
+                                    {/* <DropdownSelect
+                                        option={optionCategory}
                                         placeholder={'Danh mục'}
-                                        arrowOpen={<IconDropdown />}
-                                        arrowClosed={<IconDropdown />}
+                                        {...register('category', { required: true })}
+                                        name="category"
+                                    /> */}
+                                    <Controller
+                                        control={control}
+                                        name="category"
+                                        rules={{ required: true }}
+                                        render={({ field }) => (
+                                            <>
+                                                <DropdownSelect
+                                                    {...field}
+                                                    option={optionCategory}
+                                                    placeholder={'Danh mục'}
+                                                />
+                                                {errors.category && <span className={styles['error-message']}>Vui lòng chọn danh mục</span>}
+                                            </>
+                                        )}
                                     />
                                 </div>
                                 <div className={styles['custom-label-input']}>
                                     <label>Công nợ<span className={styles['span-required']}>*</span></label>
-                                    <DropdownSelect
-                                        options={optionDeptCode}
-                                        onChange={handleDeptCodeValue}
-                                        value={deptCodeValue}
+                                    {/* <DropdownSelect
+                                        option={optionDeptCode}
                                         placeholder={'Nhập mã công nợ'}
-                                        arrowOpen={<IconDropdown />}
-                                        arrowClosed={<IconDropdown />}
+                                        {...register('deptCode', { required: true })}
+                                        name="deptCode"
+                                    /> */}
+                                    <Controller
+                                        control={control}
+                                        name="deptCode"
+                                        rules={{ required: true }}
+                                        render={({ field }) => (
+                                            <>
+                                                <DropdownSelect
+                                                    {...field}
+                                                    option={optionDeptCode}
+                                                    placeholder={'Nhập mã công nợ'}
+                                                />
+                                                {errors.deptCode && <span className={styles['error-message']}>Vui lòng chọn mã công nợ</span>}
+                                            </>
+                                        )}
                                     />
                                 </div>
                                 <div className={styles['custom-label-input']}>
                                     <label>Quận/Huyện<span className={styles['span-required']}>*</span></label>
-                                    <DropdownSelect
-                                        options={optionDistrictValue}
-                                        onChange={handleDistrictValue}
-                                        value={districtValue}
+                                    {/* <DropdownSelect
+                                        option={optionDistrict}
                                         placeholder={'Quận/Huyện'}
-                                        arrowOpen={<IconDropdown />}
-                                        arrowClosed={<IconDropdown />}
+                                        {...register('district', { required: true })}
+                                        name="district"
+                                    /> */}
+                                    <Controller
+                                        control={control}
+                                        name="district"
+                                        rules={{ required: true }}
+                                        render={({ field }) => (
+                                            <>
+                                                <DropdownSelect
+                                                    {...field}
+                                                    option={optionDistrict}
+                                                    placeholder={'Quận/Huyện'}
+                                                />
+                                                {errors.district && <span className={styles['error-message']}>Vui lòng chọn Quận/Huyện</span>}
+                                            </>
+                                        )}
                                     />
                                 </div>
                                 <div className={styles['custom-label-input']}>
-                                    <label>Trạng thái<span className={styles['span-required']}>*</span></label>
+                                    {/* <label>Trạng thái<span className={styles['span-required']}>*</span></label>
                                     <DropdownSelect
-                                        options={optionStatus}
-                                        onChange={handleStatusValue}
-                                        value={statusValue}
-                                        placeholder={statusValue == '1' ? 'Giao dịch' : statusValue == '2' ? 'Tạm dừng' : 'Trạng thái'}
-                                        arrowOpen={<IconDropdown />}
-                                        arrowClosed={<IconDropdown />}
+                                        option={optionStatus}
+                                        placeholder={'Trạng thái'}
+                                        {...register('status', { required: true })}
+                                        name="status"
+                                    /> */}
+                                    <Controller
+                                        control={control}
+                                        name="status"
+                                        rules={{ required: true }}
+                                        render={({ field }) => (
+                                            <>
+                                                <DropdownSelect
+                                                    {...field}
+                                                    option={optionStatus}
+                                                    placeholder={'Trạng thái'}
+                                                />
+                                                {errors.status && <span className={styles['error-message']}>Vui lòng chọn Trạng thái</span>}
+                                            </>
+                                        )}
                                     />
                                 </div>
                             </div>
@@ -311,24 +314,50 @@ export default function SupplierListDetail() {
                                 </div>
                                 <div className={styles['custom-label-input']}>
                                     <label>Phường/Xã<span className={styles['span-required']}>*</span></label>
-                                    <DropdownSelect
-                                        options={optionWard}
-                                        onChange={handleWardValue}
-                                        value={wardValue}
+                                    {/* <DropdownSelect
+                                        option={optionWard}
                                         placeholder={'Phường/Xã'}
-                                        arrowOpen={<IconDropdown />}
-                                        arrowClosed={<IconDropdown />}
+                                        {...register('ward', { required: true })}
+                                        name="ward"
+                                    /> */}
+                                    <Controller
+                                        control={control}
+                                        name="ward"
+                                        rules={{ required: true }}
+                                        render={({ field }) => (
+                                            <>
+                                                <DropdownSelect
+                                                    {...field}
+                                                    option={optionWard}
+                                                    placeholder={'Phường/Xã'}
+                                                />
+                                                {errors.ward && <span className={styles['error-message']}>Vui lòng chọn Phường/Xã</span>}
+                                            </>
+                                        )}
                                     />
                                 </div>
                                 <div className={styles['custom-label-input']}>
-                                    <label>Mã nhà cung cấp<span className={styles['span-required']}>*</span></label>
+                                    {/* <label>Mã nhà cung cấp<span className={styles['span-required']}>*</span></label>
                                     <DropdownSelect
-                                        options={optionSupplierCode}
-                                        onChange={handleSupplierCodeValue}
-                                        value={supplierCodeValue}
+                                        option={optionSupplierCode}
                                         placeholder={'Nhập mã nhà cung cấp'}
-                                        arrowOpen={<IconDropdown />}
-                                        arrowClosed={<IconDropdown />}
+                                        {...register('supplierCode', { required: true })}
+                                        name="supplierCode"
+                                    /> */}
+                                    <Controller
+                                        control={control}
+                                        name="supplierCode"
+                                        rules={{ required: true }}
+                                        render={({ field }) => (
+                                            <>
+                                                <DropdownSelect
+                                                    {...field}
+                                                    option={optionSupplierCode}
+                                                    placeholder={'Nhập mã nhà cung cấp'}
+                                                />
+                                                {errors.supplierCode && <span className={styles['error-message']}>Vui lòng chọn mã nhà cung cấp</span>}
+                                            </>
+                                        )}
                                     />
                                 </div>
                             </div>
