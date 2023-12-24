@@ -48,6 +48,7 @@ export default function SupplierListDetail() {
 
     //cityValue
     const [cityValue, setCityValue] = useState('')
+    // const [cityError, setCityError] = useState(null);
     const optionCity = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.city))).map(city => ({
         value: city,
         label: city
@@ -56,6 +57,7 @@ export default function SupplierListDetail() {
     const handleCityValue = (event) => {
         // console.log(event.value);
         setCityValue(event.value)
+        // setCityError(event.value ? null : 'Tỉnh/Thành phố là bắt buộc');
     };
 
     //categoryValue
@@ -163,8 +165,12 @@ export default function SupplierListDetail() {
     //dialog component
     const [open, setOpen] = useState(false);
 
-    const handleClickOpen = () => {
-        setOpen(true);
+    const handleClickOpen = (length) => {
+        if (length === 0) {
+            setOpen(true);
+        } else {
+            setOpen(false);
+        }
     };
 
     const handleClose = () => {
@@ -224,7 +230,7 @@ export default function SupplierListDetail() {
                                         arrowOpen={<IconDropdown />}
                                         arrowClosed={<IconDropdown />}
                                     />
-                                    {errors.city && <span className={styles['error-message']}>{errors.city.message}</span>}
+                                    {/* {cityError && <span className={styles['error-message']}>{cityError}</span>} */}
                                 </div>
                                 <div className={styles['custom-label-input']}>
                                     <label>Địa chỉ cụ thể<span className={styles['span-required']}>*</span></label>
@@ -340,7 +346,7 @@ export default function SupplierListDetail() {
                         <button
                             className={styles['btn-update']}
                             type='submit'
-                            onClick={handleClickOpen}
+                            onClick={() => handleClickOpen(Object.keys(errors).length)}
                         >
                             Lưu
                         </button>
@@ -350,28 +356,24 @@ export default function SupplierListDetail() {
                         >
                             Hủy bỏ
                         </button>
-                        {
-                            !errors &&
-                            <Dialog
-                                open={open}
-                                onClose={handleClose}
-                                aria-labelledby="alert-dialog-title"
-                                aria-describedby="alert-dialog-description"
-                            >
-                                <DialogTitle id="alert-dialog-title">
-                                    {"Bạn có muốn tạo NCC không"}
-                                </DialogTitle>
-                                <DialogActions>
-                                    <Button onClick={handleClose}>Hủy bỏ</Button>
-                                    <Button
-                                        onClick={handlAgree}
-                                    >
-                                        Đồng ý
-                                    </Button>
-                                </DialogActions>
-                            </Dialog>
-                        }
-
+                        <Dialog
+                            open={open}
+                            onClose={handleClose}
+                            aria-labelledby="alert-dialog-title"
+                            aria-describedby="alert-dialog-description"
+                        >
+                            <DialogTitle id="alert-dialog-title">
+                                {"Bạn có muốn tạo NCC không"}
+                            </DialogTitle>
+                            <DialogActions>
+                                <Button onClick={handleClose}>Hủy bỏ</Button>
+                                <Button
+                                    onClick={handlAgree}
+                                >
+                                    Đồng ý
+                                </Button>
+                            </DialogActions>
+                        </Dialog>
                     </div>
                 </div>
             </form>

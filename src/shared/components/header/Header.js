@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom'
 import styles from './Header.module.scss'
 import HeaderButtonCreate from '../icons/HeaderButtonCreate'
@@ -14,23 +14,34 @@ import Breadcrumbs from './breadcrumbs/Breadcrumbs';
 export default function Header() {
     //Dropdown create
     const [isDropdown, setIsDropdown] = useState(false)
-
+    const dropdownRef = useRef(null);
     const handleClickCreate = () => {
         setIsDropdown(!isDropdown);
     };
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsDropdown(false);
+            }
+        };
 
-    const handleBlur = () => {
-        setIsDropdown(!isDropdown);
-    };
+        document.addEventListener('click', handleClickOutside);
+
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, []); //Xử lí blur
 
     return (
         <div className={styles['header']}>
             <div className={styles['header-left']}>
                 <div className={styles['dropdown-button']}>
-                    <HeaderButtonCreate
-                        onClick={handleClickCreate}
-                    // onBlur={handleBlur}
-                    />
+                    <div className={styles['div-button']} ref={dropdownRef}>
+                        <HeaderButtonCreate
+                            onClick={handleClickCreate}
+                        />
+                    </div>
+
 
                     {isDropdown &&
                         <ul className={styles['dropdown-list']}>

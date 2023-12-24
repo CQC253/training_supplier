@@ -19,6 +19,9 @@
         overflow: hidden;
         text-overflow: ellipsis;
 
+        .div-button {
+            display: flex;
+        }
         .dropdown-button {
             display: flex;
             margin: auto 30px;
