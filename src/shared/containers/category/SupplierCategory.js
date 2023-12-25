@@ -18,6 +18,9 @@ import { getLocalStorageData, setLocalStorageData } from 'redux/supplier/localSt
 import { useLocation, useHistory, Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import PopupCreate from './popupCreate/PopupCreate';
+import PopupUpdate from './popupUpdate/PopupUpdate';
+
 // import { fetchSupplierList as List } from 'redux/supplier/fetchSupplierList'
 
 export default function SupplierCategory() {
@@ -54,7 +57,35 @@ export default function SupplierCategory() {
 
     //action
     const [action, setAction] = useState([])
+    const [isMouseDown, setIsMouseDown] = useState(false);
     let deletedSupplier = null;
+
+    useEffect(() => {
+        setAction(Array(supplierListRedux.length).fill(false));
+    }, [supplierListRedux.length]);
+
+    const handleAction = (index) => {
+        const newAction = action.map((value, i) => (i === index ? !value : false));
+        setAction(newAction);
+    };
+
+    const handleBlur = (index) => {
+        if (!isMouseDown) {
+            setAction((prevAction) => {
+                const updatedAction = [...prevAction];
+                updatedAction[index] = false;
+                return updatedAction;
+            });
+        }
+    };
+
+    const handleMouseDown = () => {
+        setIsMouseDown(true);
+    };
+
+    const handleMouseUp = () => {
+        setIsMouseDown(false);
+    };
 
     //Paginate
     const [currentPage, setCurrentPage] = useState(0);
@@ -108,72 +139,26 @@ export default function SupplierCategory() {
         dispatch({ type: supplierActions.RESET_SUPPLIER_START })
     };
 
-    //action
-    useEffect(() => {
-        setAction(Array(supplierListRedux.length).fill(false));
-    }, [supplierListRedux.length]);
 
-    const handleAction = (index) => {
-        const newAction = action.map((value, i) => (i === index ? !value : false));
-        setAction(newAction);
+    //dialog popup
+    const [openCreate, setOpenCreate] = useState(false);
+
+    const handleClickOpenCreate = () => {
+        setOpenCreate(true);
     };
 
-    const handleBlur = (index) => {
-        setAction((prevAction) => {
-            const updatedAction = [...prevAction];
-            updatedAction[index] = false;
-            // console.log(updatedAction);
-            return updatedAction;
-        });
+    const handleClickCloseCreate = () => {
+        setOpenCreate(false);
     };
 
-    const handleDelete = (id) => {
-        const supplierList = getLocalStorageData('supplierList');
-        deletedSupplier = supplierList.find(item => item.id === id);
-        // console.log('deletedSupplier', deletedSupplier);
+    const [openUpdate, setOpenUpdate] = useState(false);
 
-        dispatch({ type: supplierActions.DELETE_SUPPLIER_START, payload: { id: id } })
+    const handleClickOpenUpdate = () => {
+        setOpenUpdate(true);
+    };
 
-        toast.info(
-            (
-                <div className={styles['div-undo']}>
-                    <p>Đang xóa danh mục</p>
-                    <button onClick={() => handleUndo()}>Hoàn tác</button>
-                </div>
-            ),
-            {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeButton: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-                icon: <SupplierIconInfo />,
-            },
-        );
-    }
-
-    const handleUndo = () => {
-        dispatch({
-            type: supplierActions.UNDO_SUPPLIER_START,
-            payload: {
-                deletedSupplier: deletedSupplier,
-            }
-        })
-
-        toast.success("Hoàn tác", {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-        });
+    const handleClickCloseUpdate = () => {
+        setOpenUpdate(false);
     };
 
     //Paginate
@@ -294,34 +279,60 @@ export default function SupplierCategory() {
                                             <td className={styles['td4']}>
                                                 <div
                                                     className={styles['action-button']}
-                                                    // onBlur={() => handleBlur(index)}
+                                                    onBlur={() => handleBlur(index)}
                                                 >
-                                                    <SupplierIconAction
+                                                    <button
+                                                        className={styles['custom-action-button']}
                                                         onClick={() => handleAction(index)}
-                                                    />
+                                                        onMouseDown={handleMouseDown}
+                                                        onMouseUp={handleMouseUp}
+                                                    >
+                                                        <SupplierIconAction />
+                                                    </button>
 
                                                     {action[index] &&
                                                         <ul
                                                             className={styles['action-list']}
                                                         >
-                                                            <li className={styles['action-item']}>
-                                                                <button className={styles['btn-edit']}>
+                                                            <li className={styles['action-item-create']}>
+                                                                <button
+                                                                    className={styles['btn-create']}
+                                                                    // onMouseDown={(event) => {
+                                                                    //     event.preventDefault();
+
+                                                                    // }}
+                                                                    onClick={handleClickOpenCreate}
+                                                                >
                                                                     <IconCreate />
                                                                     Thêm mới danh mục
                                                                 </button>
+                                                                {<PopupCreate
+                                                                    open={openCreate}
+                                                                    handleClose={handleClickCloseCreate}
+                                                                />}
                                                             </li>
                                                             <li className={styles['action-item']}>
-                                                                <button className={styles['btn-edit']}>
+                                                                <button
+                                                                    className={styles['btn-edit']}
+                                                                    // onMouseDown={(event) => {
+                                                                    //     event.preventDefault();
+                                                                    // }}
+                                                                    onClick={handleClickOpenUpdate}
+                                                                >
                                                                     <SupplierIconEdit />
                                                                     Sửa
                                                                 </button>
+                                                                {<PopupUpdate
+                                                                    open={openUpdate}
+                                                                    handleClose={handleClickCloseUpdate}
+                                                                    id={item.id}
+                                                                />}
                                                             </li>
                                                             <li className={styles['action-item']}>
                                                                 <button
                                                                     className={styles['btn-delete']}
                                                                     onMouseDown={(event) => {
                                                                         event.preventDefault();
-                                                                        handleDelete(item.id);
                                                                     }}
                                                                 >
                                                                     <SupplierIconDelete />

@@ -241,7 +241,7 @@
                     background: var(--neutral-2-f-2, #f2f2f2);
                     position: sticky;
                     top: 0;
-                    z-index: 1;
+                    z-index: 3;
 
                     .tr-title {
                         padding: 2px 15px;
@@ -332,7 +332,6 @@
                                 text-decoration: none;
                                 color: var(--other-link, #0054e1);
                             }
-                            
                         }
                         .td6 {
                             color: var(--other-link, #0054e1);
@@ -372,9 +371,9 @@
                             }
                             .action-list {
                                 position: absolute;
-                                z-index: 1;
+                                z-index: 2;
                                 display: flex;
-                                transform: translate(-80%, -10%);
+                                transform: translate(-80%, 20%);
                                 padding: 10px;
                                 width: 130px;
                                 flex-direction: column;

@@ -4,7 +4,6 @@
     width: 100%;
     border-radius: 3px;
     border: 1px solid var(--Neutral-5, #acacac);
-
 }
 
 .p-dropdown-label {
@@ -20,6 +19,7 @@
 
 .p-dropdown-panel {
     margin-top: 5px;
+    z-index: 9999 !important;
 }
 
 .p-dropdown-items {

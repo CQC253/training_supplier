@@ -4,7 +4,7 @@ import IconStatus from '../icons/iconsSupplierListDetail/IconStatus'
 import IconBack from '../icons/iconsSupplierListDetail/IconBack';
 import { useSelector, useDispatch } from 'react-redux';
 import supplierActions from "redux/supplier/action"
-import { useLocation, useParams, Link, useHistory } from 'react-router-dom';
+import { useParams, Link, useHistory } from 'react-router-dom';
 
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';

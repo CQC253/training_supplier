@@ -522,9 +522,13 @@ export default function SupplierContainer() {
                                                     className={styles['action-button']}
                                                     onBlur={() => handleBlur(index)}
                                                 >
-                                                    <SupplierIconAction
+                                                    <button
+                                                        className={styles['custom-action-button']}
                                                         onClick={() => handleAction(index)}
-                                                    />
+                                                    >
+                                                        <SupplierIconAction />
+                                                    </button>
+
 
                                                     {action[index] &&
                                                         <ul

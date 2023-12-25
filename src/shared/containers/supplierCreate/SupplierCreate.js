@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom';
 import styles from './SupplierCreate.module.scss'
 import { useForm, Controller } from 'react-hook-form';
@@ -108,12 +108,13 @@ export default function SupplierCreate() {
     //dialog component
     const [open, setOpen] = useState(false);
 
-    const handleClickOpen = (length) => {
+    const handleClickOpen = (errors) => {
+        const length = Object.keys(errors).length;
         // console.log(length);
         if (length === 0) {
-            setOpen(true);
-        } else {
             setOpen(false);
+        } else {
+            setOpen(true);
         }
     };
 
@@ -197,12 +198,6 @@ export default function SupplierCreate() {
                             <div className={styles['div-create-middle']}>
                                 <div className={styles['custom-label-input']}>
                                     <label>Danh mục<span className={styles['span-required']}>*</span></label>
-                                    {/* <DropdownSelect
-                                        option={optionCategory}
-                                        placeholder={'Danh mục'}
-                                        {...register('category', { required: true })}
-                                        name="category"
-                                    /> */}
                                     <Controller
                                         control={control}
                                         name="category"
@@ -221,12 +216,6 @@ export default function SupplierCreate() {
                                 </div>
                                 <div className={styles['custom-label-input']}>
                                     <label>Công nợ<span className={styles['span-required']}>*</span></label>
-                                    {/* <DropdownSelect
-                                        option={optionDeptCode}
-                                        placeholder={'Nhập mã công nợ'}
-                                        {...register('deptCode', { required: true })}
-                                        name="deptCode"
-                                    /> */}
                                     <Controller
                                         control={control}
                                         name="deptCode"
@@ -245,12 +234,6 @@ export default function SupplierCreate() {
                                 </div>
                                 <div className={styles['custom-label-input']}>
                                     <label>Quận/Huyện<span className={styles['span-required']}>*</span></label>
-                                    {/* <DropdownSelect
-                                        option={optionDistrict}
-                                        placeholder={'Quận/Huyện'}
-                                        {...register('district', { required: true })}
-                                        name="district"
-                                    /> */}
                                     <Controller
                                         control={control}
                                         name="district"
@@ -268,13 +251,7 @@ export default function SupplierCreate() {
                                     />
                                 </div>
                                 <div className={styles['custom-label-input']}>
-                                    {/* <label>Trạng thái<span className={styles['span-required']}>*</span></label>
-                                    <DropdownSelect
-                                        option={optionStatus}
-                                        placeholder={'Trạng thái'}
-                                        {...register('status', { required: true })}
-                                        name="status"
-                                    /> */}
+                                    <label>Trạng thái<span className={styles['span-required']}>*</span></label>
                                     <Controller
                                         control={control}
                                         name="status"
@@ -314,12 +291,6 @@ export default function SupplierCreate() {
                                 </div>
                                 <div className={styles['custom-label-input']}>
                                     <label>Phường/Xã<span className={styles['span-required']}>*</span></label>
-                                    {/* <DropdownSelect
-                                        option={optionWard}
-                                        placeholder={'Phường/Xã'}
-                                        {...register('ward', { required: true })}
-                                        name="ward"
-                                    /> */}
                                     <Controller
                                         control={control}
                                         name="ward"
@@ -337,13 +308,7 @@ export default function SupplierCreate() {
                                     />
                                 </div>
                                 <div className={styles['custom-label-input']}>
-                                    {/* <label>Mã nhà cung cấp<span className={styles['span-required']}>*</span></label>
-                                    <DropdownSelect
-                                        option={optionSupplierCode}
-                                        placeholder={'Nhập mã nhà cung cấp'}
-                                        {...register('supplierCode', { required: true })}
-                                        name="supplierCode"
-                                    /> */}
+                                    <label>Mã nhà cung cấp<span className={styles['span-required']}>*</span></label>
                                     <Controller
                                         control={control}
                                         name="supplierCode"
@@ -375,7 +340,7 @@ export default function SupplierCreate() {
                         <button
                             className={styles['btn-update']}
                             type='submit'
-                            onClick={() => handleClickOpen(Object.keys(errors).length)}
+                            onClick={() => handleClickOpen(errors)}
                         >
                             Lưu
                         </button>
