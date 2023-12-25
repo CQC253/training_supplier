@@ -42,6 +42,13 @@ const SupplierReducer = (state = initialState, action) => {
                 ...state,
                 supplierList: action.payload
             };
+
+        //category
+        case SupplierAction.SEARCH_CATEGORY_SUCCESS:
+            return {
+                ...state,
+                supplierList: action.payload
+            };
         default:
             return {
                 ...state,

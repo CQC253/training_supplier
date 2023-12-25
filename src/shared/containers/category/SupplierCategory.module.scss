@@ -44,6 +44,7 @@
         padding: 20px;
         margin-top: 10px;
         margin-left: 10px;
+        gap: 20px;
         border-radius: 0px 0px 3px 3px;
         background: var(--default-white, #fff);
         align-items: center;
@@ -54,14 +55,13 @@
         .form-search {
             display: flex;
             gap: 15px;
-            width: 50%;
+            width: 60%;
             min-width: 450px;
 
             .input-search {
                 display: flex;
-                width: 40%;
-                max-width: 300px;
-                min-width: 100px;
+                width: 100%;
+                min-width: 300px;
                 height: 39px;
                 justify-content: center;
                 align-items: center;
@@ -93,42 +93,16 @@
                     outline: none;
                 }
             }
-
-            .input-status {
-                display: flex;
-                width: 30%;
-                max-width: 210px;
-                min-width: 120px;
-                height: 39px;
-                align-items: center;
-                border-radius: 3px;
-                border: 1px solid var(--neutral-5, #acacac);
-            }
-
-            .input-address {
-                display: flex;
-                width: 30%;
-                max-width: 210px;
-                min-width: 120px;
-                height: 39px;
-                align-items: center;
-                border-radius: 3px;
-                border: 1px solid var(--neutral-5, #acacac);
-            }
         }
 
         .form-setting {
             display: flex;
             gap: 15px;
-            width: 30%;
-            max-width: 305px;
-            min-width: 300px;
+            width: 40%;
+            justify-content: flex-end;
 
             .btn-re-setting {
                 display: flex;
-                width: 35%;
-                min-width: 100px;
-                max-width: 105px;
                 justify-content: center;
                 align-items: center;
                 border-radius: 3px;
@@ -151,9 +125,7 @@
 
             .btn-search {
                 display: flex;
-                width: 30%;
-                min-width: 50px;
-                max-width: 90px;
+                width: 90px;
                 height: 32px;
                 justify-content: center;
                 align-items: center;
@@ -171,30 +143,6 @@
                     line-height: 20px;
                     letter-spacing: 0.168px;
                 }
-            }
-
-            .btn-setting {
-                display: flex;
-                width: 10%;
-                min-width: 25px;
-                max-width: 31px;
-                align-items: center;
-                justify-content: center;
-                border-radius: 3px;
-                background: var(--other-turquoise, #d2f2cc);
-                border: none;
-            }
-
-            .btn-operate {
-                display: flex;
-                width: 10%;
-                min-width: 25px;
-                max-width: 31px;
-                justify-content: center;
-                align-items: center;
-                border-radius: 3px;
-                background: var(--primary-yellow, #ffcd29);
-                border: none;
             }
         }
     }
@@ -231,7 +179,7 @@
 
                 tr {
                     display: grid;
-                    grid-template-columns: 4% 9% 13% 10% 6% 9% 9% 12% 12% 11% 5%;
+                    grid-template-columns: 44% 16% 30% 10%;
                     z-index: 1;
                 }
 
@@ -267,24 +215,7 @@
                             max-width: 90%;
                         }
 
-                        .th1 {
-                            .checkbox-th {
-                                width: 20px;
-                                height: 20px;
-                                border: 2px solid #707070;
-                                cursor: pointer;
-
-                                &:checked {
-                                    background-color: #138300;
-                                    border-color: #138300;
-                                }
-                            }
-                        }
-
-                        .th10 {
-                            justify-items: center;
-                        }
-                        .th11 {
+                        .th4 {
                             justify-items: center;
                         }
                     }
@@ -314,19 +245,6 @@
                             max-width: 70%;
                         }
 
-                        .td1 {
-                            .checkbox-td {
-                                width: 20px;
-                                height: 20px;
-                                border: 2px solid #707070;
-                                cursor: pointer;
-
-                                &:checked {
-                                    background-color: #138300;
-                                    border-color: #138300;
-                                }
-                            }
-                        }
                         .td2 {
                             a {
                                 text-decoration: none;
@@ -334,27 +252,16 @@
                             }
                             
                         }
-                        .td6 {
-                            color: var(--other-link, #0054e1);
-                        }
-                        .td10 {
-                            overflow: inherit;
-                            max-width: 100%;
-                            min-width: 100%;
-                            justify-items: center;
-                            align-items: center;
 
-                            .div-select {
-                                display: flex;
-                                width: 100px;
-                            }
-                        }
-                        .td11 {
-                            justify-items: center;
+                        .td4 {
+                            display: flex;
+                            justify-content: center;
                             max-width: 100%;
                             min-width: 100%;
 
                             .action-button {
+                                display: flex;
+
                                 .custom-action-button {
                                     display: flex;
                                     background: var(--default-white, #fff);
@@ -374,9 +281,9 @@
                                 position: absolute;
                                 z-index: 1;
                                 display: flex;
-                                transform: translate(-80%, -10%);
+                                transform: translate(-85%, 15%);
                                 padding: 10px;
-                                width: 130px;
+                                width: 200px;
                                 flex-direction: column;
                                 align-items: flex-start;
                                 gap: 5px;
@@ -405,7 +312,7 @@
                                         gap: 10px;
                                         color: var(
                                             --sematics-success-2,
-                                            #138300
+                                            #333
                                         );
                                         font-family: Roboto;
                                         font-size: 14px;

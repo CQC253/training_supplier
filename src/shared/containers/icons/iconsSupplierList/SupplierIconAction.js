@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from 'shared/containers/supplier/SupplierListContainer.module.scss'
+import styles from 'shared/containers/category/SupplierCategory.module.scss'
 
 export default function SupplierIconAction({ onClick }) {
     return (

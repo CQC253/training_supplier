@@ -42,6 +42,37 @@ const SupplierFactory = {
             Data: filteredList
         };
     },
+    searchCategoryData: (payload) => {
+        const supplierList = getLocalStorageData('supplierList');
+        let filteredList = supplierList;
+
+        // Lọc các phần tử trong filteredList  dựa trên giá trị tìm kiếm
+        if (payload.payload) {
+            // console.log('payload factory', payload.payload.statusValue);
+            filteredList = supplierList.filter(item => {
+                const searchFields = [
+                    item.supplierCode,
+                    item.category
+                ];
+
+                // Kiểm tra giá trị tìm kiếm
+                const isInputValueMatch = payload.payload.inputValue ? searchFields.some(field => {
+                    const regex = new RegExp(`${payload.payload.inputValue}`, 'i'); // 'i' để không phân biệt chữ hoa/chữ thường
+                    return regex.test(field);
+                }) : true;
+
+                return isInputValueMatch;
+            });
+
+            // Sắp xếp danh sách đã lọc theo thứ tự tăng dần của ID
+            filteredList.sort((a, b) => a.id - b.id);
+        }
+
+        // Cập nhật supplierListRedux với danh sách đã lọc
+        return {
+            Data: filteredList
+        };
+    },
     deleteSupplierList: (payload) => {
         const supplierList = getLocalStorageData('supplierList');
         const id = parseInt(payload.payload.id)

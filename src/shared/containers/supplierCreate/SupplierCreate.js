@@ -15,7 +15,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
 
-export default function SupplierListDetail() {
+export default function SupplierCreate() {
     //History
     const history = useHistory();
 

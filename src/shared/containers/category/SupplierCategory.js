@@ -20,7 +20,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // import { fetchSupplierList as List } from 'redux/supplier/fetchSupplierList'
 
-export default function SupplierContainer() {
+export default function SupplierCategory() {
     //Set data lên local nếu chưa có
     // useEffect(() => {
     //     const existingSupplierList = getLocalStorageData('supplierList');
@@ -92,7 +92,7 @@ export default function SupplierContainer() {
         setSearchParams({ ...searchParams, input: inputValue })
 
         dispatch({
-            type: supplierActions.FETCH_SEARCH_SUPPLIER_LIST,
+            type: supplierActions.SEARCH_CATEGORY_START,
             payload: {
                 inputValue: inputValue,
             }
@@ -235,7 +235,7 @@ export default function SupplierContainer() {
                             <SupplierIcon1 />
                         </div>
                         <input
-                            placeholder='Tìm kiếm mã NCC, tên NCC, email'
+                            placeholder='Tìm kiếm danh mục nhà cung cấp, tên nhà cung cấp'
                             className={styles['input-field']}
                             value={inputValue}
                             onChange={handleInputValueChange}
@@ -282,7 +282,7 @@ export default function SupplierContainer() {
                                             className={styles['tr-normal']}
                                             key={item.id}
                                         >
-                                            <td className={styles['td4']}>{item.category}</td>
+                                            <td className={styles['td1']}>{item.category}</td>
                                             <td className={styles['td2']}>
                                                 <Link
                                                     to={`/supplier/list/detail/${item.id}`}
@@ -291,10 +291,10 @@ export default function SupplierContainer() {
                                                 </Link>
                                             </td>
                                             <td className={styles['td3']}>Ghi chú</td>
-                                            <td className={styles['td11']}>
+                                            <td className={styles['td4']}>
                                                 <div
                                                     className={styles['action-button']}
-                                                    onBlur={() => handleBlur(index)}
+                                                    // onBlur={() => handleBlur(index)}
                                                 >
                                                     <SupplierIconAction
                                                         onClick={() => handleAction(index)}
