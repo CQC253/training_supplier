@@ -76,7 +76,7 @@ export default function SupplierListDetail() {
 
     const handleDelete = () => {
         dispatch({ type: supplierActions.DELETE_SUPPLIER_START, payload: { id: id } })
-        history.push('/supplier/list');
+        history.goBack();
     }
 
     return (

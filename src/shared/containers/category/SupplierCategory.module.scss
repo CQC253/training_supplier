@@ -166,25 +166,19 @@
             box-sizing: border-box;
             overflow: auto;
 
-            table {
+            .parent-table {
                 display: flex;
                 position: relative;
                 overflow: visible;
                 flex-direction: column;
                 align-items: flex-start;
                 width: 100%;
-                min-height: 320px;
+                // min-height: 320px;
                 max-height: 400px;
                 min-width: 1024px;
                 z-index: 1;
 
-                tr {
-                    display: grid;
-                    grid-template-columns: 40% 16% 30% 10%;
-                    z-index: 1;
-                }
-
-                thead {
+                .parent-thead {
                     width: 100%;
                     border-bottom: 1px solid var(--neutral-4-line, #d8d7d7);
                     background: var(--neutral-2-f-2, #f2f2f2);
@@ -192,7 +186,10 @@
                     top: 0;
                     z-index: 3;
 
-                    .tr-title {
+                    .paren-tr-title {
+                        display: grid;
+                        grid-template-columns: 4% 40% 16% 30% 10%;
+                        z-index: 1;
                         padding: 10px 15px;
                         text-align: left;
                         position: sticky;
@@ -212,20 +209,23 @@
                             overflow: hidden;
                             text-overflow: ellipsis;
                             white-space: nowrap;
-                            min-width: 10%;
-                            max-width: 90%;
+                            min-width: 20%;
+                            max-width: 100%;
                         }
 
-                        .th4 {
+                        .parent-th4 {
                             justify-items: center;
                         }
                     }
                 }
 
-                tbody {
+                .parent-tbody {
                     width: 100%;
 
-                    .tr-normal {
+                    .parent-tr-normal {
+                        display: grid;
+                        grid-template-columns: 4% 40% 16% 30% 10%;
+                        z-index: 1;
                         padding: 8px 15px;
                         border-bottom: 1px solid var(--neutral-4-line, #d8d7d7);
 
@@ -243,17 +243,21 @@
                             text-overflow: ellipsis;
                             white-space: nowrap;
                             min-width: 30%;
-                            max-width: 70%;
+                            max-width: 100%;
                         }
 
-                        .td2 {
-                            a {
-                                text-decoration: none;
-                                color: var(--other-link, #0054e1);
-                            }
+                        .parent-td0 {
+                            display: flex;
+                            justify-content: center;
                         }
 
-                        .td4 {
+                        .parent-td1 {
+                            color: var(--Sematics-Success-1, #1ba103);
+                            font-weight: 600;
+                            letter-spacing: 0.168px;
+                        }
+
+                        .parent-td4 {
                             display: flex;
                             justify-content: center;
                             max-width: 100%;
@@ -281,7 +285,7 @@
                                 position: absolute;
                                 z-index: 2;
                                 display: flex;
-                                transform: translate(-85%, 15%);
+                                transform: translate(-85%, 30%);
                                 padding: 10px;
                                 width: 200px;
                                 flex-direction: column;
@@ -303,7 +307,7 @@
                                     transition: all 0.4s
                                         cubic-bezier(0.93, 0.88, 0.1, 0.8);
                                     border-bottom: solid 1px #d8d7d7;
-                                    
+
                                     .btn-create {
                                         width: 100%;
                                         display: flex;
@@ -329,75 +333,230 @@
                                         #f2f2f2
                                     );
                                 }
-
-                                .action-item {
-                                    display: flex;
-                                    align-items: center;
-                                    align-self: stretch;
-                                    border-radius: 3px;
-                                    cursor: pointer;
-                                    background: var(--neutral-1-f-6, #f6f6f6);
-                                    transition: all 0.4s
-                                        cubic-bezier(0.93, 0.88, 0.1, 0.8);
-
-                                    .btn-edit {
-                                        width: 100%;
-                                        display: flex;
-                                        align-items: center;
-                                        justify-content: flex-start;
-                                        padding: 5px;
-                                        gap: 10px;
-                                        color: var(
-                                            --sematics-success-2,
-                                            #138300
-                                        );
-                                        font-family: Roboto;
-                                        font-size: 14px;
-                                        font-style: normal;
-                                        font-weight: 400;
-                                        line-height: 20px;
-                                        letter-spacing: 0.14px;
-                                        border: none;
-                                        background: var(
-                                            --neutral-1-f-6,
-                                            #f6f6f6
-                                        );
-                                    }
-                                    .btn-delete {
-                                        width: 100%;
-                                        display: flex;
-                                        align-items: center;
-                                        justify-content: flex-start;
-                                        padding: 5px;
-                                        gap: 10px;
-                                        color: var(
-                                            --sematics-danger-2,
-                                            #ff3434
-                                        );
-                                        font-family: Roboto;
-                                        font-size: 14px;
-                                        font-style: normal;
-                                        font-weight: 400;
-                                        line-height: 20px;
-                                        letter-spacing: 0.14px;
-                                        border: none;
-                                        background: var(
-                                            --neutral-1-f-6,
-                                            #f6f6f6
-                                        );
-                                    }
-                                }
-                                .action-item:hover {
-                                    transform: scale(1.05);
-                                    background-color: var(
-                                        --neutral-2-f-7,
-                                        #f2f2f2
-                                    );
-                                }
                             }
                         }
                         &:hover {
                             background: #f6f6f6;
+                        }
+                    }
+
+                    .sub-tr {
+                        display: grid;
+
+                        .sub-table {
+                            width: 100%;
+                            .sub-tbody {
+                                .sub-tr-normal {
+                                    display: grid;
+                                    grid-template-columns: 4% 40% 16% 30% 10%;
+                                    z-index: 1;
+                                    padding: 8px 15px;
+                                    border-bottom: 1px solid
+                                        var(--neutral-4-line, #d8d7d7);
+
+                                    td {
+                                        display: grid;
+                                        align-items: center;
+                                        color: var(--neutral-8-text, #333);
+                                        font-family: Roboto;
+                                        font-size: 14px;
+                                        font-style: normal;
+                                        font-weight: 400;
+                                        line-height: 20px;
+                                        letter-spacing: 0.14px;
+                                        overflow: hidden;
+                                        text-overflow: ellipsis;
+                                        white-space: nowrap;
+                                        min-width: 30%;
+                                        max-width: 70%;
+                                    }
+
+                                    .sub-td2 {
+                                        a {
+                                            text-decoration: none;
+                                            color: var(--other-link, #0054e1);
+                                        }
+                                    }
+
+                                    .sub-td4 {
+                                        display: flex;
+                                        justify-content: center;
+                                        max-width: 100%;
+                                        min-width: 100%;
+
+                                        .action-button {
+                                            display: flex;
+
+                                            .custom-action-button {
+                                                display: flex;
+                                                background: var(
+                                                    --default-white,
+                                                    #fff
+                                                );
+                                                border: none;
+                                                border-radius: 100px;
+                                                padding: 3px;
+                                                cursor: pointer;
+                                            }
+                                            .custom-action-button:hover {
+                                                background-color: var(
+                                                    --neutral-2-f-7,
+                                                    #f2f2f2
+                                                );
+                                            }
+                                        }
+                                        .action-list {
+                                            position: absolute;
+                                            z-index: 2;
+                                            display: flex;
+                                            transform: translate(-85%, 15%);
+                                            padding: 10px;
+                                            width: 200px;
+                                            flex-direction: column;
+                                            align-items: flex-start;
+                                            gap: 5px;
+                                            border-radius: 3px;
+                                            background: var(
+                                                --default-white,
+                                                #fff
+                                            );
+                                            box-shadow: 0px 1px 3px 0px
+                                                    rgba(0, 0, 0, 0.15),
+                                                0px 2px 6px 0px
+                                                    rgba(0, 0, 0, 0.05),
+                                                0px 4px 12px 0px
+                                                    rgba(0, 0, 0, 0.08);
+
+                                            .action-item-create {
+                                                display: flex;
+                                                align-items: center;
+                                                align-self: stretch;
+                                                border-radius: 3px;
+                                                cursor: pointer;
+                                                background: var(
+                                                    --neutral-1-f-6,
+                                                    #f6f6f6
+                                                );
+                                                transition: all 0.4s
+                                                    cubic-bezier(
+                                                        0.93,
+                                                        0.88,
+                                                        0.1,
+                                                        0.8
+                                                    );
+                                                border-bottom: solid 1px #d8d7d7;
+
+                                                .btn-create {
+                                                    width: 100%;
+                                                    display: flex;
+                                                    align-items: center;
+                                                    justify-content: flex-start;
+                                                    padding: 5px;
+                                                    gap: 10px;
+                                                    color: var(
+                                                        --sematics-success-2,
+                                                        #333
+                                                    );
+                                                    font-family: Roboto;
+                                                    font-size: 14px;
+                                                    font-style: normal;
+                                                    font-weight: 400;
+                                                    line-height: 20px;
+                                                    letter-spacing: 0.14px;
+                                                    border: none;
+                                                    background: var(
+                                                        --neutral-1-f-6,
+                                                        #fff
+                                                    );
+                                                }
+                                            }
+                                            .action-item-create:hover {
+                                                transform: scale(1.05);
+                                                background-color: var(
+                                                    --neutral-2-f-7,
+                                                    #f2f2f2
+                                                );
+                                            }
+
+                                            .action-item {
+                                                display: flex;
+                                                align-items: center;
+                                                align-self: stretch;
+                                                border-radius: 3px;
+                                                cursor: pointer;
+                                                background: var(
+                                                    --neutral-1-f-6,
+                                                    #f6f6f6
+                                                );
+                                                transition: all 0.4s
+                                                    cubic-bezier(
+                                                        0.93,
+                                                        0.88,
+                                                        0.1,
+                                                        0.8
+                                                    );
+
+                                                .btn-edit {
+                                                    width: 100%;
+                                                    display: flex;
+                                                    align-items: center;
+                                                    justify-content: flex-start;
+                                                    padding: 5px;
+                                                    gap: 10px;
+                                                    color: var(
+                                                        --sematics-success-2,
+                                                        #138300
+                                                    );
+                                                    font-family: Roboto;
+                                                    font-size: 14px;
+                                                    font-style: normal;
+                                                    font-weight: 400;
+                                                    line-height: 20px;
+                                                    letter-spacing: 0.14px;
+                                                    border: none;
+                                                    background: var(
+                                                        --neutral-1-f-6,
+                                                        #f6f6f6
+                                                    );
+                                                }
+                                                .btn-delete {
+                                                    width: 100%;
+                                                    display: flex;
+                                                    align-items: center;
+                                                    justify-content: flex-start;
+                                                    padding: 5px;
+                                                    gap: 10px;
+                                                    color: var(
+                                                        --sematics-danger-2,
+                                                        #ff3434
+                                                    );
+                                                    font-family: Roboto;
+                                                    font-size: 14px;
+                                                    font-style: normal;
+                                                    font-weight: 400;
+                                                    line-height: 20px;
+                                                    letter-spacing: 0.14px;
+                                                    border: none;
+                                                    background: var(
+                                                        --neutral-1-f-6,
+                                                        #f6f6f6
+                                                    );
+                                                }
+                                            }
+                                            .action-item:hover {
+                                                transform: scale(1.05);
+                                                background-color: var(
+                                                    --neutral-2-f-7,
+                                                    #f2f2f2
+                                                );
+                                            }
+                                        }
+                                    }
+                                    &:hover {
+                                        background: #f6f6f6;
+                                    }
+                                }
+                            }
                         }
                     }
                 }

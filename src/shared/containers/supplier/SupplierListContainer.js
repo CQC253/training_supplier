@@ -60,14 +60,14 @@ export default function SupplierContainer() {
 
     //statusValue
     const [statusValue, setStatusValue] = useState('')
-    const optionSearchStatus = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.status))).map(status => ({
+    const optionSearchStatus = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.items.status))).map(status => ({
         value: status,
         label: status == 1 ? 'Giao dịch' : 'Tạm dừng'
     }));
 
     //addressValue
     const [addressValue, setAddressValue] = useState('')
-    const optionAddress = Array.from(getLocalStorageData('supplierList').map(item => item.address)).map(address => ({
+    const optionAddress = Array.from(getLocalStorageData('supplierList').map(item => item.items.address)).map(address => ({
         value: address,
         label: address
     }));
@@ -79,7 +79,7 @@ export default function SupplierContainer() {
     const [selectedItems, setSelectedItems] = useState([]);
 
     //changeStatus
-    const optionStatus = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.status))).map(status => ({
+    const optionStatus = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.items.status))).map(status => ({
         value: status,
         label: status == 1 ? 'Giao dịch' : 'Tạm dừng'
     }));
@@ -90,7 +90,7 @@ export default function SupplierContainer() {
 
     //Paginate
     const [currentPage, setCurrentPage] = useState(0);
-    const [totalPages, setTotalPages] = useState(0);
+    const [totalPages, setTotalPages] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const selectItemsPerPage = [5, 10, 50];
     const [firstItemIndex, setFirstItemIndex] = useState(0);
@@ -210,7 +210,7 @@ export default function SupplierContainer() {
 
         if (!selectAll) {
             // Nếu selectAll đang là false, chọn tất cả các selectedItems
-            const allItemIds = supplierListRedux.map((item) => item.id);
+            const allItemIds = supplierListRedux.map((item) => item.items.items.id);
             setSelectedItems(allItemIds);
         } else {
             // Nếu selectAll đang là true, bỏ chọn tất cả các selectedItems
@@ -260,7 +260,7 @@ export default function SupplierContainer() {
 
     const handleDelete = (id) => {
         const supplierList = getLocalStorageData('supplierList');
-        deletedSupplier = supplierList.find(item => item.id === id);
+        deletedSupplier = supplierList.find(item => item.items.id === id);
         // console.log('deletedSupplier', deletedSupplier);
 
         dispatch({ type: supplierActions.DELETE_SUPPLIER_START, payload: { id: id } })
@@ -459,10 +459,10 @@ export default function SupplierContainer() {
                                 .map((item, index) => {
 
                                     const filteredOptions = optionStatus.filter((option) => {
-                                        if (item.status === 1) {
+                                        if (item.items.status === 1) {
                                             // Chỉ lấy tùy chọn "Tạm dừng"
                                             return option.value === 2;
-                                        } else if (item.status === 2) {
+                                        } else if (item.items.status === 2) {
                                             // Chỉ lấy tùy chọn "Giao dịch"
                                             return option.value === 1;
                                         }
@@ -472,48 +472,48 @@ export default function SupplierContainer() {
                                     return (
                                         <tr
                                             className={styles['tr-normal']}
-                                            key={item.id}
+                                            key={item.items.id}
                                         >
                                             <td className={styles['td1']}>
                                                 <input
                                                     className={styles['checkbox-td']}
                                                     type="checkbox"
-                                                    value={item.id}
-                                                    checked={selectedItems.includes(item.id)}
-                                                    onChange={() => handleSelect(item.id)}
+                                                    value={item.items.id}
+                                                    checked={selectedItems.includes(item.items.id)}
+                                                    onChange={() => handleSelect(item.items.id)}
                                                 />
                                             </td>
                                             <td className={styles['td2']}>
                                                 <Link
-                                                    to={`/supplier/list/detail/${item.id}`}
+                                                    to={`/supplier/list/detail/${item.items.id}`}
                                                 >
-                                                    {item.supplierCode}
+                                                    {item.items.supplierCode}
                                                 </Link>
                                             </td>
-                                            <td className={styles['td3']}>{item.supplierName}</td>
-                                            <td className={styles['td4']}>{item.category}</td>
-                                            <td className={styles['td5']}>{item.code}</td>
-                                            <td className={styles['td6']}>{item.deptCode}</td>
-                                            <td className={styles['td7']}>{item.phone}</td>
+                                            <td className={styles['td3']}>{item.items.supplierName}</td>
+                                            <td className={styles['td4']}>{item.items.category}</td>
+                                            <td className={styles['td5']}>{item.items.code}</td>
+                                            <td className={styles['td6']}>{item.items.deptCode}</td>
+                                            <td className={styles['td7']}>{item.items.phone}</td>
                                             <EmailTooltip
-                                                title={item.email}
+                                                title={item.items.email}
                                                 arrow
                                                 placement="top"
                                             >
-                                                <td className={styles['td8']}>{item.email}</td>
+                                                <td className={styles['td8']}>{item.items.email}</td>
                                             </EmailTooltip>
 
-                                            <td className={styles['td9']}>{item.address}</td>
+                                            <td className={styles['td9']}>{item.items.address}</td>
                                             <td className={styles['td10']}>
                                                 <div className={styles['div-select']}>
                                                     <DropdownSelect
                                                         options={filteredOptions}
-                                                        onChange={(event) => handleChangeStatus(item.id, event)}
-                                                        placeholder={item.status == 1 ? 'Giao dịch' : item.status == 2 ? 'Tạm dừng' : ''}
+                                                        onChange={(event) => handleChangeStatus(item.items.id, event)}
+                                                        placeholder={item.items.status == 1 ? 'Giao dịch' : item.items.status == 2 ? 'Tạm dừng' : ''}
                                                         arrowOpen={<SupplierIconArrow />}
                                                         arrowClosed={<SupplierIconArrow />}
 
-                                                        controlClassName={item.status}
+                                                        controlClassName={item.items.status}
                                                     />
                                                 </div>
                                             </td>
@@ -545,7 +545,7 @@ export default function SupplierContainer() {
                                                                     className={styles['btn-delete']}
                                                                     onMouseDown={(event) => {
                                                                         event.preventDefault();
-                                                                        handleDelete(item.id);
+                                                                        handleDelete(item.items.id);
                                                                     }}
                                                                 >
                                                                     <SupplierIconDelete />
@@ -593,6 +593,7 @@ export default function SupplierContainer() {
                     marginPagesDisplayed={3}
                     pageCount={totalPages}
                     previousLabel=<SupplierIconPrev />
+                    forcePage={currentPage}
 
                     pageClassName={styles['page-item']}
                     pageLinkClassName={styles['page-link']}

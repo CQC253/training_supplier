@@ -11,15 +11,15 @@ const SupplierFactory = {
             // console.log('payload factory', payload.payload.statusValue);
             filteredList = supplierList.filter(item => {
                 const searchFields = [
-                    item.supplierCode,
-                    item.supplierName,
-                    item.category,
-                    item.code,
-                    item.deptCode,
-                    item.phone,
-                    item.email,
-                    item.address,
-                    item.status
+                    item.items.supplierCode,
+                    item.items.supplierName,
+                    item.items.category,
+                    item.items.code,
+                    item.items.deptCode,
+                    item.items.phone,
+                    item.items.email,
+                    item.items.address,
+                    item.items.status
                 ];
 
                 // Kiểm tra giá trị tìm kiếm
@@ -27,14 +27,14 @@ const SupplierFactory = {
                     const regex = new RegExp(`${payload.payload.inputValue}`, 'i'); // 'i' để không phân biệt chữ hoa/chữ thường
                     return regex.test(field);
                 }) : true;
-                const isStatusValueMatch = payload.payload.statusValue ? item.status === payload.payload.statusValue : true;
-                const isAddressValueMatch = payload.payload.addressValue ? item.address === payload.payload.addressValue : true;
+                const isStatusValueMatch = payload.payload.statusValue ? item.items.status === payload.payload.statusValue : true;
+                const isAddressValueMatch = payload.payload.addressValue ? item.items.address === payload.payload.addressValue : true;
 
                 return isInputValueMatch && isStatusValueMatch && isAddressValueMatch;
             });
 
             // Sắp xếp danh sách đã lọc theo thứ tự tăng dần của ID
-            filteredList.sort((a, b) => a.id - b.id);
+            filteredList.sort((a, b) => a.items.id - b.items.id);
         }
 
         // Cập nhật supplierListRedux với danh sách đã lọc
@@ -51,8 +51,8 @@ const SupplierFactory = {
             // console.log('payload factory', payload.payload.statusValue);
             filteredList = supplierList.filter(item => {
                 const searchFields = [
-                    item.supplierCode,
-                    item.category
+                    item.items.supplierCode,
+                    item.items.category
                 ];
 
                 // Kiểm tra giá trị tìm kiếm
@@ -65,7 +65,7 @@ const SupplierFactory = {
             });
 
             // Sắp xếp danh sách đã lọc theo thứ tự tăng dần của ID
-            filteredList.sort((a, b) => a.id - b.id);
+            filteredList.sort((a, b) => a.items.id - b.items.id);
         }
 
         // Cập nhật supplierListRedux với danh sách đã lọc
@@ -76,7 +76,7 @@ const SupplierFactory = {
     deleteSupplierList: (payload) => {
         const supplierList = getLocalStorageData('supplierList');
         const id = parseInt(payload.payload.id)
-        const updatedList = supplierList.filter((item) => item.id !== id);
+        const updatedList = supplierList.filter((item) => item.items.id !== id);
         setLocalStorageData("supplierList", updatedList);
         return {
             Data: updatedList
@@ -122,7 +122,7 @@ const SupplierFactory = {
         // console.log(supplierList)
         const updateList = supplierList.map(item => {
 
-            if (item.id == id) {
+            if (item.items.id == id) {
                 return {
                     ...item,
                     status: value
@@ -146,7 +146,7 @@ const SupplierFactory = {
         // console.log(supplierList)
         const updateList = supplierList.map(item => {
 
-            if (item.id == id) {
+            if (item.items.id == id) {
                 return {
                     ...item,
                     status: status
