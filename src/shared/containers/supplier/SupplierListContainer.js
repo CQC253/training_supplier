@@ -24,7 +24,7 @@ import { getLocalStorageData, setLocalStorageData } from 'redux/supplier/localSt
 import { useLocation, useHistory, Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-// import { fetchSupplierList as List } from 'redux/supplier/fetchSupplierList'
+// import { fetchSupplierList } from 'redux/supplier/fetchSupplierList'
 
 export default function SupplierContainer() {
     //Set data lên local nếu chưa có
@@ -60,9 +60,11 @@ export default function SupplierContainer() {
 
     //statusValue
     const [statusValue, setStatusValue] = useState('')
-    const optionSearchStatus = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.items.status))).map(status => ({
+    const arrayStatus = [...new Set(getLocalStorageData('supplierList').map(item => item.items.status))];
+
+    const optionSearchStatus = arrayStatus.map(status => ({
         value: status,
-        label: status == 1 ? 'Giao dịch' : 'Tạm dừng'
+        label: status === 1 ? 'Giao dịch' : 'Tạm dừng'
     }));
 
     //addressValue
@@ -79,9 +81,9 @@ export default function SupplierContainer() {
     const [selectedItems, setSelectedItems] = useState([]);
 
     //changeStatus
-    const optionStatus = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.items.status))).map(status => ({
+    const optionStatus = arrayStatus.map(status => ({
         value: status,
-        label: status == 1 ? 'Giao dịch' : 'Tạm dừng'
+        label: status === 1 ? 'Giao dịch' : 'Tạm dừng'
     }));
 
     //action
@@ -142,7 +144,6 @@ export default function SupplierContainer() {
         const queryParams = new URLSearchParams(location.search);
         const inputValue = queryParams.get('input') || '';
         const statusValue = queryParams.get('status') ? (queryParams.get('status') == 'Giao dịch' ? 1 : 2) : '' || '';
-        console.log();
         dispatch({
             type: supplierActions.FETCH_SEARCH_SUPPLIER_LIST,
             payload: {
@@ -179,7 +180,6 @@ export default function SupplierContainer() {
         setSearchParams({ ...searchParams, input: inputValue })
         const queryParams = new URLSearchParams(location.search);
         const statusValue = queryParams.get('status') ? (queryParams.get('status') == 'Giao dịch' ? 1 : 2) : '' || '';
-        // console.log(statusValue);
         const addressValue = queryParams.get('address') || '';
         dispatch({
             type: supplierActions.FETCH_SEARCH_SUPPLIER_LIST,
@@ -253,7 +253,7 @@ export default function SupplierContainer() {
         setAction((prevAction) => {
             const updatedAction = [...prevAction];
             updatedAction[index] = false;
-            // console.log(updatedAction);
+
             return updatedAction;
         });
     };
@@ -261,7 +261,6 @@ export default function SupplierContainer() {
     const handleDelete = (id) => {
         const supplierList = getLocalStorageData('supplierList');
         deletedSupplier = supplierList.find(item => item.items.id === id);
-        // console.log('deletedSupplier', deletedSupplier);
 
         dispatch({ type: supplierActions.DELETE_SUPPLIER_START, payload: { id: id } })
 
@@ -311,7 +310,7 @@ export default function SupplierContainer() {
     useEffect(() => {
         const totalPages = Math.ceil(supplierListRedux.length / itemsPerPage);
         setTotalPages(totalPages);
-        setCurrentPage(0);
+        // setCurrentPage(0);
         const startIndex = 0;
         const endIndex = itemsPerPage;
         const updatedDisplayedSupplierList = supplierListRedux.slice(startIndex, endIndex);

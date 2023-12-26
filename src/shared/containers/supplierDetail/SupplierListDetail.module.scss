@@ -29,6 +29,14 @@
                 align-items: center;
                 justify-content: center;
 
+                button {
+                    isplay: flex;
+                    border: none;
+                    cursor: pointer;
+                    background: #fff;
+                    justify-content: center;
+                }
+
                 p {
                     display: flex;
                     margin: 0;

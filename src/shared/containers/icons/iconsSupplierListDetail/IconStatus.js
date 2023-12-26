@@ -1,9 +1,8 @@
 import React from 'react'
 
-export default function IconStatus({ onClick}) {
+export default function IconStatus() {
     return (
         <svg
-            onClick={onClick}
             xmlns="http://www.w3.org/2000/svg"
             width={17}
             height={16}

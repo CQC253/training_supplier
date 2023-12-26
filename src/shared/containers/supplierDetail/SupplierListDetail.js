@@ -29,8 +29,7 @@ export default function SupplierListDetail() {
     }, []);
 
     // Tìm NCC dựa trên id
-    const supplier = supplierListRedux.find((item) => item.id == id);
-
+    const supplier = supplierListRedux.find((item) => item.items.id == id);
     //isDropdown
     const [isDropdown, setIsDropdown] = useState(false)
     const dropdownRef = useRef(null);
@@ -84,7 +83,9 @@ export default function SupplierListDetail() {
             <div className={styles['div-top']}>
                 <div className={styles['div-update-status']} >
                     <div className={styles['div-status']} ref={dropdownRef}>
-                        <IconStatus onClick={handleStatus} />
+                        <button onClick={handleStatus}>
+                            <IconStatus  />
+                        </button>
                         <p onClick={handleStatus}>
                             Trạng thái
                         </p>
@@ -93,13 +94,13 @@ export default function SupplierListDetail() {
                     {isDropdown &&
                         <ul className={styles['dropdown-list']} >
                             <li
-                                className={`${styles['dropdown-item']} ${supplier ? (supplier.status === 1 ? styles['active'] : '') : ''}`}
+                                className={`${styles['dropdown-item']} ${supplier ? (supplier.items.status === 1 ? styles['active'] : '') : ''}`}
                                 onClick={() => handleChangeStatus(id, 1)}
                             >
                                 <p>Giao dịch</p>
                             </li>
                             <li
-                                className={`${styles['dropdown-item']} ${supplier ? (supplier.status === 2 ? styles['active'] : '') : ''}`}
+                                className={`${styles['dropdown-item']} ${supplier ? (supplier.items.status === 2 ? styles['active'] : '') : ''}`}
                                 onClick={() => handleChangeStatus(id, 2)}
                             >
                                 <p>Tạm dừng</p>
@@ -118,37 +119,37 @@ export default function SupplierListDetail() {
                             <div className={styles['custom-p-span']}>
                                 <p>Tên nhà cung cấp</p>
                                 <span>
-                                    : {supplier ? supplier.supplierName : ''}
+                                    : {supplier ? supplier.items.supplierName : ''}
                                 </span>
                             </div>
                             <div className={styles['custom-p-span']}>
                                 <p>Danh mục</p>
                                 <span>
-                                    : {supplier ? supplier.category : ''}
+                                    : {supplier ? supplier.items.category : ''}
                                 </span>
                             </div>
                             <div className={styles['custom-p-span']}>
                                 <p>Điện thoại</p>
                                 <span>
-                                    : {supplier ? supplier.phone : ''}
+                                    : {supplier ? supplier.items.phone : ''}
                                 </span>
                             </div>
                             <div className={styles['custom-p-span']}>
                                 <p>Email</p>
                                 <span>
-                                    : {supplier ? supplier.email : ''}
+                                    : {supplier ? supplier.items.email : ''}
                                 </span>
                             </div>
                             <div className={styles['custom-p-span']}>
                                 <p>Công nợ</p>
                                 <span>
-                                    : {supplier ? supplier.deptCode : ''}
+                                    : {supplier ? supplier.items.deptCode : ''}
                                 </span>
                             </div>
                             <div className={styles['custom-p-span']}>
                                 <p>Mã code</p>
                                 <span>
-                                    : {supplier ? supplier.code : ''}
+                                    : {supplier ? supplier.items.code : ''}
                                 </span>
                             </div>
                         </div>
@@ -157,33 +158,33 @@ export default function SupplierListDetail() {
                             <div className={styles['custom-p-span']}>
                                 <p>Trạng thái</p>
                                 <span
-                                    className={supplier ? (supplier.status === 1 ? styles['transaction'] : styles['pause']) : ''}
+                                    className={supplier ? (supplier.items.status === 1 ? styles['transaction'] : styles['pause']) : ''}
                                 >
-                                    : {supplier ? (supplier.status === 1 ? 'Giao dịch' : 'Tạm dừng') : ''}
+                                    : {supplier ? (supplier.items.status === 1 ? 'Giao dịch' : 'Tạm dừng') : ''}
                                 </span>
                             </div>
                             <div className={styles['custom-p-span']}>
                                 <p>Tỉnh/Thành phố</p>
                                 <span>
-                                    : {supplier ? supplier.city : ''}
+                                    : {supplier ? supplier.items.city : ''}
                                 </span>
                             </div>
                             <div className={styles['custom-p-span']}>
                                 <p>Quận/Huyện</p>
                                 <span>
-                                    : {supplier ? supplier.district : ''}
+                                    : {supplier ? supplier.items.district : ''}
                                 </span>
                             </div>
                             <div className={styles['custom-p-span']}>
                                 <p>Phường/Xã</p>
                                 <span>
-                                    : {supplier ? supplier.ward : ''}
+                                    : {supplier ? supplier.items.ward : ''}
                                 </span>
                             </div>
                             <div className={styles['custom-p-span']}>
                                 <p>Địa chỉ cụ thể</p>
                                 <span>
-                                    : {supplier ? supplier.address : ''}
+                                    : {supplier ? supplier.items.address : ''}
                                 </span>
                             </div>
                         </div>

@@ -132,7 +132,7 @@ export default function SupplierCategory() {
     useEffect(() => {
         const totalPages = Math.ceil(supplierListRedux.length / itemsPerPage);
         setTotalPages(totalPages);
-        setCurrentPage(0);
+        // setCurrentPage(0);
         const startIndex = 0;
         const endIndex = itemsPerPage;
         const updatedDisplayedSupplierList = supplierListRedux.slice(startIndex, endIndex);
@@ -294,6 +294,7 @@ export default function SupplierCategory() {
 
                         <tbody className={styles['parent-tbody']}>
                             {rows.map((row, indexCD) => {
+                                const filteredItems = supplierListRedux.filter(item => item.items.category === row.categorization);
                                 return (
                                     <React.Fragment key={row.id}>
                                         <tr className={styles['parent-tr-normal']}>
@@ -345,86 +346,87 @@ export default function SupplierCategory() {
                                                 <td>
                                                     <table className={styles['sub-table']}>
                                                         <tbody className={styles['sub-tbody']}>
-                                                            {supplierListRedux
-                                                                .slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage)
-                                                                .map((item, index) => {
-                                                                    return (
-                                                                        <tr
-                                                                            className={styles['sub-tr-normal']}
-                                                                            key={item.id}
-                                                                        >
-                                                                            <td className={styles['sub-td0']}></td>
-                                                                            <td className={styles['sub-td1']}>{item.category}</td>
-                                                                            <td className={styles['sub-td2']}>
-                                                                                <Link
-                                                                                    to={`/supplier/list/detail/${item.id}`}
-                                                                                >
-                                                                                    {item.supplierCode}
-                                                                                </Link>
-                                                                            </td>
-                                                                            <td className={styles['sub-td3']}>Ghi chú</td>
-                                                                            <td className={styles['sub-td4']}>
-                                                                                <div
-                                                                                    className={styles['action-button']}
-                                                                                >
-                                                                                    <button
-                                                                                        className={styles['custom-action-button']}
-                                                                                        onClick={() => handleAction(index)}
-                                                                                        //onBlur={() => handleBlur(index)}
-
+                                                            {
+                                                                supplierListRedux
+                                                                    .slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage)
+                                                                    .map((item, index) => {
+                                                                        return (
+                                                                            <tr
+                                                                                className={styles['sub-tr-normal']}
+                                                                                key={item.items.id}
+                                                                            >
+                                                                                <td className={styles['sub-td0']}></td>
+                                                                                <td className={styles['sub-td1']}>{item.items.category}</td>
+                                                                                <td className={styles['sub-td2']}>
+                                                                                    <Link
+                                                                                        to={`/supplier/list/detail/${item.items.id}`}
                                                                                     >
-                                                                                        <SupplierIconAction />
-                                                                                    </button>
+                                                                                        {item.items.supplierCode}
+                                                                                    </Link>
+                                                                                </td>
+                                                                                <td className={styles['sub-td3']}>Ghi chú</td>
+                                                                                <td className={styles['sub-td4']}>
+                                                                                    <div
+                                                                                        className={styles['action-button']}
+                                                                                    >
+                                                                                        <button
+                                                                                            className={styles['custom-action-button']}
+                                                                                            onClick={() => handleAction(index)}
+                                                                                            //onBlur={() => handleBlur(index)}
 
-                                                                                    {action[index] &&
-                                                                                        <ul
-                                                                                            className={styles['action-list']}
                                                                                         >
-                                                                                            <li className={styles['action-item-create']}>
-                                                                                                <button
-                                                                                                    className={styles['btn-create']}
-                                                                                                    onClick={handleClickOpenCreate}
-                                                                                                >
-                                                                                                    <IconCreate />
-                                                                                                    Thêm mới danh mục
-                                                                                                </button>
-                                                                                                {openCreate && <PopupCreate
-                                                                                                    open={openCreate}
-                                                                                                    handleClose={handleClickCloseCreate}
-                                                                                                />}
-                                                                                            </li>
-                                                                                            <li className={styles['action-item']}>
-                                                                                                <button
-                                                                                                    className={styles['btn-edit']}
-                                                                                                    onClick={handleClickOpenUpdate}
-                                                                                                >
-                                                                                                    <SupplierIconEdit />
-                                                                                                    Sửa
-                                                                                                </button>
-                                                                                                {<PopupUpdate
-                                                                                                    open={openUpdate}
-                                                                                                    handleClose={handleClickCloseUpdate}
-                                                                                                    id={item.id}
-                                                                                                />}
-                                                                                            </li>
-                                                                                            <li className={styles['action-item']}>
-                                                                                                <button
-                                                                                                    className={styles['btn-delete']}
-                                                                                                    onMouseDown={(event) => {
-                                                                                                        event.preventDefault();
-                                                                                                    }}
-                                                                                                >
-                                                                                                    <SupplierIconDelete />
-                                                                                                    Xóa
-                                                                                                </button>
-                                                                                            </li>
-                                                                                        </ul>
-                                                                                    }
-                                                                                </div>
-                                                                            </td>
-                                                                        </tr>
-                                                                    )
-                                                                })}
+                                                                                            <SupplierIconAction />
+                                                                                        </button>
+
+                                                                                        {action[index] &&
+                                                                                            <ul
+                                                                                                className={styles['action-list']}
+                                                                                            >
+                                                                                                <li className={styles['action-item-create']}>
+                                                                                                    <button
+                                                                                                        className={styles['btn-create']}
+                                                                                                        onClick={handleClickOpenCreate}
+                                                                                                    >
+                                                                                                        <IconCreate />
+                                                                                                        Thêm mới danh mục
+                                                                                                    </button>
+                                                                                                    {openCreate && <PopupCreate
+                                                                                                        open={openCreate}
+                                                                                                        handleClose={handleClickCloseCreate}
+                                                                                                    />}
+                                                                                                </li>
+                                                                                                <li className={styles['action-item']}>
+                                                                                                    <button
+                                                                                                        className={styles['btn-edit']}
+                                                                                                        onClick={handleClickOpenUpdate}
+                                                                                                    >
+                                                                                                        <SupplierIconEdit />
+                                                                                                        Sửa
+                                                                                                    </button>
+                                                                                                    {<PopupUpdate
+                                                                                                        open={openUpdate}
+                                                                                                        handleClose={handleClickCloseUpdate}
+                                                                                                        id={item.items.id}
+                                                                                                    />}
+                                                                                                </li>
+                                                                                                <li className={styles['action-item']}>
+                                                                                                    <button
+                                                                                                        className={styles['btn-delete']}
+                                                                                                        onMouseDown={(event) => {
+                                                                                                            event.preventDefault();
+                                                                                                        }}
+                                                                                                    >
+                                                                                                        <SupplierIconDelete />
+                                                                                                        Xóa
+                                                                                                    </button>
+                                                                                                </li>
+                                                                                            </ul>
+                                                                                        }
+                                                                                    </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                        )
+                                                                    })}
                                                         </tbody>
                                                     </table>
                                                 </td>

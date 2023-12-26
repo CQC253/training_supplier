@@ -34,7 +34,7 @@ export default function SupplierCreate() {
 
     const getNextId = () => {
         if (supplierListRedux.length > 0) {
-            const lastId = supplierListRedux[supplierListRedux.length - 1].id;
+            const lastId = supplierListRedux[supplierListRedux.length - 1].items.id;
             return lastId + 1;
         } else {
             return 1;
@@ -45,38 +45,38 @@ export default function SupplierCreate() {
     const { register, handleSubmit, control, formState: { errors } } = useForm();
 
     //cityValue
-    const optionCity = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.city))).map(city => ({
+    const optionCity = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.items.city))).map(city => ({
         name: city
     }));
 
     //categoryValue
-    const optionCategory = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.category))).map(category => ({
+    const optionCategory = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.items.category))).map(category => ({
         name: category
     }));
 
     //deptCodeValue
-    const optionDeptCode = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.deptCode))).map(deptCode => ({
+    const optionDeptCode = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.items.deptCode))).map(deptCode => ({
         name: deptCode,
     }));
 
     //districtValue
-    const optionDistrict = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.district))
+    const optionDistrict = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.items.district))
     ).map(district => ({
         name: district,
     }));
 
     //statusValue
-    const optionStatus = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.status))).map(status => ({
+    const optionStatus = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.items.status))).map(status => ({
         name: status && status == 1 ? 'Giao dịch' : 'Tạm dừng'
     }));
 
     //wardValue
-    const optionWard = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.ward))).map(ward => ({
+    const optionWard = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.items.ward))).map(ward => ({
         name: ward
     }));
 
     //supplierCodeValue
-    const optionSupplierCode = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.supplierCode))).map(supplierCode => ({
+    const optionSupplierCode = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.items.supplierCode))).map(supplierCode => ({
         name: supplierCode
     }));
 
@@ -111,10 +111,10 @@ export default function SupplierCreate() {
     const handleClickOpen = (errors) => {
         const length = Object.keys(errors).length;
         // console.log(length);
-        if (length === 0) {
-            setOpen(false);
-        } else {
+        if (length == 0) {
             setOpen(true);
+        } else {
+            setOpen(false);
         }
     };
 

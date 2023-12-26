@@ -2,7 +2,7 @@ import { getLocalStorageData, setLocalStorageData } from "./localStorageUtils";
 
 const SupplierFactory = {
     fetchAndSearchData: (payload) => {
-        // console.log('payload factory', payload);
+        console.log('payload factory', payload);
         const supplierList = getLocalStorageData('supplierList');
         let filteredList = supplierList;
 
@@ -102,8 +102,23 @@ const SupplierFactory = {
         // console.log('payload factory', payload);
         const supplierList = getLocalStorageData('supplierList');
 
+        //Tạo categorization, note, items
+        const newItem = {
+            categorization: "", 
+            note: "Ghi chú",
+            items: payload.payload.info 
+        };
+
+        const existingItem = supplierList.find(
+            item => item.items.category === payload.payload.info.category
+        );
+
+        if (existingItem) {
+            newItem.categorization = existingItem.categorization;
+        }
+
         // Thêm nhà cung cấp mới vào danh sách
-        supplierList.push(payload.payload.info);
+        supplierList.push(newItem);
 
         // Lưu danh sách đã cập nhật trở lại local storage
         setLocalStorageData('supplierList', supplierList);
@@ -113,20 +128,15 @@ const SupplierFactory = {
         };
     },
     changeStatusSupplierList: (payload) => {
-
         const id = payload.payload.id;
 
-        const value = payload.payload.event.value;
+        const newStatus = payload.payload.event.value;
 
         const supplierList = getLocalStorageData('supplierList');
-        // console.log(supplierList)
         const updateList = supplierList.map(item => {
 
             if (item.items.id == id) {
-                return {
-                    ...item,
-                    status: value
-                }
+                item.items.status = newStatus
             }
             return item
         });
@@ -137,20 +147,16 @@ const SupplierFactory = {
         };
     },
     updateStatusSuppDetail: (payload) => {
-
         const id = payload.payload.id;
 
         const status = payload.payload.status;
 
         const supplierList = getLocalStorageData('supplierList');
-        // console.log(supplierList)
+
         const updateList = supplierList.map(item => {
 
             if (item.items.id == id) {
-                return {
-                    ...item,
-                    status: status
-                }
+                item.items.status = status
             }
             return item
         });
