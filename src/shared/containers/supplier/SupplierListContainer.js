@@ -132,6 +132,7 @@ export default function SupplierContainer() {
                 addressValue: addressValue
             }
         })
+        setCurrentPage(0)
     };
 
     useEffect(() => {
@@ -152,6 +153,7 @@ export default function SupplierContainer() {
                 statusValue: statusValue
             }
         })
+        setCurrentPage(0)
     };
 
     useEffect(() => {
@@ -189,6 +191,8 @@ export default function SupplierContainer() {
                 addressValue: addressValue,
             }
         })
+
+        setCurrentPage(0)
     };
 
     //Reset button

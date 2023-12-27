@@ -15,28 +15,6 @@ function* fetchSearchSupplierListSaga() {
             });
         } catch (error) {
             yield put({
-                type: actions.SEARCH_CATEGORY_ERROR,
-                payload: error
-            });
-        } finally {
-
-        }
-    });
-}
-
-function* searchCategorySaga() {
-    yield takeEvery(actions.SEARCH_CATEGORY_START, function* (payload) {
-        // console.log('payload saga', payload);
-        try {
-            const response = yield call(() =>
-                factories.searchCategoryData(payload)
-            );
-            yield put({
-                type: actions.SEARCH_CATEGORY_SUCCESS,
-                payload: response.Data
-            });
-        } catch (error) {
-            yield put({
                 type: actions.FETCH_SEARCH_SUPPLIER_ERROR,
                 payload: error
             });
@@ -247,7 +225,6 @@ function* resetSupplierSaga() {
 export default function* SupplierSaga() {
     yield all([
         fork(fetchSearchSupplierListSaga),
-        fork(searchCategorySaga),
         fork(deleteSupplierSaga),
         fork(undoSupplierSaga),
         fork(createSupplierSaga),

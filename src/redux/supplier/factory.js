@@ -2,14 +2,40 @@ import { getLocalStorageData, setLocalStorageData } from "./localStorageUtils";
 
 const SupplierFactory = {
     fetchAndSearchData: (payload) => {
-        console.log('payload factory', payload);
+        // console.log('payload factory', payload);
         const supplierList = getLocalStorageData('supplierList');
         let filteredList = supplierList;
-
-        // Lọc các phần tử trong filteredList  dựa trên giá trị tìm kiếm
-        if (payload.payload) {
-            // console.log('payload factory', payload.payload.statusValue);
-            filteredList = supplierList.filter(item => {
+    
+        // Kiểm tra payload và loại bỏ các mục có giá trị rỗng cho các trường quan trọng ngay cả khi không có payload
+        if (!payload || !payload.payload) {
+            filteredList = filteredList.filter(item => (
+                item.items.supplierName !== "" &&
+                item.items.code !== "" &&
+                item.items.deptCode !== "" &&
+                item.items.phone !== "" &&
+                item.items.email !== "" &&
+                item.items.address !== "" 
+            ));
+        }
+    
+        // Lọc các phần tử trong filteredList dựa trên giá trị tìm kiếm và các điều kiện bổ sung từ payload
+        if (payload && payload.payload) {
+            filteredList = filteredList.filter(item => {
+                // Kiểm tra giá trị rỗng cho các trường quan trọng
+                const isEmptyField = (
+                    item.items.supplierName === "" ||
+                    item.items.code === "" ||
+                    item.items.deptCode === "" ||
+                    item.items.phone === "" ||
+                    item.items.email === "" ||
+                    item.items.address === ""
+                );
+                
+                if (isEmptyField) {
+                    return false; // Loại bỏ các mục có giá trị rỗng cho các trường quan trọng
+                }
+    
+                // Tiếp tục lọc dựa trên giá trị tìm kiếm từ payload
                 const searchFields = [
                     item.items.supplierCode,
                     item.items.supplierName,
@@ -21,58 +47,26 @@ const SupplierFactory = {
                     item.items.address,
                     item.items.status
                 ];
-
-                // Kiểm tra giá trị tìm kiếm
+    
                 const isInputValueMatch = payload.payload.inputValue ? searchFields.some(field => {
-                    const regex = new RegExp(`${payload.payload.inputValue}`, 'i'); // 'i' để không phân biệt chữ hoa/chữ thường
+                    const regex = new RegExp(`${payload.payload.inputValue}`, 'i');
                     return regex.test(field);
                 }) : true;
                 const isStatusValueMatch = payload.payload.statusValue ? item.items.status === payload.payload.statusValue : true;
                 const isAddressValueMatch = payload.payload.addressValue ? item.items.address === payload.payload.addressValue : true;
-
+    
                 return isInputValueMatch && isStatusValueMatch && isAddressValueMatch;
             });
-
+    
             // Sắp xếp danh sách đã lọc theo thứ tự tăng dần của ID
             filteredList.sort((a, b) => a.items.id - b.items.id);
         }
-
+    
         // Cập nhật supplierListRedux với danh sách đã lọc
         return {
             Data: filteredList
         };
-    },
-    searchCategoryData: (payload) => {
-        const supplierList = getLocalStorageData('supplierList');
-        let filteredList = supplierList;
-
-        // Lọc các phần tử trong filteredList  dựa trên giá trị tìm kiếm
-        if (payload.payload) {
-            // console.log('payload factory', payload.payload.statusValue);
-            filteredList = supplierList.filter(item => {
-                const searchFields = [
-                    item.items.supplierCode,
-                    item.items.category
-                ];
-
-                // Kiểm tra giá trị tìm kiếm
-                const isInputValueMatch = payload.payload.inputValue ? searchFields.some(field => {
-                    const regex = new RegExp(`${payload.payload.inputValue}`, 'i'); // 'i' để không phân biệt chữ hoa/chữ thường
-                    return regex.test(field);
-                }) : true;
-
-                return isInputValueMatch;
-            });
-
-            // Sắp xếp danh sách đã lọc theo thứ tự tăng dần của ID
-            filteredList.sort((a, b) => a.items.id - b.items.id);
-        }
-
-        // Cập nhật supplierListRedux với danh sách đã lọc
-        return {
-            Data: filteredList
-        };
-    },
+    },    
     deleteSupplierList: (payload) => {
         const supplierList = getLocalStorageData('supplierList');
         const id = parseInt(payload.payload.id)
@@ -104,9 +98,9 @@ const SupplierFactory = {
 
         //Tạo categorization, note, items
         const newItem = {
-            categorization: "", 
+            categorization: "",
             note: "Ghi chú",
-            items: payload.payload.info 
+            items: payload.payload.info
         };
 
         const existingItem = supplierList.find(

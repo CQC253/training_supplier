@@ -2,7 +2,6 @@ import SupplierAction from './action';
 
 let initialState = {
     supplierList: [],
-    // isLoading: false
 };
 
 const SupplierReducer = (state = initialState, action) => {
@@ -26,6 +25,7 @@ const SupplierReducer = (state = initialState, action) => {
         case SupplierAction.CREATE_SUPPLIER_SUCCESS:
             return {
                 ...state,
+                supplierList: action.payload
             };
         case SupplierAction.CHANGE_STATUS_SUPPLIER_SUCCESS:
             return {
@@ -38,13 +38,6 @@ const SupplierReducer = (state = initialState, action) => {
                 supplierList: action.payload
             };
         case SupplierAction.RESET_SUPPLIER_SUCCESS:
-            return {
-                ...state,
-                supplierList: action.payload
-            };
-
-        //category
-        case SupplierAction.SEARCH_CATEGORY_SUCCESS:
             return {
                 ...state,
                 supplierList: action.payload

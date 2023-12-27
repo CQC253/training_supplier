@@ -73,6 +73,10 @@ export default function SupplierListDetail() {
     //handleDelete
     const history = useHistory();
 
+    const handleClickBack = () => {
+        history.goBack();
+    }
+
     const handleDelete = () => {
         dispatch({ type: supplierActions.DELETE_SUPPLIER_START, payload: { id: id } })
         history.goBack();
@@ -84,7 +88,7 @@ export default function SupplierListDetail() {
                 <div className={styles['div-update-status']} >
                     <div className={styles['div-status']} ref={dropdownRef}>
                         <button onClick={handleStatus}>
-                            <IconStatus  />
+                            <IconStatus />
                         </button>
                         <p onClick={handleStatus}>
                             Trạng thái
@@ -194,14 +198,14 @@ export default function SupplierListDetail() {
 
 
             <div className={styles['div-bottom']}>
-                <Link
-                    to={'/supplier/list'}
-                >
-                    <div className={styles['div-bottom-left']}>
+                <div className={styles['div-bottom-left']}>
+                    <button
+                        onClick={handleClickBack}
+                    >
                         <IconBack />
-                        <p>Quay lại</p>
-                    </div>
-                </Link>
+                    </button>
+                    <p  onClick={handleClickBack}>Quay lại</p>
+                </div>
 
                 <div className={styles['div-bottom-right']}>
                     <Link

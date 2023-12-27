@@ -243,6 +243,13 @@
             min-width: 100px;
             cursor: pointer;
 
+            button {
+                display: flex;
+                padding: 0;
+                border: none;
+                background: none;
+            }
+
             p {
                 color: var(--neutral-7-icon, #707070);
                 text-align: center;

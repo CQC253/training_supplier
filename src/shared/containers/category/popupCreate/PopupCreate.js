@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom';
 import styles from './PopupCreate.module.scss'
-import { Dialog, DialogContent, DialogActions } from '@material-ui/core';
+import { Dialog, DialogContent, DialogActions, DialogTitle, Button } from '@material-ui/core';
 
 import { useSelector, useDispatch } from 'react-redux';
-import supplierActions from "redux/supplier/action"
+import SupplierCategoryAction from "redux/category/action"
 
 import DropdownSelect from '../../supplierCreate/dropdown/Dropdown';
 import { getLocalStorageData } from 'redux/supplier/localStorageUtils';
@@ -19,24 +19,30 @@ export default function PopupCreate({ open, handleClose }) {
     //dispatch
     const dispatch = useDispatch();
 
-    //FETCH_SEARCH_SUPPLIER_LIST
+    //FETCH_SEARCH_CATEGORY_START
     useEffect(() => {
         dispatch({
-            type: supplierActions.FETCH_SEARCH_SUPPLIER_LIST,
+            type: SupplierCategoryAction.FETCH_SEARCH_CATEGORY_START,
         });
     }, []);
 
-    // get supplierList and : supplierListRedux
-    const { supplierList: supplierListRedux } = useSelector((state) => state.SupplierReducer);
+    // get supplierCategoryList
+    const { supplierCategoryList } = useSelector((state) => state.SupplierCategoryReducer);
 
-    const getNextId = () => {
-        if (supplierListRedux.length > 0) {
-            const lastId = supplierListRedux[supplierListRedux.length - 1].id;
-            return lastId + 1;
-        } else {
-            return 1;
-        }
-    };
+    const [lastId, setLastId] = useState(1); // State để lưu giữ id cuối cùng
+
+    useEffect(() => {
+        const getNextId = () => {
+            if (supplierCategoryList.length > 0) {
+                const newLastId = supplierCategoryList[supplierCategoryList.length - 1].items.id;
+                setLastId(newLastId + 1); // Cập nhật giá trị lastId
+            } else {
+                setLastId(1); // Nếu danh sách rỗng, thiết lập lại lastId về 1
+            }
+        };
+
+        getNextId(); // Gọi hàm để lấy id khi supplierCategoryList thay đổi
+    }, [supplierCategoryList]);
 
     //use form
     const { register, handleSubmit, control, formState: { errors } } = useForm();
@@ -49,40 +55,73 @@ export default function PopupCreate({ open, handleClose }) {
     ]
 
     //supplierCodeValue
-    const optionSupplierCode = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.supplierCode))).map(supplierCode => ({
-        name: supplierCode
-    }));
+    // const arraySupplierCode = [...new Set(getLocalStorageData('supplierList').map(item => item.items.supplierCode))];
+    // console.log(arraySupplierCode);
+    // const optionSupplierCode = arraySupplierCode.map(supplierCode => ({
+    //     name: supplierCode
+    // }));
+
+    const optionSupplierCode = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.items.supplierCode)))
+        .map(supplierCode => ({
+            name: supplierCode
+        }));
+
+    //dialog
+    const [openAgree, setOpenAgree] = useState(false);
+
+    const handleOpenAgree = (errors) => {
+        const length = Object.keys(errors).length;
+        // console.log(length);
+        if (length == 0) {
+            setOpenAgree(true);
+        } else {
+            setOpenAgree(false);
+        }
+    };
+
+    const handleCloseAgree = () => {
+        setOpenAgree(false);
+    };
 
     //onSubmit
     const [infoCreate, setInfoCreate] = useState(null)
     const onSubmit = (data) => {
-        console.log(data);
-        // const id = getNextId()
-
-        // const getInfo = {
-        //     id: parseInt(id),
-        //     supplierCode: data.supplierCode.name,
-        //     supplierName: data.supplierName,
-        //     category: data.category.name,
-        //     code: parseInt(data.code),
-        //     deptCode: parseInt(data.deptCode.name),
-        //     phone: data.phone,
-        //     email: data.email,
-        //     city: data.city.name,
-        //     district: data.district.name,
-        //     ward: data.ward.name,
-        //     address: data.address,
-        //     status: data.status.name && data.status.name == "Giao dịch" ? 1 : 2,
-        // }
-        // // console.log('getInfo', getInfo);
-        // setInfoCreate(getInfo)
+        // console.log(data);
+        const id = lastId
+        let categorization = ''
+        if (data.categoryDivision.name) {
+            categorization = data.categoryDivision.name
+        } else {
+            categorization = data.categoryDivision.value.name
+        }
+        const getInfo = {
+            categorization: categorization,
+            note: data.note,
+            items: {
+                id: parseInt(id),
+                supplierCode: data.supplierCode.name,
+                supplierName: '',
+                category: data.category,
+                code: '',
+                deptCode: '',
+                phone: '',
+                email: '',
+                city: '',
+                district: '',
+                ward: '',
+                address: '',
+                status: 2,
+            }
+        }
+        // console.log('getInfo', getInfo);
+        setInfoCreate(getInfo)
     };
 
     //Back List supplier 
     const handlAgree = () => {
-        // console.log(infoCreate);
-        dispatch({ type: supplierActions.CREATE_SUPPLIER_START, payload: { info: infoCreate } })
-        history.push('/supplier/list');
+        dispatch({ type: SupplierCategoryAction.CREATE_CATEGORY_START, payload: { info: infoCreate } })
+        handleCloseAgree()
+        handleClose()
     };
 
     return (
@@ -148,7 +187,7 @@ export default function PopupCreate({ open, handleClose }) {
                                     {...register('category', { required: true })}
                                     placeholder="Nhập tên danh mục"
                                 />
-                                {errors.address && <span className={styles['error-message']}>Tên danh mục là bắt buộc</span>}
+                                {errors.category && <span className={styles['error-message']}>Tên danh mục là bắt buộc</span>}
                             </div>
                         </div>
 
@@ -171,17 +210,37 @@ export default function PopupCreate({ open, handleClose }) {
                         <button
                             className={styles['btn-save-out']}
                             type='submit'
+                            onClick={() => handleOpenAgree(errors)}
                         >
                             Lưu & Thoát
                         </button>
                         <button
                             className={styles['btn-save-continue']}
                             type='submit'
+                            onClick={() => handleOpenAgree(errors)}
                         >
                             Lưu & Tiếp tục
                         </button>
                     </DialogActions>
                 </form>
+            </Dialog>
+            <Dialog
+                open={openAgree}
+                onClose={handleCloseAgree}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    {"Bạn có muốn tạo NCC không"}
+                </DialogTitle>
+                <DialogActions>
+                    <Button onClick={handleCloseAgree}>Hủy bỏ</Button>
+                    <Button
+                        onClick={handlAgree}
+                    >
+                        Đồng ý
+                    </Button>
+                </DialogActions>
             </Dialog>
         </div>
     );

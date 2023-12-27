@@ -49,9 +49,11 @@ export default function PopupUpdate({ open, handleClose, id }) {
     ]
 
     //supplierCodeValue
-    const optionSupplierCode = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.supplierCode))).map(supplierCode => ({
-        name: supplierCode
-    }));
+    const optionSupplierCode = Array.from(new Set(getLocalStorageData('supplierList')
+        .map(item => item.items.supplierCode)))
+        .map(supplierCode => ({
+            name: supplierCode
+        }));
 
     //onSubmit
     const [infoCreate, setInfoCreate] = useState(null)
@@ -148,7 +150,7 @@ export default function PopupUpdate({ open, handleClose, id }) {
                                     {...register('category', { required: true })}
                                     placeholder="Nhập tên danh mục"
                                 />
-                                {errors.address && <span className={styles['error-message']}>Tên danh mục là bắt buộc</span>}
+                                {errors.category && <span className={styles['error-message']}>Tên danh mục là bắt buộc</span>}
                             </div>
                         </div>
 

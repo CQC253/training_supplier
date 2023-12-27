@@ -15,10 +15,12 @@
 import { combineReducers } from 'redux';
 import SupplierReducer from './supplier/reducer';
 import AppReducer from './app/reducer'
+import SupplierCategoryReducer from './category/reducer'
 
 const rootReducer = combineReducers({
     SupplierReducer: SupplierReducer,
     App: AppReducer,
+    SupplierCategoryReducer: SupplierCategoryReducer,
 });
 
 export default rootReducer;
