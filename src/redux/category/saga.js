@@ -98,6 +98,41 @@ function* createCategorySaga() {
     });
 }
 
+function* updateCategorySaga() {
+    yield takeEvery(actions.UPDATE_CATEGORY_START, function* (payload) {
+        // console.log('payload saga', payload);
+        try {
+            const response = yield call(() =>
+                factories.updateCategoryList(payload)
+            );
+            yield put({
+                type: actions.UPDATE_CATEGORY_SUCCESS,
+                payload: response.Data
+            });
+            
+            const searcPayload = {
+                payload: {
+                    inputValue: '',
+                }
+            }
+            const search = yield call(() =>
+                factories.fetchAndSearchCategoryData(searcPayload)
+            );
+            yield put({
+                type: actions.FETCH_SEARCH_CATEGORY_SUCCESS,
+                payload: search.Data
+            });
+        } catch (error) {
+            yield put({
+                type: actions.UPDATE_CATEGORY_ERROR,
+                payload: error
+            });
+        } finally {
+
+        }
+    });
+}
+
 function* resetCategorySaga() {
     yield takeEvery(actions.RESET_CATEGORY_START, function* () {
         // console.log('payload', payload);
@@ -127,6 +162,7 @@ export default function* CategorySaga() {
         fork(fetchAndSearchCategorySaga),
         fork(deleteCategorySaga),
         fork(createCategorySaga),
+        fork(updateCategorySaga),
         fork(resetCategorySaga),
     ]);
 }

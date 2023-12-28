@@ -30,7 +30,7 @@ const CategoryFactory = {
             filteredList.sort((a, b) => a.items.id - b.items.id);
         }
         // console.log(filteredList);
-        
+
         // Cập nhật supplierListRedux với danh sách đã lọc
         return {
             Data: filteredList
@@ -66,6 +66,26 @@ const CategoryFactory = {
 
         return {
             Data: categoryList
+        };
+    },
+    updateCategoryList: (payload) => {
+        console.log('payload factory', payload);
+        const categoryList = getLocalStorageData('supplierList');
+
+        //Tìm đến NCC dựa trên payload.payload.info.items.id và thay NCC đó thành payload.payload.info
+        const updatedList = categoryList.map(item => {
+            if (item.items.id === payload.payload.info.items.id) {
+                return payload.payload.info;
+            }
+            return item;
+        });
+        // console.log(updatedList);
+
+        // Lưu danh sách đã cập nhật trở lại local storage
+        setLocalStorageData('supplierList', updatedList);
+
+        return {
+            Data: updatedList
         };
     },
     resetCategoryList: () => {

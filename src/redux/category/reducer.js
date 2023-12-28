@@ -28,6 +28,11 @@ const SupplierCategoryRuducer = (state = initialState, action) => {
                 ...state,
                 supplierCategoryList: action.payload
             };
+        case SupplierCategoryAction.UPDATE_CATEGORY_SUCCESS:
+            return {
+                ...state,
+                supplierCategoryList: action.payload
+            };
         default:
             return {
                 ...state,

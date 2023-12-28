@@ -28,7 +28,8 @@ export default function PopupCreate({ open, handleClose }) {
 
     // get supplierCategoryList
     const { supplierCategoryList } = useSelector((state) => state.SupplierCategoryReducer);
-
+    
+    //create new id
     const [lastId, setLastId] = useState(1); // State để lưu giữ id cuối cùng
 
     useEffect(() => {
@@ -48,20 +49,14 @@ export default function PopupCreate({ open, handleClose }) {
     const { register, handleSubmit, control, formState: { errors } } = useForm();
 
     //category division
-    const optionCategoryDivision = [
+    const optionCategorization = [
         { name: 'Ngành' },
         { name: 'Nhóm' },
         { name: 'Mục' }
     ]
 
-    //supplierCodeValue
-    // const arraySupplierCode = [...new Set(getLocalStorageData('supplierList').map(item => item.items.supplierCode))];
-    // console.log(arraySupplierCode);
-    // const optionSupplierCode = arraySupplierCode.map(supplierCode => ({
-    //     name: supplierCode
-    // }));
-
-    const optionSupplierCode = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.items.supplierCode)))
+    const optionSupplierCode = Array.from(new Set(getLocalStorageData('supplierList')
+        .map(item => item.items.supplierCode)))
         .map(supplierCode => ({
             name: supplierCode
         }));
@@ -89,10 +84,10 @@ export default function PopupCreate({ open, handleClose }) {
         // console.log(data);
         const id = lastId
         let categorization = ''
-        if (data.categoryDivision.name) {
-            categorization = data.categoryDivision.name
+        if (data.categorization.name) {
+            categorization = data.categorization.name
         } else {
-            categorization = data.categoryDivision.value.name
+            categorization = data.categorization.value.name
         }
         const getInfo = {
             categorization: categorization,
@@ -113,11 +108,12 @@ export default function PopupCreate({ open, handleClose }) {
                 status: 2,
             }
         }
+    
         // console.log('getInfo', getInfo);
         setInfoCreate(getInfo)
     };
 
-    //Back List supplier 
+    //Back  
     const handlAgree = () => {
         dispatch({ type: SupplierCategoryAction.CREATE_CATEGORY_START, payload: { info: infoCreate } })
         handleCloseAgree()
@@ -147,12 +143,12 @@ export default function PopupCreate({ open, handleClose }) {
                                 <Controller
                                     control={control}
                                     rules={{ required: false }}
-                                    name="categoryDivision"
+                                    name="categorization"
                                     render={({ field }) => (
                                         <>
                                             <DropdownSelect
                                                 {...field}
-                                                option={optionCategoryDivision}
+                                                option={optionCategorization}
                                             />
                                         </>
                                     )}
@@ -181,7 +177,7 @@ export default function PopupCreate({ open, handleClose }) {
 
                         <div className={styles['custom-label-category']}>
                             <label>Tên danh mục<span className={styles['span-required']}>*</span>:</label>
-                            <div>
+                            <div className={styles['div-input']}>
                                 <input
                                     type="text"
                                     {...register('category', { required: true })}

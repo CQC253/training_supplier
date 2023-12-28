@@ -144,7 +144,6 @@ export default function SupplierCategory() {
     ]
 
     const [openRows, setOpenRows] = useState([]);
-    const [subRows, setSubRows] = useState([]);
 
     const handleRowClick = (indexCD) => {
         const isOpen = openRows.includes(indexCD);
@@ -153,46 +152,30 @@ export default function SupplierCategory() {
         } else {
             setOpenRows([...openRows, indexCD]);
         }
-
-        const clickedCategorization = rows[indexCD].categorization;
-
-        const filteredSubRows = supplierCategoryList.filter(
-            (item) => item.categorization == clickedCategorization
-        );
-
-        setSubRows(filteredSubRows)
     };
 
     //actionCategory
     const [action, setAction] = useState([])
-    const parentRef = useRef(null);
 
     useEffect(() => {
-        setAction(Array(subRows.length).fill(false));
-    }, [subRows.length]);
+        setAction(Array(supplierCategoryList.length).fill(false));
+    }, [supplierCategoryList.length]);
 
     const handleAction = (index) => {
         const newAction = action.map((value, i) => (i === index ? !value : false));
         setAction(newAction);
     };
 
-    // const handleBlur = (index) => {
-    //     setAction((prevAction) => {
-    //         const updatedAction = [...prevAction];
-    //         updatedAction[index] = false;
-    //         return updatedAction;
-    //     });
-    //     setTimeout(() => {
-    //         if (parentRef.current.contains(document.activeElement)) {
-    //             return;
-    //         }
-    //         // Xử lý logic khi div cha mất focus
-    //     }, 0);
-    // };
+    const handleBlur = (index) => {
+        setAction((prevAction) => {
+            const updatedAction = [...prevAction];
+            updatedAction[index] = false;
+            return updatedAction;
+        });
+    };
 
     //actionCategorization
     const [actionCD, setActionCD] = useState([])
-    const parentCDRef = useRef(null);
     // let deletedSupplier = null;
 
     useEffect(() => {
@@ -204,19 +187,14 @@ export default function SupplierCategory() {
         setActionCD(newActionCD);
     };
 
-    // const handleBlur = (index) => {
-    //     setAction((prevAction) => {
-    //         const updatedAction = [...prevAction];
-    //         updatedAction[index] = false;
-    //         return updatedAction;
-    //     });
-    //     setTimeout(() => {
-    //         if (parentCDRef.current.contains(document.activeElement)) {
-    //             return;
-    //         }
-    //         // Xử lý logic khi div cha mất focus
-    //     }, 0);
-    // };
+    const handleBlurCD = (indexCD) => {
+        setAction((prevAction) => {
+            const updatedAction = [...prevAction];
+            updatedAction[indexCD] = false;
+
+            return updatedAction;
+        });
+    };
 
     //dialog popup
     const [openCreate, setOpenCreate] = useState(false);
@@ -304,6 +282,8 @@ export default function SupplierCategory() {
 
                         <tbody className={styles['parent-tbody']}>
                             {rows.map((row, indexCD) => {
+                                const filteredSubRows = supplierCategoryList.filter(item => item.categorization === row.categorization);
+
                                 return (
                                     <React.Fragment key={row.id}>
                                         <tr className={styles['parent-tr-normal']}>
@@ -319,11 +299,11 @@ export default function SupplierCategory() {
                                             <td className={styles['parent-td4']}>
                                                 <div
                                                     className={styles['action-button']}
+                                                    // onBlur={() => handleBlurCD(indexCD)}
                                                 >
                                                     <button
                                                         className={styles['custom-action-button']}
                                                         onClick={() => handleActionCD(indexCD)}
-                                                    // onBlur={() => handleBlur(indexCD)}
                                                     >
                                                         <SupplierIconAction />
                                                     </button>
@@ -356,7 +336,7 @@ export default function SupplierCategory() {
                                                     <table className={styles['sub-table']}>
                                                         <tbody className={styles['sub-tbody']}>
                                                             {
-                                                                subRows.map((item, index) => {
+                                                                filteredSubRows.map((item, index) => {
                                                                     return (
                                                                         <tr
                                                                             className={styles['sub-tr-normal']}
@@ -379,7 +359,7 @@ export default function SupplierCategory() {
                                                                                     <button
                                                                                         className={styles['custom-action-button']}
                                                                                         onClick={() => handleAction(index)}
-                                                                                        //onBlur={() => handleBlur(index)}
+                                                                                        onBlur={() => handleBlur(index)}
 
                                                                                     >
                                                                                         <SupplierIconAction />
