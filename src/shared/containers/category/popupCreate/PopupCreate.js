@@ -12,83 +12,84 @@ import { useForm, Controller } from 'react-hook-form';
 
 import IconClose from 'shared/containers/icons/iconPopupCreate/IconClose';
 
-export default function PopupCreate({ open, handleClose }) {
-    //History
+export default function PopupCreate({ open, handleClose, id }) {
+    const rows = [
+        { id: 1, categorization: 'Ngành', supplierCode: '--', note: 'Ghi chú' },
+        { id: 2, categorization: 'Nhóm', supplierCode: '--', note: 'Ghi chú' },
+        { id: 3, categorization: 'Mục', supplierCode: '--', note: 'Ghi chú' },
+    ]
+
     const history = useHistory();
-
-    //dispatch
     const dispatch = useDispatch();
+    const { supplierCategoryList } = useSelector((state) => state.SupplierCategoryReducer);
+    const { register, handleSubmit, control, formState: { errors }, setValue, watch } = useForm();
 
-    //FETCH_SEARCH_CATEGORY_START
+    const [openAgree, setOpenAgree] = useState(false);
+    const [lastId, setLastId] = useState(1);
+    const [infoCreate, setInfoCreate] = useState(null)
+
+
     useEffect(() => {
         dispatch({
             type: SupplierCategoryAction.FETCH_SEARCH_CATEGORY_START,
         });
     }, []);
 
-    // get supplierCategoryList
-    const { supplierCategoryList } = useSelector((state) => state.SupplierCategoryReducer);
-    
-    //create new id
-    const [lastId, setLastId] = useState(1); // State để lưu giữ id cuối cùng
+    useEffect(() => {
+        const findCategorization = rows.find(row => row.id === id);
+
+        if (findCategorization) {
+            setValue('categorization', findCategorization.categorization);
+        }
+    }, []); 
+    const categorizationValue = watch('categorization');
 
     useEffect(() => {
         const getNextId = () => {
             if (supplierCategoryList.length > 0) {
                 const newLastId = supplierCategoryList[supplierCategoryList.length - 1].items.id;
-                setLastId(newLastId + 1); // Cập nhật giá trị lastId
+                setLastId(newLastId + 1);
             } else {
-                setLastId(1); // Nếu danh sách rỗng, thiết lập lại lastId về 1
+                setLastId(1);
             }
         };
 
-        getNextId(); // Gọi hàm để lấy id khi supplierCategoryList thay đổi
+        getNextId();
     }, [supplierCategoryList]);
 
-    //use form
-    const { register, handleSubmit, control, formState: { errors } } = useForm();
-
-    //category division
     const optionCategorization = [
         { name: 'Ngành' },
         { name: 'Nhóm' },
         { name: 'Mục' }
     ]
-
     const optionSupplierCode = Array.from(new Set(getLocalStorageData('supplierList')
         .map(item => item.items.supplierCode)))
         .map(supplierCode => ({
             name: supplierCode
         }));
 
-    //dialog
-    const [openAgree, setOpenAgree] = useState(false);
 
     const handleOpenAgree = (errors) => {
         const length = Object.keys(errors).length;
-        // console.log(length);
         if (length == 0) {
             setOpenAgree(true);
         } else {
             setOpenAgree(false);
         }
     };
-
     const handleCloseAgree = () => {
         setOpenAgree(false);
     };
 
-    //onSubmit
-    const [infoCreate, setInfoCreate] = useState(null)
     const onSubmit = (data) => {
-        // console.log(data);
         const id = lastId
         let categorization = ''
         if (data.categorization.name) {
             categorization = data.categorization.name
         } else {
-            categorization = data.categorization.value.name
+            categorization = data.categorization
         }
+
         const getInfo = {
             categorization: categorization,
             note: data.note,
@@ -108,12 +109,10 @@ export default function PopupCreate({ open, handleClose }) {
                 status: 2,
             }
         }
-    
-        // console.log('getInfo', getInfo);
+
         setInfoCreate(getInfo)
     };
 
-    //Back  
     const handlAgree = () => {
         dispatch({ type: SupplierCategoryAction.CREATE_CATEGORY_START, payload: { info: infoCreate } })
         handleCloseAgree()
@@ -149,6 +148,7 @@ export default function PopupCreate({ open, handleClose }) {
                                             <DropdownSelect
                                                 {...field}
                                                 option={optionCategorization}
+                                                value={categorizationValue}
                                             />
                                         </>
                                     )}

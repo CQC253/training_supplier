@@ -231,6 +231,7 @@
 
                 tr {
                     display: grid;
+                    align-items: center;
                     grid-template-columns: 4% 9% 13% 10% 6% 9% 9% 12% 12% 11% 5%;
                     z-index: 1;
                 }
@@ -252,8 +253,6 @@
                         th {
                             position: sticky;
                             top: 0;
-                            display: grid;
-                            align-items: center;
                             color: var(--neutral-8-text, #333);
                             font-family: Roboto;
                             font-size: 14px;
@@ -298,8 +297,6 @@
                         border-bottom: 1px solid var(--neutral-4-line, #d8d7d7);
 
                         td {
-                            display: grid;
-                            align-items: center;
                             color: var(--neutral-8-text, #333);
                             font-family: Roboto;
                             font-size: 14px;

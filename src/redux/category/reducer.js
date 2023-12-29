@@ -6,13 +6,17 @@ let initialState = {
 
 const SupplierCategoryRuducer = (state = initialState, action) => {
     switch (action.type) {
-        //category
         case SupplierCategoryAction.FETCH_SEARCH_CATEGORY_SUCCESS:
             return {
                 ...state,
                 supplierCategoryList: action.payload
             };
         case SupplierCategoryAction.DELETE_CATEGORY_SUCCESS:
+            return {
+                ...state,
+                supplierList: action.payload
+            };
+        case SupplierCategoryAction.UNDO_CATEGORY_SUCCESS:
             return {
                 ...state,
                 supplierList: action.payload

@@ -20,77 +20,35 @@ import SupplierIconInfo from '../icons/iconsSupplierList/SuppliericonInfo';
 
 import { useDispatch, useSelector } from 'react-redux';
 import supplierActions from "redux/supplier/action"
-import { getLocalStorageData, setLocalStorageData } from 'redux/supplier/localStorageUtils';
 import { useLocation, useHistory, Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-// import { fetchSupplierList } from 'redux/supplier/fetchSupplierList'
+import { getLocalStorageData, setLocalStorageData } from 'redux/supplier/localStorageUtils';
+import { fetchSupplierList } from 'redux/supplier/fetchSupplierList'
 
 export default function SupplierContainer() {
-    //Set data lên local nếu chưa có
-    // useEffect(() => {
-    //     const existingSupplierList = getLocalStorageData('supplierList');
-    //     if (!existingSupplierList) {
-    //         setLocalStorageData('supplierList', List);
-    //     }
-    // }, []);
+    let deletedSupplier = null;
 
-    // get data from LocalStorage
     const dispatch = useDispatch();
-    const { supplierList: supplierListRedux } = useSelector((state) => state.SupplierReducer); // get supplierList and : supplierListRedux
-
-    useEffect(() => {
-        dispatch({
-            type: supplierActions.FETCH_SEARCH_SUPPLIER_LIST,
-        });
-    }, []);
-
-    //Search button
     const location = useLocation();
     const history = useHistory();
+    const { supplierList: supplierListRedux } = useSelector((state) => state.SupplierReducer);
+
     const queryParams = new URLSearchParams(location.search);
     const [searchParams, setSearchParams] = useState({
         input: queryParams.get('input') || '',
         status: queryParams.get('status') || '',
         address: queryParams.get('address') || '',
     });
-
-    //inputValue
     const [inputValue, setInputValue] = useState('');
-
-    //statusValue
     const [statusValue, setStatusValue] = useState('')
-    const arrayStatus = [...new Set(getLocalStorageData('supplierList').map(item => item.items.status))];
-
-    const optionSearchStatus = arrayStatus.map(status => ({
-        value: status,
-        label: status === 1 ? 'Giao dịch' : 'Tạm dừng'
-    }));
-
-    //addressValue
     const [addressValue, setAddressValue] = useState('')
-    const optionAddress = Array.from(getLocalStorageData('supplierList').map(item => item.items.address)).map(address => ({
-        value: address,
-        label: address
-    }));
 
-    //Reset button 
-
-    //selectAll
     const [selectAll, setSelectAll] = useState(false);
     const [selectedItems, setSelectedItems] = useState([]);
 
-    //changeStatus
-    const optionStatus = arrayStatus.map(status => ({
-        value: status,
-        label: status === 1 ? 'Giao dịch' : 'Tạm dừng'
-    }));
-
-    //action
     const [action, setAction] = useState([])
-    let deletedSupplier = null;
 
-    //Paginate
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -99,7 +57,29 @@ export default function SupplierContainer() {
     const [lastItemIndex, setLastItemIndex] = useState(0);
     const [displayedSupplierList, setDisplayedSupplierList] = useState([]);
 
-    //Tooltip
+    const existingSupplierList = getLocalStorageData('supplierList');
+    if (!existingSupplierList) {
+        setLocalStorageData('supplierList', fetchSupplierList);
+    }
+    useEffect(() => {
+        dispatch({
+            type: supplierActions.FETCH_SEARCH_SUPPLIER_LIST,
+        });
+    }, []);
+
+    const arrayStatus = [...new Set(getLocalStorageData('supplierList').map(item => item.items.status))];
+    const optionStatus = arrayStatus.map(status => ({
+        value: status,
+        label: status === 1 ? 'Giao dịch' : 'Tạm dừng'
+    }));
+    const optionAddress = Array.from(getLocalStorageData('supplierList')
+        .map(item => item.items.address))
+        .filter(address => address !== '')
+        .map(address => ({
+            value: address,
+            label: address
+        }));
+
     const EmailTooltip = styled(({ className, ...props }) => (
         <Tooltip {...props} classes={{ popper: className }} />
     ))(({ theme }) => ({
@@ -111,15 +91,16 @@ export default function SupplierContainer() {
         },
     }));
 
-    //---------------------------------------------------
+    const changeStatus = arrayStatus.map(status => ({
+        value: status,
+        label: status === 1 ? 'Giao dịch' : 'Tạm dừng'
+    }));
 
-    //search inputValue
     const handleInputValueChange = (event) => {
         setInputValue(event.target.value);
     };
 
-    //search statusValue
-    const handleSearchStatus = (event) => {
+    const handleStatus = (event) => {
         setStatusValue(event.value == 1 ? "Giao dịch" : "Tạm dừng")
         const queryParams = new URLSearchParams(location.search);
         const inputValue = queryParams.get('input') || '';
@@ -134,12 +115,10 @@ export default function SupplierContainer() {
         })
         setCurrentPage(0)
     };
-
     useEffect(() => {
         setSearchParams({ ...searchParams, status: statusValue })
     }, [statusValue])
 
-    //search addressValue
     const handleAddress = (event) => {
         setAddressValue(event.value)
         const queryParams = new URLSearchParams(location.search);
@@ -155,29 +134,18 @@ export default function SupplierContainer() {
         })
         setCurrentPage(0)
     };
-
     useEffect(() => {
         setSearchParams({ ...searchParams, address: addressValue })
     }, [addressValue])
 
-    //Search all (button)
-    useEffect(() => {
-        handleSearchHistory()
-    }, [searchParams]);
-
     const handleSearchHistory = () => {
-        // Cập nhật URL mà không làm tải lại trang
         const searchParamsString = new URLSearchParams(searchParams).toString();
         history.push(`${location.pathname}?${searchParamsString}`);
     };
-
     useEffect(() => {
-        setSearchParams({
-            input: '',
-            status: '',
-            address: '',
-        })
-    }, [])
+        handleSearchHistory()
+    }, [searchParams]);
+    
     const handleSearch = () => {
         setSearchParams({ ...searchParams, input: inputValue })
         const queryParams = new URLSearchParams(location.search);
@@ -195,7 +163,6 @@ export default function SupplierContainer() {
         setCurrentPage(0)
     };
 
-    //Reset button
     const handleReset = () => {
         setInputValue('');
         setStatusValue('')
@@ -208,16 +175,21 @@ export default function SupplierContainer() {
         dispatch({ type: supplierActions.RESET_SUPPLIER_START })
     };
 
-    //selectAll
+    useEffect(() => {
+        setSearchParams({
+            input: '',
+            status: '',
+            address: '',
+        })
+    }, [])
+
     const handleSelectAll = () => {
         setSelectAll(!selectAll);
 
         if (!selectAll) {
-            // Nếu selectAll đang là false, chọn tất cả các selectedItems
             const allItemIds = supplierListRedux.map((item) => item.items.items.id);
             setSelectedItems(allItemIds);
         } else {
-            // Nếu selectAll đang là true, bỏ chọn tất cả các selectedItems
             setSelectedItems([]);
         }
     };
@@ -230,7 +202,6 @@ export default function SupplierContainer() {
         }
     };
 
-    //changeStatus 
     const handleChangeStatus = (id, event) => {
         const queryParams = new URLSearchParams(location.search);
         const inputValue = queryParams.get('input') || '';
@@ -243,7 +214,6 @@ export default function SupplierContainer() {
         }
     };
 
-    //action
     useEffect(() => {
         setAction(Array(supplierListRedux.length).fill(false));
     }, [supplierListRedux.length]);
@@ -310,11 +280,9 @@ export default function SupplierContainer() {
         });
     };
 
-    //Paginate
     useEffect(() => {
         const totalPages = Math.ceil(supplierListRedux.length / itemsPerPage);
         setTotalPages(totalPages);
-        // setCurrentPage(0);
         const startIndex = 0;
         const endIndex = itemsPerPage;
         const updatedDisplayedSupplierList = supplierListRedux.slice(startIndex, endIndex);
@@ -343,8 +311,6 @@ export default function SupplierContainer() {
     useEffect(() => {
         calculateIndexes();
     }, [currentPage, itemsPerPage, displayedSupplierList]);
-
-    //---------------------------------------------------
 
     return (
         <div className={styles['div-supplier']}>
@@ -378,8 +344,8 @@ export default function SupplierContainer() {
 
                     <div className={styles['input-status']}>
                         <DropdownSelect
-                            options={optionSearchStatus}
-                            onChange={handleSearchStatus}
+                            options={optionStatus}
+                            onChange={handleStatus}
                             value={statusValue}
                             placeholder={'Trạng thái'}
                             arrowOpen={<SupplierIcon2 />}
@@ -461,12 +427,10 @@ export default function SupplierContainer() {
                                 .slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage)
                                 .map((item, index) => {
 
-                                    const filteredOptions = optionStatus.filter((option) => {
+                                    const filteredOptions = changeStatus.filter((option) => {
                                         if (item.items.status === 1) {
-                                            // Chỉ lấy tùy chọn "Tạm dừng"
                                             return option.value === 2;
                                         } else if (item.items.status === 2) {
-                                            // Chỉ lấy tùy chọn "Giao dịch"
                                             return option.value === 1;
                                         }
                                         return false;

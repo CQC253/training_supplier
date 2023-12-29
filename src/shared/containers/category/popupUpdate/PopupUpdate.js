@@ -13,61 +13,46 @@ import { useForm, Controller } from 'react-hook-form';
 import IconClose from 'shared/containers/icons/iconPopupCreate/IconClose';
 
 export default function PopupUpdate({ open, handleClose, id }) {
-    //History
     const history = useHistory();
-
-    //dispatch
     const dispatch = useDispatch();
+    const { supplierCategoryList } = useSelector((state) => state.SupplierCategoryReducer);
+    const { register, handleSubmit, control, formState: { errors }, setValue, watch } = useForm();
 
-    //FETCH_SEARCH_CATEGORY_START
+    const [openAgree, setOpenAgree] = useState(false);
+    const [infoCreate, setInfoCreate] = useState(null)
+
     useEffect(() => {
         dispatch({
             type: SupplierCategoryAction.FETCH_SEARCH_CATEGORY_START,
         });
     }, []);
 
-    // get supplierCategoryList
-    const { supplierCategoryList } = useSelector((state) => state.SupplierCategoryReducer);
-
-    //use form
-    const { register, handleSubmit, control, formState: { errors }, setValue, watch } = useForm();
-    const categorizationValue = watch('categorization');
-    const supplierCodeValue = watch('supplierCode');
-
     useEffect(() => {
-        // Tìm thông tin của supplier có `id` tương ứng trong supplierListRedux
         const supplierToUpdate = supplierCategoryList.find(supplier => supplier.items.id === id);
-        // console.log(supplierToUpdate);
 
-        // Kiểm tra nếu có dữ liệu supplier cần sửa, thì đặt giá trị cho từng trường trong form
         if (supplierToUpdate) {
             setValue('categorization', supplierToUpdate.categorization);
             setValue('supplierCode', supplierToUpdate.items.supplierCode);
             setValue('category', supplierToUpdate.items.category);
             setValue('note', supplierToUpdate.note);
         }
-    }, [id, supplierCategoryList, setValue, handleClose]);
+    }, []); 
+    const categorizationValue = watch('categorization');
+    const supplierCodeValue = watch('supplierCode');
 
-    //Categorization
     const optionCategorization = [
         { name: 'Ngành' },
         { name: 'Nhóm' },
         { name: 'Mục' }
     ]
-
-    //supplierCodeValue
     const optionSupplierCode = Array.from(new Set(getLocalStorageData('supplierList')
         .map(item => item.items.supplierCode)))
         .map(supplierCode => ({
             name: supplierCode
         }));
 
-    //dialog
-    const [openAgree, setOpenAgree] = useState(false);
-
     const handleOpenAgree = (errors) => {
         const length = Object.keys(errors).length;
-        // console.log(length);
         if (length == 0) {
             setOpenAgree(true);
         } else {
@@ -79,10 +64,7 @@ export default function PopupUpdate({ open, handleClose, id }) {
         setOpenAgree(false);
     };
 
-    //onSubmit
-    const [infoCreate, setInfoCreate] = useState(null)
     const onSubmit = (data) => {
-
         let categorization = ''
         if (data.categorization.name) {
             categorization = data.categorization.name
@@ -120,11 +102,9 @@ export default function PopupUpdate({ open, handleClose, id }) {
             }
         }
 
-        // console.log('getInfo', getInfo);
         setInfoCreate(getInfo)
     };
 
-    //Back
     const handlAgree = () => {
         dispatch({ type: SupplierCategoryAction.UPDATE_CATEGORY_START, payload: { info: infoCreate } })
         handleCloseAgree()

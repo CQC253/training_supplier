@@ -12,31 +12,33 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
 
 export default function SupplierListDetail() {
-    // Lấy id từ URL
     const { id } = useParams();
 
-    //get supplierList
     const { supplierList: supplierListRedux } = useSelector((state) => state.SupplierReducer);
-
-    //dispatch
     const dispatch = useDispatch();
 
-    //FETCH_SEARCH_SUPPLIER_LIST
+    const [isDropdown, setIsDropdown] = useState(false)
+    const dropdownRef = useRef(null);
+    const [open, setOpen] = useState(false);
+    const history = useHistory();
+
     useEffect(() => {
         dispatch({
             type: supplierActions.FETCH_SEARCH_SUPPLIER_LIST,
         });
     }, []);
 
-    // Tìm NCC dựa trên id
     const supplier = supplierListRedux.find((item) => item.items.id == id);
-    //isDropdown
-    const [isDropdown, setIsDropdown] = useState(false)
-    const dropdownRef = useRef(null);
+
     const handleStatus = () => {
         setIsDropdown(!isDropdown);
     };
-
+    const handleChangeStatus = (id, status) => {
+        dispatch({
+            type: supplierActions.UPDATE_STATUS_SUPP_DETAIL_START,
+            payload: { id: id, status: status },
+        });
+    }
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -49,36 +51,21 @@ export default function SupplierListDetail() {
         return () => {
             document.removeEventListener('click', handleClickOutside);
         };
-    }, []); //Xử lí blur
-
-    //handleChangeStatus
-    const handleChangeStatus = (id, status) => {
-        dispatch({
-            type: supplierActions.UPDATE_STATUS_SUPP_DETAIL_START,
-            payload: { id: id, status: status },
-        });
-    }
-
-    //dialog component
-    const [open, setOpen] = React.useState(false);
+    }, []);
 
     const handleClickOpen = () => {
         setOpen(true);
     };
-
-    const handleClose = () => {
+    const handleClickClose = () => {
         setOpen(false);
     };
 
-    //handleDelete
-    const history = useHistory();
-
-    const handleClickBack = () => {
+    const handleDelete = () => {
+        dispatch({ type: supplierActions.DELETE_SUPPLIER_START, payload: { id: id } })
         history.goBack();
     }
 
-    const handleDelete = () => {
-        dispatch({ type: supplierActions.DELETE_SUPPLIER_START, payload: { id: id } })
+    const handleClickBack = () => {
         history.goBack();
     }
 
@@ -225,7 +212,7 @@ export default function SupplierListDetail() {
                     </button>
                     <Dialog
                         open={open}
-                        onClose={handleClose}
+                        onClose={handleClickClose}
                         aria-labelledby="alert-dialog-title"
                         aria-describedby="alert-dialog-description"
                     >
@@ -233,7 +220,7 @@ export default function SupplierListDetail() {
                             {"Bạn có muốn xóa hay không"}
                         </DialogTitle>
                         <DialogActions>
-                            <Button onClick={handleClose}>Hủy bỏ</Button>
+                            <Button onClick={handleClickClose}>Hủy bỏ</Button>
                             <Button onClick={handleDelete} autoFocus>
                                 Đồng ý
                             </Button>

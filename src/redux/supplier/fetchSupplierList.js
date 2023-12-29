@@ -1,5 +1,3 @@
-import { setLocalStorageData } from "./localStorageUtils";
-
 export const fetchSupplierList = [
     {
         categorization: "Ngành",
@@ -952,5 +950,3 @@ export const fetchSupplierList = [
         },
     },
 ];
-
-setLocalStorageData('supplierList', fetchSupplierList);

@@ -36,7 +36,6 @@ function* deleteSupplierSaga() {
                 payload: response.Data
             });
 
-            // Lấy giá trị từ URL query params
             const queryParams = new URLSearchParams(location.search);
             const inputValue = queryParams.get('input') || '';
             const statusValue = queryParams.get('status') ? (queryParams.get('status') == 'Giao dịch' ? 1 : 2) : '' || '';
@@ -78,7 +77,6 @@ function* undoSupplierSaga() {
                 payload: response.Data
             });
 
-            // Lấy giá trị từ URL query params
             const queryParams = new URLSearchParams(location.search);
             const inputValue = queryParams.get('input') || '';
             const statusValue = queryParams.get('status') ? (queryParams.get('status') == 'Giao dịch' ? 1 : 2) : '' || '';
@@ -143,11 +141,8 @@ function* changeStatusSupplierSaga() {
                 type: actions.CHANGE_STATUS_SUPPLIER_SUCCESS,
                 payload: response.Data
             });
-            // console.log('response saga 1nd', response);
-            // console.log('payload response saga 1nd', payload);
 
             if (shouldSearch) {
-                // Lấy giá trị từ URL query params
                 const queryParams = new URLSearchParams(location.search);
                 const inputValue = queryParams.get('input') || '';
                 const statusValue = queryParams.get('status') ? (queryParams.get('status') == 'Giao dịch' ? 1 : 2) : '' || '';
@@ -160,11 +155,9 @@ function* changeStatusSupplierSaga() {
                         addressValue: addressValue
                     }
                 }
-                // console.log('payload saga 2nd', payload);
                 const response = yield call(() =>
                     factories.fetchAndSearchData(payload)
                 );
-                // console.log('response saga 2nd', response);
                 yield put({
                     type: actions.FETCH_SEARCH_SUPPLIER_SUCCESS,
                     payload: response.Data
@@ -202,11 +195,9 @@ function* resetSupplierSaga() {
     yield takeEvery(actions.RESET_SUPPLIER_START, function* () {
         // console.log('payload', payload);
         try {
-            // Lấy dữ liệu từ localStorage
             const supplierList = yield call(() =>
                 factories.resetSupplierList()
             );
-            // console.log('supplierList', supplierList);
             yield put({
                 type: actions.RESET_SUPPLIER_SUCCESS,
                 payload: supplierList.Data

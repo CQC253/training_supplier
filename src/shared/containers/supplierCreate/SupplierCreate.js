@@ -7,30 +7,32 @@ import { useSelector, useDispatch } from 'react-redux';
 import supplierActions from "redux/supplier/action"
 
 import DropdownSelect from './dropdown/Dropdown';
-import { getLocalStorageData } from 'redux/supplier/localStorageUtils';
+import { getLocalStorageData, setLocalStorageData } from 'redux/supplier/localStorageUtils';
 import IconBack from '../icons/iconsSupplierCreate/IconBack';
 
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
+import { fetchSupplierList } from 'redux/supplier/fetchSupplierList'
 
 export default function SupplierCreate() {
-    //History
     const history = useHistory();
-
-    //dispatch
     const dispatch = useDispatch();
+    const { supplierList: supplierListRedux } = useSelector((state) => state.SupplierReducer);
+    const { register, handleSubmit, control, formState: { errors } } = useForm();
 
-    //FETCH_SEARCH_SUPPLIER_LIST
+
+    const existingSupplierList = getLocalStorageData('supplierList');
+    if (!existingSupplierList) {
+        setLocalStorageData('supplierList', fetchSupplierList);
+    }
+
     useEffect(() => {
         dispatch({
             type: supplierActions.FETCH_SEARCH_SUPPLIER_LIST,
         });
     }, []);
-
-    // get supplierList and : supplierListRedux
-    const { supplierList: supplierListRedux } = useSelector((state) => state.SupplierReducer);
 
     const getNextId = () => {
         if (supplierListRedux.length > 0) {
@@ -41,49 +43,37 @@ export default function SupplierCreate() {
         }
     };
 
-    //use form
-    const { register, handleSubmit, control, formState: { errors } } = useForm();
-
-    //cityValue
     const optionCity = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.items.city))).map(city => ({
         name: city
     }));
 
-    //categoryValue
     const optionCategory = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.items.category))).map(category => ({
         name: category
     }));
 
-    //deptCodeValue
     const optionDeptCode = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.items.deptCode))).map(deptCode => ({
         name: deptCode,
     }));
 
-    //districtValue
     const optionDistrict = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.items.district))
     ).map(district => ({
         name: district,
     }));
 
-    //statusValue
     const optionStatus = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.items.status))).map(status => ({
         name: status && status == 1 ? 'Giao dịch' : 'Tạm dừng'
     }));
 
-    //wardValue
     const optionWard = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.items.ward))).map(ward => ({
         name: ward
     }));
 
-    //supplierCodeValue
     const optionSupplierCode = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.items.supplierCode))).map(supplierCode => ({
         name: supplierCode
     }));
 
-    //onSubmit
     const [infoCreate, setInfoCreate] = useState(null)
     const onSubmit = (data) => {
-        // console.log(data);
         const id = getNextId()
 
         const getInfo = {
@@ -101,16 +91,13 @@ export default function SupplierCreate() {
             address: data.address,
             status: data.status.name && data.status.name == "Giao dịch" ? 1 : 2,
         }
-        // console.log('getInfo', getInfo);
         setInfoCreate(getInfo)
     };
 
-    //dialog component
     const [open, setOpen] = useState(false);
 
     const handleClickOpen = (errors) => {
         const length = Object.keys(errors).length;
-        // console.log(length);
         if (length == 0) {
             setOpen(true);
         } else {
@@ -118,17 +105,15 @@ export default function SupplierCreate() {
         }
     };
 
-    const handleClose = () => {
+    const handleClickClose = () => {
         setOpen(false);
     };
 
-    //Back
     const handleGoBack = () => {
         history.goBack();
     };
-    //Back List supplier 
+  
     const handlAgree = () => {
-        // console.log(infoCreate);
         dispatch({ type: supplierActions.CREATE_SUPPLIER_START, payload: { info: infoCreate } })
         history.push('/supplier/list');
     };
@@ -352,7 +337,7 @@ export default function SupplierCreate() {
                         </button>
                         <Dialog
                             open={open}
-                            onClose={handleClose}
+                            onClose={handleClickClose}
                             aria-labelledby="alert-dialog-title"
                             aria-describedby="alert-dialog-description"
                         >
@@ -360,7 +345,7 @@ export default function SupplierCreate() {
                                 {"Bạn có muốn tạo NCC không"}
                             </DialogTitle>
                             <DialogActions>
-                                <Button onClick={handleClose}>Hủy bỏ</Button>
+                                <Button onClick={handleClickClose}>Hủy bỏ</Button>
                                 <Button
                                     onClick={handlAgree}
                                 >

@@ -36,7 +36,6 @@ function* deleteCategorySaga() {
                 payload: response.Data
             });
 
-            // Lấy giá trị từ URL query params
             const queryParams = new URLSearchParams(location.search);
             const inputValue = queryParams.get('input') || '';
 
@@ -46,7 +45,7 @@ function* deleteCategorySaga() {
                 }
             };
             const search = yield call(() =>
-                factories.fetchAndSearchData(payload)
+                factories.fetchAndSearchCategoryData(payload)
             );
             yield put({
                 type: actions.FETCH_SEARCH_CATEGORY_SUCCESS,
@@ -55,6 +54,43 @@ function* deleteCategorySaga() {
         } catch (error) {
             yield put({
                 type: actions.DELETE_CATEGORY_ERROR,
+                payload: error
+            });
+        } finally {
+
+        }
+    });
+}
+
+function* undoCategorySaga() {
+    yield takeEvery(actions.UNDO_CATEGORY_START, function* (payload) {
+        try {
+            const response = yield call(() =>
+                factories.undoCategoryList(payload)
+            );
+            yield put({
+                type: actions.UNDO_CATEGORY_SUCCESS,
+                payload: response.Data
+            });
+
+            const queryParams = new URLSearchParams(location.search);
+            const inputValue = queryParams.get('input') || '';
+
+            payload = {
+                payload: {
+                    inputValue: inputValue,
+                }
+            };
+            const search = yield call(() =>
+                factories.fetchAndSearchCategoryData(payload)
+            );
+            yield put({
+                type: actions.FETCH_SEARCH_CATEGORY_SUCCESS,
+                payload: search.Data
+            });
+        } catch (error) {
+            yield put({
+                type: actions.UNDO_CATEGORY_ERROR,
                 payload: error
             });
         } finally {
@@ -137,11 +173,9 @@ function* resetCategorySaga() {
     yield takeEvery(actions.RESET_CATEGORY_START, function* () {
         // console.log('payload', payload);
         try {
-            // Lấy dữ liệu từ localStorage
             const categoryList = yield call(() =>
                 factories.resetCategoryList()
             );
-            // console.log('categoryList', categoryList);
             yield put({
                 type: actions.RESET_CATEGORY_SUCCESS,
                 payload: categoryList.Data
@@ -161,6 +195,7 @@ export default function* CategorySaga() {
     yield all([
         fork(fetchAndSearchCategorySaga),
         fork(deleteCategorySaga),
+        fork(undoCategorySaga),
         fork(createCategorySaga),
         fork(updateCategorySaga),
         fork(resetCategorySaga),

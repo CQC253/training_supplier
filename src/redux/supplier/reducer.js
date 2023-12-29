@@ -7,7 +7,6 @@ let initialState = {
 const SupplierReducer = (state = initialState, action) => {
     switch (action.type) {
         case SupplierAction.FETCH_SEARCH_SUPPLIER_SUCCESS:
-            // console.log('action', action);
             return {
                 ...state,
                 supplierList: action.payload
