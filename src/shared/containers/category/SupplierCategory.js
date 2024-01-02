@@ -126,6 +126,7 @@ export default function SupplierCategory() {
     }, [rows.length]);
 
     const handleActionCD = (indexCD) => {
+        // console.log('vào handleActionCD');
         const newActionCD = actionCD.map((value, i) => (i === indexCD ? !value : false));
         setActionCD(newActionCD);
     };
@@ -139,6 +140,7 @@ export default function SupplierCategory() {
     }, [supplierCategoryList]);
 
     const handleAction = (id) => {
+        // console.log('vào handleAction');
         setAction(prevActions => ({
             ...prevActions,
             [id]: !prevActions[id]
@@ -193,9 +195,30 @@ export default function SupplierCategory() {
         });
     };
 
+    // useEffect(() => {
+    //     const handleClickOutside = (event) => {
+    //         console.log('refAction.current', refAction.current);
+    //         // console.log('refAction.current.contains(event.target)', refAction.current.contains(event.target));
+    //         if (!refAction.current || !refAction.current.contains(event.target)) {
+
+    //             console.log('vào handleClickOutside');
+    //             setAction(Array(supplierCategoryList.length).fill(false));
+    //             setActionCD(Array(rows.length).fill(false));
+    //         }
+    //     };
+
+    //     document.addEventListener('mousedown', handleClickOutside);
+
+    //     return () => {
+    //         console.log('unmount');
+    //         document.removeEventListener('mousedown', handleClickOutside);
+    //     };
+    // }, []);
+
     const handleClickOutside = (event) => {
-        setAction(Array(supplierCategoryList.length).fill(false));
-        setActionCD(Array(rows.length).fill(false));
+        // console.log('vào handleClickOutside');
+        // setAction(Array(supplierCategoryList.length).fill(false));
+        // setActionCD(Array(rows.length).fill(false));
     };
     useOnClickOutside(refAction, handleClickOutside);
 
@@ -356,8 +379,8 @@ export default function SupplierCategory() {
 
                                                         {actionCD[indexCD] &&
                                                             <ul
-                                                                ref={refAction}
                                                                 className={styles['action-list']}
+                                                                ref={refAction}
                                                             >
                                                                 <li className={styles['action-item-create']}>
                                                                     <button
@@ -408,8 +431,8 @@ export default function SupplierCategory() {
 
                                                                                         {action[item.items.id] &&
                                                                                             <ul
-                                                                                                ref={refAction}
                                                                                                 className={styles['action-list']}
+                                                                                                ref={refAction}
                                                                                             >
                                                                                                 <li className={styles['action-item-create']}>
                                                                                                     <button

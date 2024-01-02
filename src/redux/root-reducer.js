@@ -16,11 +16,13 @@ import { combineReducers } from 'redux';
 import SupplierReducer from './supplier/reducer';
 import AppReducer from './app/reducer'
 import SupplierCategoryReducer from './category/reducer'
+import ProvincesReducer from './provinces/reducer'
 
 const rootReducer = combineReducers({
-    SupplierReducer: SupplierReducer,
+    SupplierReducer,
     App: AppReducer,
-    SupplierCategoryReducer: SupplierCategoryReducer,
+    SupplierCategoryReducer,
+    ProvincesReducer,
 });
 
 export default rootReducer;

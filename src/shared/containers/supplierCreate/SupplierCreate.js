@@ -5,34 +5,53 @@ import { useForm, Controller } from 'react-hook-form';
 
 import { useSelector, useDispatch } from 'react-redux';
 import supplierActions from "redux/supplier/action"
+import ProvincesActions from "redux/provinces/action";
 
 import DropdownSelect from './dropdown/Dropdown';
-import { getLocalStorageData, setLocalStorageData } from 'redux/supplier/localStorageUtils';
 import IconBack from '../icons/iconsSupplierCreate/IconBack';
 
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
+
+import { getLocalStorageData, setLocalStorageData } from 'redux/supplier/localStorageUtils';
 import { fetchSupplierList } from 'redux/supplier/fetchSupplierList'
+import { method } from 'lodash';
 
 export default function SupplierCreate() {
     const history = useHistory();
     const dispatch = useDispatch();
     const { supplierList: supplierListRedux } = useSelector((state) => state.SupplierReducer);
-    const { register, handleSubmit, control, formState: { errors } } = useForm();
+    const {
+        provinces,
+        districts,
+        wards,
+    } = useSelector((state) => state.ProvincesReducer);
 
+    const { register, handleSubmit, control,clearErrors, formState: { errors }, setValue } = useForm();
+
+    const [open, setOpen] = useState(false);
+    // const [provinceValue, setProvinceValue] = useState(null);
+    // const [districtValue, setDistrictValue] = useState(null);
 
     const existingSupplierList = getLocalStorageData('supplierList');
     if (!existingSupplierList) {
         setLocalStorageData('supplierList', fetchSupplierList);
     }
 
+
     useEffect(() => {
         dispatch({
             type: supplierActions.FETCH_SEARCH_SUPPLIER_LIST,
         });
     }, []);
+
+    useEffect(() => {
+        dispatch({
+            type: ProvincesActions.FETCH_PROVINCES_START,
+        });
+    }, [dispatch]);
 
     const getNextId = () => {
         if (supplierListRedux.length > 0) {
@@ -43,8 +62,9 @@ export default function SupplierCreate() {
         }
     };
 
-    const optionCity = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.items.city))).map(city => ({
-        name: city
+    const optionCity = provinces.map(province => ({
+        name: province.name,
+        code: province.code
     }));
 
     const optionCategory = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.items.category))).map(category => ({
@@ -55,27 +75,58 @@ export default function SupplierCreate() {
         name: deptCode,
     }));
 
-    const optionDistrict = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.items.district))
-    ).map(district => ({
-        name: district,
+    const optionDistrict = districts.map(district => ({
+        name: district.name,
+        code: district.code
     }));
 
     const optionStatus = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.items.status))).map(status => ({
         name: status && status == 1 ? 'Giao dịch' : 'Tạm dừng'
     }));
 
-    const optionWard = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.items.ward))).map(ward => ({
-        name: ward
-    }));
+    const optionWard = wards.map(ward => ({ name: ward.name }));
 
     const optionSupplierCode = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.items.supplierCode))).map(supplierCode => ({
         name: supplierCode
     }));
 
+    const handleProvinceChange = (event) => {
+        console.log(event?.value?.name)
+        if(event){
+            clearErrors('city')
+        }
+        const provinceCode = event.value.code;
+        setValue("city", event.value.name)
+
+        if(districts && event?.value?.name){
+            dispatch({
+                type: ProvincesActions.FETCH_PROVINCES_START,
+            });
+        }else{
+            dispatch({
+                type: ProvincesActions.FETCH_DISTRICTS_START,
+                payload: provinceCode
+            });
+        }
+    };
+
+    const handleDistrictChange = (event) => {
+        if(event){
+            clearErrors('district')
+        }
+        const districtCode = event.value.code;
+        setValue("district", event.value.name)
+
+        dispatch({
+            type: ProvincesActions.FETCH_WARDS_START,
+            payload: districtCode
+        });
+    };
+
     const [infoCreate, setInfoCreate] = useState(null)
     const onSubmit = (data) => {
+        handleClickOpen()
         const id = getNextId()
-
         const getInfo = {
             id: parseInt(id),
             supplierCode: data.supplierCode.name,
@@ -85,18 +136,18 @@ export default function SupplierCreate() {
             deptCode: parseInt(data.deptCode.name),
             phone: data.phone,
             email: data.email,
-            city: data.city.name,
-            district: data.district.name,
-            ward: data.ward.name,
+            city: data.city,
+            district: data.district,
+            ward: data.ward,
             address: data.address,
             status: data.status.name && data.status.name == "Giao dịch" ? 1 : 2,
         }
-        setInfoCreate(getInfo)
+        console.log('getInfo', getInfo);
+
+        // setInfoCreate(getInfo)
     };
 
-    const [open, setOpen] = useState(false);
-
-    const handleClickOpen = (errors) => {
+    const handleClickOpen = () => {
         const length = Object.keys(errors).length;
         if (length == 0) {
             setOpen(true);
@@ -112,10 +163,10 @@ export default function SupplierCreate() {
     const handleGoBack = () => {
         history.goBack();
     };
-  
+
     const handlAgree = () => {
-        dispatch({ type: supplierActions.CREATE_SUPPLIER_START, payload: { info: infoCreate } })
-        history.push('/supplier/list');
+        // dispatch({ type: supplierActions.CREATE_SUPPLIER_START, payload: { info: infoCreate } })
+        // history.push('/supplier/list');
     };
 
     return (
@@ -163,6 +214,7 @@ export default function SupplierCreate() {
                                                     {...field}
                                                     option={optionCity}
                                                     placeholder={'Tỉnh/Thành phố'}
+                                                    onChange={(event) => handleProvinceChange(event)}
                                                 />
                                                 {errors.city && <span className={styles['error-message']}>Vui lòng chọn Tỉnh/Thành phố</span>}
                                             </>
@@ -229,6 +281,8 @@ export default function SupplierCreate() {
                                                     {...field}
                                                     option={optionDistrict}
                                                     placeholder={'Quận/Huyện'}
+                                                    onChange={(event) => handleDistrictChange(event)}
+                                                    emptyMessage='Hãy chọn Tỉnh/Thành phố'
                                                 />
                                                 {errors.district && <span className={styles['error-message']}>Vui lòng chọn Quận/Huyện</span>}
                                             </>
@@ -286,6 +340,7 @@ export default function SupplierCreate() {
                                                     {...field}
                                                     option={optionWard}
                                                     placeholder={'Phường/Xã'}
+                                                    emptyMessage='Hãy chọn Quận/Huyện'
                                                 />
                                                 {errors.ward && <span className={styles['error-message']}>Vui lòng chọn Phường/Xã</span>}
                                             </>
@@ -325,7 +380,7 @@ export default function SupplierCreate() {
                         <button
                             className={styles['btn-update']}
                             type='submit'
-                            onClick={() => handleClickOpen(errors)}
+                            // onClick={handleClickOpen}
                         >
                             Lưu
                         </button>

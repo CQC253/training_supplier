@@ -11,10 +11,14 @@ import HeaderIconRight5 from '../icons/HeaderIconRight5'
 import HeaderIconAccount from '../icons/HeaderIconAccount'
 import Breadcrumbs from './breadcrumbs/Breadcrumbs';
 
+import PopupCreate from 'shared/containers/category/popupCreate/PopupCreate';
+
 export default function Header() {
     //Dropdown create
     const [isDropdown, setIsDropdown] = useState(false)
     const dropdownRef = useRef(null);
+    const [openCreate, setOpenCreate] = useState(false);
+
     const handleClickCreate = () => {
         setIsDropdown(!isDropdown);
     };
@@ -32,59 +36,75 @@ export default function Header() {
         };
     }, []); //Xử lí blur
 
+    const handleCreateCategory = () => {
+        setOpenCreate(true);
+    };
+    const handleCloseCategory = () => {
+        setOpenCreate(false);
+    };
+
     return (
-        <div className={styles['header']}>
-            <div className={styles['header-left']}>
-                <div className={styles['dropdown-button']}>
-                    <div className={styles['div-button']} ref={dropdownRef}>
-                        <HeaderButtonCreate
-                            onClick={handleClickCreate}
-                        />
-                    </div>
+        <>
+            {openCreate &&
+                <PopupCreate
+                    open={openCreate}
+                    handleClose={handleCloseCategory}
+                    id={1}
+                />
+            }
+
+            <div className={styles['header']}>
+                <div className={styles['header-left']}>
+                    <div className={styles['dropdown-button']}>
+                        <div className={styles['div-button']} ref={dropdownRef}>
+                            <HeaderButtonCreate
+                                onClick={handleClickCreate}
+                            />
+                        </div>
 
 
-                    {isDropdown &&
-                        <ul className={styles['dropdown-list']}>
-                            <Link
-                                to={'/supplier/list/create'}
-                            >
-                                <li className={styles['dropdown-item']}>
+                        {isDropdown &&
+                            <ul className={styles['dropdown-list']}>
+                                <li
+                                    className={styles['dropdown-item']}
+                                    onClick={() => handleCreateCategory()}
+                                >
                                     <p>Tạo danh mục</p>
                                 </li>
-                            </Link>
-                            <Link
-                                to={'/supplier/list/create'}
-                            >
-                                <li className={styles['dropdown-item']}>
-                                    <p>Tạo nhà cung cấp</p>
-                                </li>
-                            </Link>
+                                <Link
+                                    to={'/supplier/list/create'}
+                                >
+                                    <li className={styles['dropdown-item']}>
+                                        <p>Tạo nhà cung cấp</p>
+                                    </li>
+                                </Link>
 
-                        </ul>
-                    }
+                            </ul>
+                        }
+                    </div>
+
+                    <div className={styles['div-sell']}>
+                        <a href='/' className={styles['a-sell']}>BÁN HÀNG</a>
+                        <HeaderIconSell />
+                    </div>
+
+                    <div className={styles['div-breadcrums']}>
+                        <Breadcrumbs />
+                    </div>
                 </div>
 
-                <div className={styles['div-sell']}>
-                    <a href='/' className={styles['a-sell']}>BÁN HÀNG</a>
-                    <HeaderIconSell />
+                <div className={styles['header-right']}>
+                    <div className={styles['div-icon']}>
+                        <HeaderIconRight1 />
+                        <HeaderIconRight2 />
+                        <HeaderIconRight3 />
+                        <HeaderIconRight4 />
+                        <HeaderIconRight5 />
+                        <HeaderIconAccount />
+                    </div>
                 </div>
 
-                <div className={styles['div-breadcrums']}>
-                    <Breadcrumbs />
-                </div>
             </div>
-
-            <div className={styles['header-right']}>
-                <div className={styles['div-icon']}>
-                    <HeaderIconRight1 />
-                    <HeaderIconRight2 />
-                    <HeaderIconRight3 />
-                    <HeaderIconRight4 />
-                    <HeaderIconRight5 />
-                    <HeaderIconAccount />
-                </div>
-            </div>
-
-        </div >
+        </>
     )
 }

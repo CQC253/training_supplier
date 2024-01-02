@@ -8,15 +8,8 @@ import './Dropdown.css'
 import IconDropdown from 'shared/containers/icons/iconsSupplierCreate/IconDropdown'
 
 const DropdownSelect = forwardRef(
-    ({ option, placeholder, value, onChange, emptyMessage, ...rest }, ref) => {
+    ({ option, placeholder, value, ...rest }, ref) => {
         const dropdownRef = useRef(null);
-        const [selectValue, setSelectValue] = useState(value || null)
-        const handleOnChange = (event) => {
-            if (onChange) {
-                onChange(event);
-                setSelectValue(event.value.name)
-            }
-        };
 
         return (
             <>
@@ -33,16 +26,13 @@ const DropdownSelect = forwardRef(
                         }
                     }}
 
-                    onChange={(event) => handleOnChange(event)}
-                    value={selectValue ? selectValue : placeholder ? undefined : option[0].name}
+                    value={value ? value : placeholder ? undefined : option[0].name}
                     options={option}
                     optionLabel="name"
-                    placeholder={selectValue ? selectValue : placeholder ? placeholder : option[0].name}
+                    placeholder={value ? value : placeholder ? placeholder : option[0].name}
                     className="dropdownSelect-primereact"
                     dropdownIcon={<IconDropdown />}
-                    emptyMessage={emptyMessage}
                 />
-                
             </>
         );
     }

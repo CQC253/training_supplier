@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogActions, DialogTitle, Button } from '@mate
 import { useSelector, useDispatch } from 'react-redux';
 import SupplierCategoryAction from "redux/category/action"
 
-import DropdownSelect from '../../supplierCreate/dropdown/Dropdown';
+import DropdownSelect from '../dropdown/Dropdown';
 import { getLocalStorageData } from 'redux/supplier/localStorageUtils';
 import { useForm, Controller } from 'react-hook-form';
 

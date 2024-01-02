@@ -20,9 +20,9 @@ const CategoryFactory = {
 
                 return isInputValueMatch;
             });
-
-            filteredList.sort((a, b) => a.items.id - b.items.id);
         }
+
+        filteredList.sort((a, b) => a.items.id - b.items.id);
 
         return {
             Data: filteredList
@@ -32,6 +32,8 @@ const CategoryFactory = {
         const categoryList = getLocalStorageData('supplierList');
         const id = parseInt(payload.payload.id)
         const updatedList = categoryList.filter((item) => item.items.id !== id);
+
+        updatedList.sort((a, b) => a.items.id - b.items.id);
         setLocalStorageData("supplierList", updatedList);
         return {
             Data: updatedList
@@ -44,6 +46,8 @@ const CategoryFactory = {
         if (deletedCategory) {
             updatedList.push(deletedCategory);
         }
+
+        updatedList.sort((a, b) => a.items.id - b.items.id);
         setLocalStorageData('supplierList', updatedList);
 
         return {
@@ -61,6 +65,7 @@ const CategoryFactory = {
 
         categoryList.push(newItem);
 
+        categoryList.sort((a, b) => a.items.id - b.items.id);
         setLocalStorageData('supplierList', categoryList);
 
         return {
@@ -77,6 +82,7 @@ const CategoryFactory = {
             return item;
         });
 
+        updatedList.sort((a, b) => a.items.id - b.items.id);
         setLocalStorageData('supplierList', updatedList);
 
         return {

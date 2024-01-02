@@ -217,10 +217,10 @@
             width: 100%;
             box-sizing: border-box;
             overflow: auto;
+            position: relative;
 
             table {
                 display: flex;
-                position: relative;
                 overflow: visible;
                 flex-direction: column;
                 align-items: flex-start;
@@ -247,12 +247,8 @@
                     .tr-title {
                         padding: 2px 15px;
                         text-align: left;
-                        position: sticky;
-                        top: 0;
 
                         th {
-                            position: sticky;
-                            top: 0;
                             color: var(--neutral-8-text, #333);
                             font-family: Roboto;
                             font-size: 14px;
@@ -367,9 +363,9 @@
                                 }
                             }
                             .action-list {
+                                display: flex;
                                 position: absolute;
                                 z-index: 2;
-                                display: flex;
                                 transform: translate(-80%, -10%);
                                 padding: 10px;
                                 width: 130px;
@@ -459,7 +455,6 @@
 
     .div-paginate {
         display: flex;
-        position: relative;
         padding: 4px 10px 4px 10px;
         margin: 10px 0 10px 10px;
         border-radius: 3px;
