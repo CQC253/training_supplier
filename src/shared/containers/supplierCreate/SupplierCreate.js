@@ -17,7 +17,6 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 import { getLocalStorageData, setLocalStorageData } from 'redux/supplier/localStorageUtils';
 import { fetchSupplierList } from 'redux/supplier/fetchSupplierList'
-import { method } from 'lodash';
 
 export default function SupplierCreate() {
     const history = useHistory();
@@ -29,11 +28,9 @@ export default function SupplierCreate() {
         wards,
     } = useSelector((state) => state.ProvincesReducer);
 
-    const { register, handleSubmit, control,clearErrors, formState: { errors }, setValue } = useForm();
+    const { register, handleSubmit, control, clearErrors, formState: { errors }, setValue } = useForm();
 
     const [open, setOpen] = useState(false);
-    // const [provinceValue, setProvinceValue] = useState(null);
-    // const [districtValue, setDistrictValue] = useState(null);
 
     const existingSupplierList = getLocalStorageData('supplierList');
     if (!existingSupplierList) {
@@ -91,35 +88,29 @@ export default function SupplierCreate() {
     }));
 
     const handleProvinceChange = (event) => {
-        console.log(event?.value?.name)
-        if(event){
+        if (event) {
             clearErrors('city')
+            setValue("city", event.value.name)
+            setValue("district", [])
+            setValue("ward", [])
         }
-        const provinceCode = event.value.code;
-        setValue("city", event.value.name)
 
-        if(districts && event?.value?.name){
-            dispatch({
-                type: ProvincesActions.FETCH_PROVINCES_START,
-            });
-        }else{
-            dispatch({
-                type: ProvincesActions.FETCH_DISTRICTS_START,
-                payload: provinceCode
-            });
-        }
+        dispatch({
+            type: ProvincesActions.FETCH_DISTRICTS_START,
+            payload: event.value.code
+        });
     };
 
     const handleDistrictChange = (event) => {
-        if(event){
+        if (event) {
             clearErrors('district')
+            setValue("district", event.value.name)
+            setValue("ward", [])
         }
-        const districtCode = event.value.code;
-        setValue("district", event.value.name)
 
         dispatch({
             type: ProvincesActions.FETCH_WARDS_START,
-            payload: districtCode
+            payload: event.value.code
         });
     };
 
@@ -138,13 +129,12 @@ export default function SupplierCreate() {
             email: data.email,
             city: data.city,
             district: data.district,
-            ward: data.ward,
+            ward: data.ward.name,
             address: data.address,
             status: data.status.name && data.status.name == "Giao dịch" ? 1 : 2,
         }
-        console.log('getInfo', getInfo);
 
-        // setInfoCreate(getInfo)
+        setInfoCreate(getInfo)
     };
 
     const handleClickOpen = () => {
@@ -165,8 +155,8 @@ export default function SupplierCreate() {
     };
 
     const handlAgree = () => {
-        // dispatch({ type: supplierActions.CREATE_SUPPLIER_START, payload: { info: infoCreate } })
-        // history.push('/supplier/list');
+        dispatch({ type: supplierActions.CREATE_SUPPLIER_START, payload: { info: infoCreate } })
+        history.push('/supplier/list');
     };
 
     return (
@@ -380,7 +370,7 @@ export default function SupplierCreate() {
                         <button
                             className={styles['btn-update']}
                             type='submit'
-                            // onClick={handleClickOpen}
+                        // onClick={handleClickOpen}
                         >
                             Lưu
                         </button>

@@ -91,6 +91,28 @@ export default function SupplierContainer() {
         },
     }));
 
+    const AddressTooltip = styled(({ className, ...props }) => (
+        <Tooltip {...props} classes={{ popper: className }} />
+    ))(({ theme }) => ({
+        [`& .${tooltipClasses.tooltip}`]: {
+            backgroundColor: '#000',
+            color: '#FFF',
+            boxShadow: theme.shadows[1],
+            fontSize: 12,
+        },
+    }));
+
+    const CategoryTooltip = styled(({ className, ...props }) => (
+        <Tooltip {...props} classes={{ popper: className }} />
+    ))(({ theme }) => ({
+        [`& .${tooltipClasses.tooltip}`]: {
+            backgroundColor: '#000',
+            color: '#FFF',
+            boxShadow: theme.shadows[1],
+            fontSize: 12,
+        },
+    }));
+
     const changeStatus = arrayStatus.map(status => ({
         value: status,
         label: status === 1 ? 'Giao dịch' : 'Tạm dừng'
@@ -145,7 +167,7 @@ export default function SupplierContainer() {
     useEffect(() => {
         handleSearchHistory()
     }, [searchParams]);
-    
+
     const handleSearch = () => {
         setSearchParams({ ...searchParams, input: inputValue })
         const queryParams = new URLSearchParams(location.search);
@@ -426,6 +448,7 @@ export default function SupplierContainer() {
                             {supplierListRedux
                                 .slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage)
                                 .map((item, index) => {
+                                    const addressArr = [item.items.address, item.items.ward, item.items.district, item.items.city]
 
                                     const filteredOptions = changeStatus.filter((option) => {
                                         if (item.items.status === 1) {
@@ -458,7 +481,13 @@ export default function SupplierContainer() {
                                                 </Link>
                                             </td>
                                             <td className={styles['td3']}>{item.items.supplierName}</td>
-                                            <td className={styles['td4']}>{item.items.category}</td>
+                                            <CategoryTooltip
+                                                title={item.items.category}
+                                                arrow
+                                                placement="top"
+                                            >
+                                                <td className={styles['td4']}>{item.items.category}</td>
+                                            </CategoryTooltip>
                                             <td className={styles['td5']}>{item.items.code}</td>
                                             <td className={styles['td6']}>{item.items.deptCode}</td>
                                             <td className={styles['td7']}>{item.items.phone}</td>
@@ -470,7 +499,14 @@ export default function SupplierContainer() {
                                                 <td className={styles['td8']}>{item.items.email}</td>
                                             </EmailTooltip>
 
-                                            <td className={styles['td9']}>{item.items.address}</td>
+                                            <AddressTooltip
+                                                title={addressArr.join(', ')}
+                                                arrow
+                                                placement="top"
+                                            >
+                                                <td className={styles['td9']}>{addressArr.join(', ')}</td>
+                                            </AddressTooltip>
+
                                             <td className={styles['td10']}>
                                                 <div className={styles['div-select']}>
                                                     <DropdownSelect
@@ -487,7 +523,7 @@ export default function SupplierContainer() {
                                             <td className={styles['td11']}>
                                                 <div
                                                     className={styles['action-button']}
-                                                    onBlur={() => handleBlur(index)} 
+                                                    onBlur={() => handleBlur(index)}
                                                 >
                                                     <button
                                                         className={styles['custom-action-button']}

@@ -11,7 +11,6 @@ export default function DropdownSelect({
     placeholder,
     arrowOpen,
     arrowClosed,
-
     className = 'dropdown-root',
     controlClassName = 'dropdown-control',
     placeholderClassName = 'dropdown-placeholder-status',

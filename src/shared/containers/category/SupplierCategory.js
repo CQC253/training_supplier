@@ -49,6 +49,8 @@ export default function SupplierCategory() {
     const [action, setAction] = useState([])
     const [actionCD, setActionCD] = useState([])
     const refAction = useRef(null);
+    // const parentRef = useRef(null);
+    // const subRef = useRef(null);
 
     const [openCreate, setOpenCreate] = useState(false);
     const [idParent, setIdParent] = useState(null)
@@ -126,26 +128,44 @@ export default function SupplierCategory() {
     }, [rows.length]);
 
     const handleActionCD = (indexCD) => {
-        // console.log('vào handleActionCD');
         const newActionCD = actionCD.map((value, i) => (i === indexCD ? !value : false));
         setActionCD(newActionCD);
     };
 
     useEffect(() => {
-        const iniActions = {};
+        const initActions = {};
         supplierCategoryList.forEach(item => {
-            iniActions[item.items.id] = false;
+            initActions[item.items.id] = false;
         });
-        setAction(iniActions);
+        setAction(initActions);
     }, [supplierCategoryList]);
 
     const handleAction = (id) => {
-        // console.log('vào handleAction');
         setAction(prevActions => ({
             ...prevActions,
             [id]: !prevActions[id]
         }));
     };
+    
+    // console.log('parentRef', parentRef);
+    // console.log('subRef', subRef);
+
+    // const handleClickOutsideParent = (event) => {
+    //     setActionCD(Array(rows.length).fill(false));
+    // };
+    // useOnClickOutside(parentRef, handleClickOutsideParent);
+
+    // const handleClickOutsideSub = (event) => {
+    //     setAction(Array(supplierCategoryList.length).fill(false));
+    // };
+    // useOnClickOutside(subRef, handleClickOutsideSub);
+
+    console.log(refAction);
+    const handleClickOutside = (event) => {
+        setAction(Array(supplierCategoryList.length).fill(false));
+        setActionCD(Array(rows.length).fill(false));
+    };
+    useOnClickOutside(refAction, handleClickOutside);
 
     const handleDelete = (id) => {
         const supplierList = getLocalStorageData('supplierList');
@@ -194,33 +214,6 @@ export default function SupplierCategory() {
             theme: "light",
         });
     };
-
-    // useEffect(() => {
-    //     const handleClickOutside = (event) => {
-    //         console.log('refAction.current', refAction.current);
-    //         // console.log('refAction.current.contains(event.target)', refAction.current.contains(event.target));
-    //         if (!refAction.current || !refAction.current.contains(event.target)) {
-
-    //             console.log('vào handleClickOutside');
-    //             setAction(Array(supplierCategoryList.length).fill(false));
-    //             setActionCD(Array(rows.length).fill(false));
-    //         }
-    //     };
-
-    //     document.addEventListener('mousedown', handleClickOutside);
-
-    //     return () => {
-    //         console.log('unmount');
-    //         document.removeEventListener('mousedown', handleClickOutside);
-    //     };
-    // }, []);
-
-    const handleClickOutside = (event) => {
-        // console.log('vào handleClickOutside');
-        // setAction(Array(supplierCategoryList.length).fill(false));
-        // setActionCD(Array(rows.length).fill(false));
-    };
-    useOnClickOutside(refAction, handleClickOutside);
 
     const handleClickOpenCreate = (id) => {
         setIdParent(id)
@@ -369,6 +362,8 @@ export default function SupplierCategory() {
                                                 <td className={styles['parent-td4']}>
                                                     <div
                                                         className={styles['action-button-parent']}
+                                                        ref={refAction}
+                                                        // ref={parentRef[row.id]}
                                                     >
                                                         <button
                                                             className={styles['custom-action-button']}
@@ -380,7 +375,6 @@ export default function SupplierCategory() {
                                                         {actionCD[indexCD] &&
                                                             <ul
                                                                 className={styles['action-list']}
-                                                                ref={refAction}
                                                             >
                                                                 <li className={styles['action-item-create']}>
                                                                     <button
@@ -421,6 +415,8 @@ export default function SupplierCategory() {
                                                                                 <td className={styles['sub-td4']}>
                                                                                     <div
                                                                                         className={styles['action-button-sub']}
+                                                                                        ref={refAction}
+                                                                                        // ref={subRef[item.items.id]}
                                                                                     >
                                                                                         <button
                                                                                             className={styles['custom-action-button']}
@@ -432,7 +428,6 @@ export default function SupplierCategory() {
                                                                                         {action[item.items.id] &&
                                                                                             <ul
                                                                                                 className={styles['action-list']}
-                                                                                                ref={refAction}
                                                                                             >
                                                                                                 <li className={styles['action-item-create']}>
                                                                                                     <button
