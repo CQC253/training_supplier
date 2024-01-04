@@ -225,7 +225,6 @@
                 flex-direction: column;
                 align-items: flex-start;
                 width: 100%;
-                min-height: 320px;
                 max-height: 400px;
                 min-width: 1024px;
 
@@ -277,10 +276,12 @@
                         }
 
                         .th10 {
-                            justify-items: center;
+                            display: flex;
+                            justify-content: center;
                         }
                         .th11 {
-                            justify-items: center;
+                            display: flex;
+                            justify-content: center;
                         }
                     }
                 }
@@ -304,7 +305,7 @@
                             text-overflow: ellipsis;
                             white-space: nowrap;
                             min-width: 30%;
-                            max-width: 70%;
+                            max-width: 90%;
                         }
 
                         .td1 {
@@ -330,11 +331,11 @@
                             color: var(--other-link, #0054e1);
                         }
                         .td10 {
+                            display: flex;
+                            justify-content: center;
                             overflow: inherit;
                             max-width: 100%;
                             min-width: 100%;
-                            justify-items: center;
-                            align-items: center;
 
                             .div-select {
                                 display: flex;
@@ -342,10 +343,10 @@
                             }
                         }
                         .td11 {
-                            justify-items: center;
+                            display: flex;
+                            justify-content: center;
                             max-width: 100%;
                             min-width: 100%;
-
                             .action-button {
                                 .custom-action-button {
                                     display: flex;
@@ -361,88 +362,89 @@
                                         #f2f2f2
                                     );
                                 }
-                            }
-                            .action-list {
-                                display: flex;
-                                position: absolute;
-                                z-index: 2;
-                                transform: translate(-80%, -10%);
-                                padding: 10px;
-                                width: 130px;
-                                flex-direction: column;
-                                align-items: flex-start;
-                                gap: 5px;
-                                border-radius: 3px;
-                                background: var(--default-white, #fff);
-                                box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.15),
-                                    0px 2px 6px 0px rgba(0, 0, 0, 0.05),
-                                    0px 4px 12px 0px rgba(0, 0, 0, 0.08);
 
-                                .action-item {
+                                .action-list {
                                     display: flex;
-                                    align-items: center;
-                                    align-self: stretch;
+                                    position: absolute;
+                                    z-index: 2;
+                                    transform: translate(-80%, -10%);
+                                    padding: 10px;
+                                    width: 130px;
+                                    flex-direction: column;
+                                    align-items: flex-start;
+                                    gap: 5px;
                                     border-radius: 3px;
-                                    cursor: pointer;
-                                    background: var(--neutral-1-f-6, #f6f6f6);
-                                    transition: all 0.4s
-                                        cubic-bezier(0.93, 0.88, 0.1, 0.8);
-
-                                    .btn-edit {
-                                        width: 100%;
+                                    background: var(--default-white, #fff);
+                                    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.15),
+                                        0px 2px 6px 0px rgba(0, 0, 0, 0.05),
+                                        0px 4px 12px 0px rgba(0, 0, 0, 0.08);
+    
+                                    .action-item {
                                         display: flex;
                                         align-items: center;
-                                        justify-content: flex-start;
-                                        padding: 5px;
-                                        gap: 10px;
-                                        color: var(
-                                            --sematics-success-2,
-                                            #138300
-                                        );
-                                        font-family: Roboto;
-                                        font-size: 14px;
-                                        font-style: normal;
-                                        font-weight: 400;
-                                        line-height: 20px;
-                                        letter-spacing: 0.14px;
-                                        border: none;
-                                        background: var(
-                                            --neutral-1-f-6,
-                                            #f6f6f6
-                                        );
+                                        align-self: stretch;
+                                        border-radius: 3px;
+                                        cursor: pointer;
+                                        background: var(--neutral-1-f-6, #f6f6f6);
+                                        transition: all 0.4s
+                                            cubic-bezier(0.93, 0.88, 0.1, 0.8);
+    
+                                        .btn-edit {
+                                            width: 100%;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: flex-start;
+                                            padding: 5px;
+                                            gap: 10px;
+                                            color: var(
+                                                --sematics-success-2,
+                                                #138300
+                                            );
+                                            font-family: Roboto;
+                                            font-size: 14px;
+                                            font-style: normal;
+                                            font-weight: 400;
+                                            line-height: 20px;
+                                            letter-spacing: 0.14px;
+                                            border: none;
+                                            background: var(
+                                                --neutral-1-f-6,
+                                                #f6f6f6
+                                            );
+                                        }
+                                        .btn-delete {
+                                            width: 100%;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: flex-start;
+                                            padding: 5px;
+                                            gap: 10px;
+                                            color: var(
+                                                --sematics-danger-2,
+                                                #ff3434
+                                            );
+                                            font-family: Roboto;
+                                            font-size: 14px;
+                                            font-style: normal;
+                                            font-weight: 400;
+                                            line-height: 20px;
+                                            letter-spacing: 0.14px;
+                                            border: none;
+                                            background: var(
+                                                --neutral-1-f-6,
+                                                #f6f6f6
+                                            );
+                                        }
                                     }
-                                    .btn-delete {
-                                        width: 100%;
-                                        display: flex;
-                                        align-items: center;
-                                        justify-content: flex-start;
-                                        padding: 5px;
-                                        gap: 10px;
-                                        color: var(
-                                            --sematics-danger-2,
-                                            #ff3434
-                                        );
-                                        font-family: Roboto;
-                                        font-size: 14px;
-                                        font-style: normal;
-                                        font-weight: 400;
-                                        line-height: 20px;
-                                        letter-spacing: 0.14px;
-                                        border: none;
-                                        background: var(
-                                            --neutral-1-f-6,
-                                            #f6f6f6
+                                    .action-item:hover {
+                                        transform: scale(1.05);
+                                        background-color: var(
+                                            --neutral-2-f-7,
+                                            #f2f2f2
                                         );
                                     }
                                 }
-                                .action-item:hover {
-                                    transform: scale(1.05);
-                                    background-color: var(
-                                        --neutral-2-f-7,
-                                        #f2f2f2
-                                    );
-                                }
-                            }
+                            }  
                         }
                         &:hover {
                             background: #f6f6f6;

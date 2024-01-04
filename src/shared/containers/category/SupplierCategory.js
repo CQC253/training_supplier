@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, createRef } from 'react'
 import useOnClickOutside from 'hooks/use-onclick-outside'
 
 import ReactPaginate from 'react-paginate';
@@ -17,13 +17,13 @@ import SupplierIconInfo from '../icons/iconsSupplierList/SuppliericonInfo';
 
 import { useDispatch, useSelector } from 'react-redux';
 import SupplierCategoryAction from "redux/category/action"
-import { getLocalStorageData, setLocalStorageData } from 'redux/supplier/localStorageUtils';
 import { useLocation, useHistory, Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PopupCreate from './popupCreate/PopupCreate';
 import PopupUpdate from './popupUpdate/PopupUpdate';
 
+import { getLocalStorageData, setLocalStorageData } from 'redux/supplier/localStorageUtils';
 import { fetchSupplierList } from 'redux/supplier/fetchSupplierList'
 
 export default function SupplierCategory() {
@@ -48,9 +48,8 @@ export default function SupplierCategory() {
     const [openRows, setOpenRows] = useState([]);
     const [action, setAction] = useState([])
     const [actionCD, setActionCD] = useState([])
-    const refAction = useRef(null);
-    // const parentRef = useRef(null);
-    // const subRef = useRef(null);
+    const [parentRefs, setParentRefs] = useState([]);
+    const [subRefs, setSubRefs] = useState([]);
 
     const [openCreate, setOpenCreate] = useState(false);
     const [idParent, setIdParent] = useState(null)
@@ -146,26 +145,63 @@ export default function SupplierCategory() {
             [id]: !prevActions[id]
         }));
     };
-    
-    // console.log('parentRef', parentRef);
-    // console.log('subRef', subRef);
 
-    // const handleClickOutsideParent = (event) => {
-    //     setActionCD(Array(rows.length).fill(false));
-    // };
-    // useOnClickOutside(parentRef, handleClickOutsideParent);
-
-    // const handleClickOutsideSub = (event) => {
-    //     setAction(Array(supplierCategoryList.length).fill(false));
-    // };
-    // useOnClickOutside(subRef, handleClickOutsideSub);
-
-    console.log(refAction);
-    const handleClickOutside = (event) => {
-        setAction(Array(supplierCategoryList.length).fill(false));
-        setActionCD(Array(rows.length).fill(false));
+    useEffect(() => {
+        setParentRefs((parentRefs) =>
+            Array(rows.length)
+                .fill()
+                .map((_, i) => parentRefs[i] || createRef()),
+        );
+    }, [rows.length]);
+    const handleClickOutsideParent = (event) => {
+        parentRefs.forEach((ref, indexCD) => {
+            if (ref.current && ref.current.contains(event.target)) {
+                return;
+            } else {
+                setActionCD(prevActionCDs => prevActionCDs.map((value, i) => (i === indexCD ? false : value)));
+            }
+        });
     };
-    useOnClickOutside(refAction, handleClickOutside);
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutsideParent);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutsideParent);
+        };
+    }, [parentRefs]);
+
+
+
+    useEffect(() => {
+        setSubRefs((subRefs) =>
+            Array(supplierCategoryList.length)
+                .fill()
+                .map((_, i) => subRefs[i] || createRef()),
+        );
+    }, [supplierCategoryList.length]);
+    const handleClickOutsideSub = (event) => {
+        let isClickedOnActionButton = false;
+        subRefs.forEach((ref, index) => {
+            if (ref.current && ref.current.contains(event.target)) {
+                isClickedOnActionButton = true;
+            }
+        });
+
+        if (!isClickedOnActionButton) {
+            setAction(prevActions => {
+                const updatedActions = { ...prevActions };
+                Object.keys(updatedActions).forEach(key => {
+                    updatedActions[key] = false;
+                });
+                return updatedActions;
+            });
+        }
+    };
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutsideSub);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutsideSub);
+        };
+    }, [subRefs]);
 
     const handleDelete = (id) => {
         const supplierList = getLocalStorageData('supplierList');
@@ -362,8 +398,7 @@ export default function SupplierCategory() {
                                                 <td className={styles['parent-td4']}>
                                                     <div
                                                         className={styles['action-button-parent']}
-                                                        ref={refAction}
-                                                        // ref={parentRef[row.id]}
+                                                        ref={parentRefs[indexCD]}
                                                     >
                                                         <button
                                                             className={styles['custom-action-button']}
@@ -415,8 +450,7 @@ export default function SupplierCategory() {
                                                                                 <td className={styles['sub-td4']}>
                                                                                     <div
                                                                                         className={styles['action-button-sub']}
-                                                                                        ref={refAction}
-                                                                                        // ref={subRef[item.items.id]}
+                                                                                        ref={subRefs[item.items.id]}
                                                                                     >
                                                                                         <button
                                                                                             className={styles['custom-action-button']}

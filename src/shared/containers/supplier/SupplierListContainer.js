@@ -523,7 +523,7 @@ export default function SupplierContainer() {
                                             <td className={styles['td11']}>
                                                 <div
                                                     className={styles['action-button']}
-                                                    onBlur={() => handleBlur(index)}
+                                                    // onBlur={() => handleBlur(index)}
                                                 >
                                                     <button
                                                         className={styles['custom-action-button']}
