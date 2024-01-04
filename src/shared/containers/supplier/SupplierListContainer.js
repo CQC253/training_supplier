@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
@@ -57,6 +57,9 @@ export default function SupplierContainer() {
     const [lastItemIndex, setLastItemIndex] = useState(0);
     const [displayedSupplierList, setDisplayedSupplierList] = useState([]);
 
+    const actionListRef = useRef(null);
+    const tableRef = useRef(null);
+
     const existingSupplierList = getLocalStorageData('supplierList');
     if (!existingSupplierList) {
         setLocalStorageData('supplierList', fetchSupplierList);
@@ -80,6 +83,17 @@ export default function SupplierContainer() {
             label: address
         }));
 
+    const CategoryTooltip = styled(({ className, ...props }) => (
+        <Tooltip {...props} classes={{ popper: className }} />
+    ))(({ theme }) => ({
+        [`& .${tooltipClasses.tooltip}`]: {
+            backgroundColor: '#000',
+            color: '#FFF',
+            boxShadow: theme.shadows[1],
+            fontSize: 12,
+        },
+    }));
+
     const EmailTooltip = styled(({ className, ...props }) => (
         <Tooltip {...props} classes={{ popper: className }} />
     ))(({ theme }) => ({
@@ -92,17 +106,6 @@ export default function SupplierContainer() {
     }));
 
     const AddressTooltip = styled(({ className, ...props }) => (
-        <Tooltip {...props} classes={{ popper: className }} />
-    ))(({ theme }) => ({
-        [`& .${tooltipClasses.tooltip}`]: {
-            backgroundColor: '#000',
-            color: '#FFF',
-            boxShadow: theme.shadows[1],
-            fontSize: 12,
-        },
-    }));
-
-    const CategoryTooltip = styled(({ className, ...props }) => (
         <Tooltip {...props} classes={{ popper: className }} />
     ))(({ theme }) => ({
         [`& .${tooltipClasses.tooltip}`]: {
@@ -244,6 +247,27 @@ export default function SupplierContainer() {
         const newAction = action.map((value, i) => (i === index ? !value : false));
         setAction(newAction);
     };
+
+    useEffect(() => {
+        console.log();
+        function handleActionListPosition() {
+            if (action) {
+                const actionListElement = actionListRef.current;
+                const tableElement = tableRef.current;
+
+                if (actionListElement && tableElement) {
+                    const actionListRect = actionListElement.getBoundingClientRect();
+                    const tableRect = tableElement.getBoundingClientRect();
+
+                    if (actionListRect.bottom > tableRect.bottom) {
+                        actionListElement.style.transform = `translate(${-80}%, ${-155}%)`;
+                    }
+                }
+            }
+        }
+
+        handleActionListPosition();
+    }, [action]);
 
     const handleBlur = (index) => {
         setAction((prevAction) => {
@@ -419,7 +443,7 @@ export default function SupplierContainer() {
             </div>
 
             <div className={styles['div-supplier-list']}>
-                <div className={styles['div-table']}>
+                <div className={styles['div-table']} ref={tableRef}>
                     <table>
                         <thead>
                             <tr className={styles['tr-title']}>
@@ -523,7 +547,7 @@ export default function SupplierContainer() {
                                             <td className={styles['td11']}>
                                                 <div
                                                     className={styles['action-button']}
-                                                    // onBlur={() => handleBlur(index)}
+                                                    onBlur={() => handleBlur(index)}
                                                 >
                                                     <button
                                                         className={styles['custom-action-button']}
@@ -536,6 +560,7 @@ export default function SupplierContainer() {
                                                     {action[index] &&
                                                         <ul
                                                             className={styles['action-list']}
+                                                            ref={actionListRef}
                                                         >
                                                             <li className={styles['action-item']}>
                                                                 <button className={styles['btn-edit']}>

@@ -50,6 +50,9 @@ export default function SupplierCategory() {
     const [actionCD, setActionCD] = useState([])
     const [parentRefs, setParentRefs] = useState([]);
     const [subRefs, setSubRefs] = useState([]);
+    const actionParentRef = useRef(null);
+    const actionSubRef = useRef(null);
+    const tableRef = useRef(null);
 
     const [openCreate, setOpenCreate] = useState(false);
     const [idParent, setIdParent] = useState(null)
@@ -202,6 +205,41 @@ export default function SupplierCategory() {
             document.removeEventListener('mousedown', handleClickOutsideSub);
         };
     }, [subRefs]);
+
+    useEffect(() => {
+        console.log();
+        function handleActionListPosition() {
+            if (action) {
+                const actionParentElement = actionParentRef.current;
+                const tableElement = tableRef.current;
+
+                if (actionParentElement && tableElement) {
+                    const actionParentRect = actionParentElement.getBoundingClientRect();
+                    const tableRect = tableElement.getBoundingClientRect();
+
+                    if (actionParentRect.bottom > tableRect.bottom) {
+                        actionParentElement.style.transform = `translate(${-80}%, ${-140}%)`;
+                    }
+                }
+            }
+
+            if (actionCD) {
+                const actionSubElement = actionSubRef.current;
+                const tableElement = tableRef.current;
+
+                if (actionSubElement && tableElement) {
+                    const actionSubRect = actionSubElement.getBoundingClientRect();
+                    const tableRect = tableElement.getBoundingClientRect();
+
+                    if (actionSubRect.bottom > tableRect.bottom) {
+                        actionSubElement.style.transform = `translate(${-80}%, ${-115}%)`;
+                    }
+                }
+            }
+        }
+
+        handleActionListPosition();
+    }, [action, actionCD]);
 
     const handleDelete = (id) => {
         const supplierList = getLocalStorageData('supplierList');
@@ -367,7 +405,7 @@ export default function SupplierCategory() {
                 </div>
 
                 <div className={styles['div-supplier-list']}>
-                    <div className={styles['div-table']}>
+                    <div className={styles['div-table']} ref={tableRef}>
                         <table className={styles['parent-table']}>
                             <thead className={styles['parent-thead']}>
                                 <tr className={styles['paren-tr-title']}>
@@ -410,6 +448,7 @@ export default function SupplierCategory() {
                                                         {actionCD[indexCD] &&
                                                             <ul
                                                                 className={styles['action-list']}
+                                                                ref={actionParentRef}
                                                             >
                                                                 <li className={styles['action-item-create']}>
                                                                     <button
@@ -462,6 +501,7 @@ export default function SupplierCategory() {
                                                                                         {action[item.items.id] &&
                                                                                             <ul
                                                                                                 className={styles['action-list']}
+                                                                                                ref={actionSubRef}
                                                                                             >
                                                                                                 <li className={styles['action-item-create']}>
                                                                                                     <button
