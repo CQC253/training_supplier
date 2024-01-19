@@ -89,63 +89,67 @@
                 .custom-label-select {
                     display: flex;
                     width: 50%;
+                    gap: 5px;
                     flex-direction: column;
                 }
-            }
 
-            .custom-label-category {
-                display: flex;
-                gap: 20px;
-                align-items: center;
-
-                label {
-                    min-width: 100px;
-                }
-
-                .div-input {
+                .custom-label-category {
                     display: flex;
-                    width: 100%;
-
-                    input {
+                    gap: 8px;
+                    flex-direction: column;
+    
+                    label {
+                        min-width: 100px;
+                    }
+    
+                    .div-input {
                         display: flex;
-                        padding: 6px 10px;
+                        flex-direction: column;
                         width: 100%;
-                        justify-content: center;
-                        align-items: flex-start;
-                        border-radius: 3px;
-                        border: 1px solid var(--Neutral-5, #acacac);
-                        color: var(--neutral-7-icon, #333);
-                        font-family: Roboto;
-                        font-size: 15px;
-                        font-style: normal;
-                        font-weight: 400;
-                        line-height: 20px;
-                        letter-spacing: 0.14px;
-                    }
-
-                    input::placeholder {
-                        color: var(--neutral-3-input, #e3e3e3);
-                        font-family: Roboto;
-                        font-size: 14px;
-                        font-style: normal;
-                        font-weight: 400;
-                        line-height: 20px;
-                        letter-spacing: 0.14px;
-                    }
-
-                    input:focus {
-                        border-color: rgb(14, 134, 194);
-                        outline: none;
+    
+                        input {
+                            display: flex;
+                            padding: 6px 10px;
+                            width: 100%;
+                            justify-content: center;
+                            align-items: flex-start;
+                            border-radius: 3px;
+                            border: 1px solid var(--Neutral-5, #acacac);
+                            color: var(--neutral-7-icon, #333);
+                            font-family: Roboto;
+                            font-size: 15px;
+                            font-style: normal;
+                            font-weight: 400;
+                            line-height: 20px;
+                            letter-spacing: 0.14px;
+                        }
+    
+                        input::placeholder {
+                            color: var(--neutral-3-input, #e3e3e3);
+                            font-family: Roboto;
+                            font-size: 14px;
+                            font-style: normal;
+                            font-weight: 400;
+                            line-height: 20px;
+                            letter-spacing: 0.14px;
+                        }
+    
+                        input:focus {
+                            border-color: rgb(14, 134, 194);
+                            outline: none;
+                        }
                     }
                 }
             }
-
+            
             .custom-label-note {
                 display: flex;
+                gap: 5px;
                 flex-direction: column;
 
                 input {
                     display: flex;
+                    height: 64px;
                     padding: 6px 10px;
                     width: 100%;
                     justify-content: center;

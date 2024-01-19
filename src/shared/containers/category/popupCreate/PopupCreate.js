@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { useHistory } from 'react-router-dom';
 import styles from './PopupCreate.module.scss'
 import { Dialog, DialogContent, DialogActions, DialogTitle, Button } from '@material-ui/core';
 
@@ -7,69 +6,48 @@ import { useSelector, useDispatch } from 'react-redux';
 import SupplierCategoryAction from "redux/category/action"
 
 import DropdownSelect from '../dropdown/Dropdown';
-import { getLocalStorageData } from 'redux/supplier/localStorageUtils';
 import { useForm, Controller } from 'react-hook-form';
 
 import IconClose from 'shared/containers/icons/iconPopupCreate/IconClose';
 
 export default function PopupCreate({ open, handleClose, id }) {
-    const rows = [
-        { id: 1, categorization: 'Ngành', supplierCode: '--', note: 'Ghi chú' },
-        { id: 2, categorization: 'Nhóm', supplierCode: '--', note: 'Ghi chú' },
-        { id: 3, categorization: 'Mục', supplierCode: '--', note: 'Ghi chú' },
-    ]
-
-    const history = useHistory();
     const dispatch = useDispatch();
     const { supplierCategoryList } = useSelector((state) => state.SupplierCategoryReducer);
-    const { register, handleSubmit, control, formState: { errors }, setValue, watch } = useForm();
+    const { register, handleSubmit, control, formState: { errors }, setValue, clearErrors } = useForm();
+
+    const [parentArray, setParentArray] = useState([])
+    const [selectedParentName, setSelectedParentName] = useState(null);
 
     const [openAgree, setOpenAgree] = useState(false);
-    const [lastId, setLastId] = useState(1);
     const [infoCreate, setInfoCreate] = useState(null)
 
 
     useEffect(() => {
         dispatch({
             type: SupplierCategoryAction.FETCH_SEARCH_CATEGORY_START,
+            payload: {
+                inputValue: '',
+            }
         });
     }, []);
-
     useEffect(() => {
-        const findCategorization = rows.find(row => row.id === id);
-
-        if (findCategorization) {
-            setValue('categorization', findCategorization.categorization);
-        }
-    }, []); 
-    const categorizationValue = watch('categorization');
-
-    useEffect(() => {
-        const getNextId = () => {
-            if (supplierCategoryList.length > 0) {
-                const newLastId = supplierCategoryList[supplierCategoryList.length - 1].items.id;
-                setLastId(newLastId + 1);
-            } else {
-                setLastId(1);
-            }
-        };
-
-        getNextId();
+        setParentArray(supplierCategoryList?.parent)
     }, [supplierCategoryList]);
 
-    const optionCategorization = [
-        { name: 'Ngành' },
-        { name: 'Nhóm' },
-        { name: 'Mục' }
-    ]
-    const optionSupplierCode = Array.from(new Set(getLocalStorageData('supplierList')
-        .map(item => item.items.supplierCode)))
-        .map(supplierCode => ({
-            name: supplierCode
-        }));
+    const optionParentName = parentArray.map(item => ({
+        name: item.categoryName,
+        code: item.id
+    }))
 
+    const handleParentNameChange = (event) => {
+        if (event) {
+            clearErrors('parentName')
+            setValue("parentName", event.code)
+        }
+        setSelectedParentName(event);
+    }
 
-    const handleOpenAgree = (errors) => {
+    const handleOpenAgree = () => {
         const length = Object.keys(errors).length;
         if (length == 0) {
             setOpenAgree(true);
@@ -82,46 +60,39 @@ export default function PopupCreate({ open, handleClose, id }) {
     };
 
     const onSubmit = (data) => {
-        const id = lastId
-        let categorization = ''
-        if (data.categorization.name) {
-            categorization = data.categorization.name
-        } else {
-            categorization = data.categorization
-        }
+        handleOpenAgree()
 
         const getInfo = {
-            categorization: categorization,
+            parent_id: data.parentName ? data.parentName : null,
+            categoryName: data.category,
             note: data.note,
-            items: {
-                id: parseInt(id),
-                supplierCode: data.supplierCode.name,
-                supplierName: '',
-                category: data.category,
-                code: '',
-                deptCode: '',
-                phone: '',
-                email: '',
-                city: '',
-                district: '',
-                ward: '',
-                address: '',
-                status: 2,
-            }
         }
-
         setInfoCreate(getInfo)
     };
 
-    const handlAgree = () => {
-        dispatch({ type: SupplierCategoryAction.CREATE_CATEGORY_START, payload: { info: infoCreate } })
+    const isAgree = (rs) => {
         handleCloseAgree()
         handleClose()
+    }
+
+    const handlAgree = () => {
+        dispatch({ 
+            type: SupplierCategoryAction.CREATE_CATEGORY_START,
+            payload: { info: infoCreate },
+            callBack: isAgree,
+        })
     };
 
     return (
         <div className={styles['div-popup-create']}>
-            <Dialog open={open} onClose={handleClose} className={styles['div-dialog']}>
+            <Dialog
+                open={open}
+                onClose={handleClose}
+                className={styles['div-dialog']}
+                maxWidth='md'
+                fullWidth
+                PaperProps={{ style: { width: '800px' } }}
+            >
                 <div className={styles['div-title']}>
                     <div className={styles['div-p-close']}>
                         <div className={styles['div-p']}>
@@ -142,48 +113,31 @@ export default function PopupCreate({ open, handleClose, id }) {
                                 <Controller
                                     control={control}
                                     rules={{ required: false }}
-                                    name="categorization"
+                                    name="parentName"
                                     render={({ field }) => (
                                         <>
                                             <DropdownSelect
                                                 {...field}
-                                                option={optionCategorization}
-                                                value={categorizationValue}
+                                                option={optionParentName}
+                                                selectedOption={selectedParentName}
+                                                onChange={handleParentNameChange}
+                                                placeholder={optionParentName[0]?.name}
                                             />
                                         </>
                                     )}
                                 />
                             </div>
 
-                            <div className={styles['custom-label-select']}>
-                                <label>Mã nhà cung cấp<span className={styles['span-required']}>*</span></label>
-                                <Controller
-                                    control={control}
-                                    name="supplierCode"
-                                    rules={{ required: true }}
-                                    render={({ field }) => (
-                                        <>
-                                            <DropdownSelect
-                                                {...field}
-                                                option={optionSupplierCode}
-                                                placeholder={'Nhập mã nhà cung cấp'}
-                                            />
-                                            {errors.supplierCode && <span className={styles['error-message']}>Vui lòng chọn mã nhà cung cấp</span>}
-                                        </>
-                                    )}
-                                />
-                            </div>
-                        </div>
-
-                        <div className={styles['custom-label-category']}>
-                            <label>Tên danh mục<span className={styles['span-required']}>*</span>:</label>
-                            <div className={styles['div-input']}>
-                                <input
-                                    type="text"
-                                    {...register('category', { required: true })}
-                                    placeholder="Nhập tên danh mục"
-                                />
-                                {errors.category && <span className={styles['error-message']}>Tên danh mục là bắt buộc</span>}
+                            <div className={styles['custom-label-category']}>
+                                <label>Tên danh mục<span className={styles['span-required']}>*</span>:</label>
+                                <div className={styles['div-input']}>
+                                    <input
+                                        type="text"
+                                        {...register('category', { required: true })}
+                                        placeholder="Nhập tên danh mục"
+                                    />
+                                    {errors.category && <span className={styles['error-message']}>Tên danh mục là bắt buộc</span>}
+                                </div>
                             </div>
                         </div>
 
@@ -206,14 +160,12 @@ export default function PopupCreate({ open, handleClose, id }) {
                         <button
                             className={styles['btn-save-out']}
                             type='submit'
-                            onClick={() => handleOpenAgree(errors)}
                         >
                             Lưu & Thoát
                         </button>
                         <button
                             className={styles['btn-save-continue']}
                             type='submit'
-                            onClick={() => handleOpenAgree(errors)}
                         >
                             Lưu & Tiếp tục
                         </button>

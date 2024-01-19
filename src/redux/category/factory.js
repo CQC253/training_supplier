@@ -10,7 +10,8 @@ const CategoryFactory = {
             filteredList = supplierList.filter(item => {
                 const searchFields = [
                     item.items.supplierCode,
-                    item.items.category
+                    item.items.category,
+                    item.note
                 ];
 
                 const isInputValueMatch = payload.payload.inputValue ? searchFields.some(field => {

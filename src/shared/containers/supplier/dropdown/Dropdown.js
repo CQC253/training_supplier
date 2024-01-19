@@ -18,7 +18,6 @@ export default function DropdownSelect({
 }) {
     return (
         <>
-            {/* {console.log(placeholder)} */}
             <Dropdown
                 options={options}
                 onChange={onChange}

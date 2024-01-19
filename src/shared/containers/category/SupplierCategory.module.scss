@@ -55,7 +55,7 @@
         .form-search {
             display: flex;
             gap: 15px;
-            width: 60%;
+            width: 70%;
             min-width: 450px;
 
             .input-search {
@@ -107,12 +107,13 @@
                 align-items: center;
                 border-radius: 3px;
                 background: var(--neutral-2-f-2, #f2f2f2);
-                min-width: 100px;
+                width: 90px;
                 height: 32px;
                 border: none;
 
                 .p-re-setting {
-                    color: var(--neutral-7-icon, #707070);
+                    margin: 0;
+                    color: var(--Neutral-5, #ACACAC);
                     text-align: center;
                     font-family: Roboto;
                     font-size: 14px;
@@ -186,7 +187,7 @@
 
                     .paren-tr-title {
                         display: grid;
-                        grid-template-columns: 4% 40% 16% 30% 10%;
+                        grid-template-columns: 4% 43% 43% 10%;
                         z-index: 1;
                         padding: 10px 15px;
                         text-align: left;
@@ -207,8 +208,9 @@
                             max-width: 100%;
                         }
 
-                        .parent-th4 {
-                            justify-items: center;
+                        .parent-th3 {
+                            display: flex;
+                            justify-content: center;
                         }
                     }
                 }
@@ -218,7 +220,7 @@
 
                     .parent-tr-normal {
                         display: grid;
-                        grid-template-columns: 4% 40% 16% 30% 10%;
+                        grid-template-columns: 4% 43% 43% 10%;
                         z-index: 1;
                         padding: 8px 15px;
                         border-bottom: 1px solid var(--neutral-4-line, #d8d7d7);
@@ -247,12 +249,17 @@
                         }
 
                         .parent-td1 {
+                            display: flex;
                             color: var(--Sematics-Success-1, #1ba103);
                             font-weight: 600;
                             letter-spacing: 0.168px;
                         }
 
-                        .parent-td4 {
+                        .parent-td2 {
+                            display: flex;
+                        }
+
+                        .parent-td3 {
                             display: flex;
                             justify-content: center;
                             max-width: 100%;
@@ -335,7 +342,7 @@
                         }
                     }
 
-                    .actionCD-open {
+                    .actionPr-open {
                         background-color: #fbfaf4;
                     }
 
@@ -348,7 +355,7 @@
                                 .sub-tr-normal {
                                     display: grid;
                                     align-items: center;
-                                    grid-template-columns: 5% 39% 16% 30% 10%;
+                                    grid-template-columns: 5% 42% 43% 10%;
                                     z-index: 1;
                                     padding: 8px 15px;
                                     border-bottom: 1px solid
@@ -356,6 +363,8 @@
                                     background: #fbfaf4;
 
                                     td {
+                                        display: flex;
+                                        align-items: center;
                                         color: var(--neutral-8-text, #333);
                                         font-family: Roboto;
                                         font-size: 14px;
@@ -367,7 +376,8 @@
                                         text-overflow: ellipsis;
                                         white-space: nowrap;
                                         min-width: 30%;
-                                        max-width: 70%;
+                                        max-width: 100%;
+                                        height: 100%;
                                     }
 
                                     .sub-td0 {
@@ -375,13 +385,10 @@
                                     }
 
                                     .sub-td2 {
-                                        a {
-                                            text-decoration: none;
-                                            color: var(--other-link, #0054e1);
-                                        }
+                                        display: flex;
                                     }
 
-                                    .sub-td4 {
+                                    .sub-td3 {
                                         display: flex;
                                         justify-content: center;
                                         max-width: 100%;

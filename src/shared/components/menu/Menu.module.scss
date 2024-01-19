@@ -44,10 +44,6 @@
             //     background: #fff2b2;
             // }
 
-            &.active-link {
-                background-color: #fff2b2;
-            }
-
             .span-title {
                 width: 165px;
                 color: var(--neutral-8-text, #333);
@@ -57,6 +53,14 @@
                 font-weight: 400;
                 line-height: 20px;
                 letter-spacing: 0.14px;
+            }
+
+            &.active-link {
+                background-color: #fff2b2;
+                
+                .span-title {
+                font-weight: 600;
+                }
             }
         }
     }

@@ -98,7 +98,7 @@ const Routes = [
                 fallback: () => {
                     return null;
                 }
-            }
+            },
         ]
     },
     {

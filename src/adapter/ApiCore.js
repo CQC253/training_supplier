@@ -10,7 +10,6 @@ const ApiCore = (function () {
         }
         if (options.fetchSingle) {
             this.fetchSingle = function (id) {
-                console.log(id)
                 return apiProvider.fetchSingle(_this.url, id)
             }
         }

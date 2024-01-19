@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import Constants from 'utils/Constants'
 
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
@@ -23,16 +24,14 @@ import supplierActions from "redux/supplier/action"
 import { useLocation, useHistory, Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { getLocalStorageData, setLocalStorageData } from 'redux/supplier/localStorageUtils';
-import { fetchSupplierList } from 'redux/supplier/fetchSupplierList'
 
 export default function SupplierContainer() {
-    let deletedSupplier = null;
-
     const dispatch = useDispatch();
     const location = useLocation();
     const history = useHistory();
-    const { supplierList: supplierListRedux } = useSelector((state) => state.SupplierReducer);
+
+    const { supplierList } = useSelector((state) => state.SupplierReducer);
+    const [supplierListRedux, setSupplierListRedux] = useState([])
 
     const queryParams = new URLSearchParams(location.search);
     const [searchParams, setSearchParams] = useState({
@@ -59,28 +58,62 @@ export default function SupplierContainer() {
 
     const actionListRef = useRef(null);
     const tableRef = useRef(null);
+    const supplierListReduxRef = useRef(supplierListRedux);
+    const deleteDispatchedRef = useRef(false);
 
-    const existingSupplierList = getLocalStorageData('supplierList');
-    if (!existingSupplierList) {
-        setLocalStorageData('supplierList', fetchSupplierList);
-    }
+    useEffect(() => {
+        if (Array.isArray(supplierList)) {
+            setSupplierListRedux(supplierList)
+        }
+    }, [supplierList]);
+
+    useEffect(() => {
+        supplierListReduxRef.current = supplierListRedux;
+    }, [supplierListRedux]);
+
     useEffect(() => {
         dispatch({
             type: supplierActions.FETCH_SEARCH_SUPPLIER_LIST,
+            payload: {
+                statusValue: '',
+                inputValue: '',
+                addressValue: ''
+            }
         });
     }, []);
 
-    const arrayStatus = [...new Set(getLocalStorageData('supplierList').map(item => item.items.status))];
-    const optionStatus = arrayStatus.map(status => ({
-        value: status,
-        label: status === 1 ? 'Giao dịch' : 'Tạm dừng'
-    }));
-    const optionAddress = Array.from(getLocalStorageData('supplierList')
-        .map(item => item.items.address))
-        .filter(address => address !== '')
-        .map(address => ({
+    useEffect(() => {
+        function handleActionListPosition() {
+            if (action) {
+                const actionListElement = actionListRef.current;
+                const tableElement = tableRef.current;
+
+                if (actionListElement && tableElement) {
+                    const actionListRect = actionListElement.getBoundingClientRect();
+                    const tableRect = tableElement.getBoundingClientRect();
+
+                    if (actionListRect.bottom > tableRect.bottom) {
+                        actionListElement.style.transform = `translate(${-80}%, ${-155}%)`;
+                    }
+                }
+            }
+        }
+
+        handleActionListPosition();
+    }, [action]);
+
+    const optionStatus = Array.from(new Set(supplierListRedux.map(item => item.status)))
+        .map(status => ({
+            value: status,
+            label: status === 1 ? 'Giao dịch' : 'Tạm dừng'
+        }));
+    const optionAddress = Array.from(new Set(supplierListRedux.map((item) => {
+        const fullAddress = `${item.address}, ${item.ward}, ${item.district}, ${item.province}`;
+        return fullAddress;
+    })))
+        .map((address) => ({
             value: address,
-            label: address
+            label: address,
         }));
 
     const CategoryTooltip = styled(({ className, ...props }) => (
@@ -116,17 +149,15 @@ export default function SupplierContainer() {
         },
     }));
 
-    const changeStatus = arrayStatus.map(status => ({
-        value: status,
-        label: status === 1 ? 'Giao dịch' : 'Tạm dừng'
-    }));
-
     const handleInputValueChange = (event) => {
         setInputValue(event.target.value);
     };
 
     const handleStatus = (event) => {
-        setStatusValue(event.value == 1 ? "Giao dịch" : "Tạm dừng")
+        deleteDispatchedRef.current = true;
+        toast.dismiss();
+
+        setStatusValue(event.label)
         const queryParams = new URLSearchParams(location.search);
         const inputValue = queryParams.get('input') || '';
         const addressValue = queryParams.get('address') || '';
@@ -145,6 +176,9 @@ export default function SupplierContainer() {
     }, [statusValue])
 
     const handleAddress = (event) => {
+        deleteDispatchedRef.current = true;
+        toast.dismiss();
+
         setAddressValue(event.value)
         const queryParams = new URLSearchParams(location.search);
         const inputValue = queryParams.get('input') || '';
@@ -172,6 +206,9 @@ export default function SupplierContainer() {
     }, [searchParams]);
 
     const handleSearch = () => {
+        deleteDispatchedRef.current = true;
+        toast.dismiss();
+
         setSearchParams({ ...searchParams, input: inputValue })
         const queryParams = new URLSearchParams(location.search);
         const statusValue = queryParams.get('status') ? (queryParams.get('status') == 'Giao dịch' ? 1 : 2) : '' || '';
@@ -197,7 +234,14 @@ export default function SupplierContainer() {
             status: '',
             address: '',
         })
-        dispatch({ type: supplierActions.RESET_SUPPLIER_START })
+        dispatch({
+            type: supplierActions.FETCH_SEARCH_SUPPLIER_LIST,
+            payload: {
+                inputValue: '',
+                statusValue: '',
+                addressValue: ''
+            }
+        })
     };
 
     useEffect(() => {
@@ -212,7 +256,7 @@ export default function SupplierContainer() {
         setSelectAll(!selectAll);
 
         if (!selectAll) {
-            const allItemIds = supplierListRedux.map((item) => item.items.items.id);
+            const allItemIds = supplierListRedux.map((item) => item.id);
             setSelectedItems(allItemIds);
         } else {
             setSelectedItems([]);
@@ -228,15 +272,10 @@ export default function SupplierContainer() {
     };
 
     const handleChangeStatus = (id, event) => {
-        const queryParams = new URLSearchParams(location.search);
-        const inputValue = queryParams.get('input') || '';
-        const statusValue = queryParams.get('status') || '';
-        const addressValue = queryParams.get('address') || '';
-        if (inputValue || statusValue || addressValue) {
-            dispatch({ type: supplierActions.CHANGE_STATUS_SUPPLIER_START, payload: { id, event, shouldSearch: true } });
-        } else {
-            dispatch({ type: supplierActions.CHANGE_STATUS_SUPPLIER_START, payload: { id, event, shouldSearch: false } });
-        }
+        dispatch({
+            type: supplierActions.CHANGE_STATUS_SUPPLIER_START,
+            payload: { id: id, status: event.value }
+        })
     };
 
     useEffect(() => {
@@ -249,7 +288,6 @@ export default function SupplierContainer() {
     };
 
     useEffect(() => {
-        console.log();
         function handleActionListPosition() {
             if (action) {
                 const actionListElement = actionListRef.current;
@@ -279,51 +317,62 @@ export default function SupplierContainer() {
     };
 
     const handleDelete = (id) => {
-        const supplierList = getLocalStorageData('supplierList');
-        deletedSupplier = supplierList.find(item => item.items.id === id);
+        let timeoutId;
 
-        dispatch({ type: supplierActions.DELETE_SUPPLIER_START, payload: { id: id } })
+        const updatedList = supplierListRedux.filter((item) => item.id !== id);
+        setSupplierListRedux(updatedList)
+
+        const handleUndo = (id) => {
+            const itemUndo = supplierList.find(item => item.id === id)
+            if (itemUndo) {
+                const undoList = [...supplierListReduxRef.current, itemUndo];
+                undoList.sort((a, b) => a.id - b.id)
+                setSupplierListRedux(undoList)
+            }
+
+            clearTimeout(timeoutId);
+
+            toast.success("Hoàn tác", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+        };
 
         toast.info(
             (
                 <div className={styles['div-undo']}>
                     <p>Đang xóa nhà cung cấp</p>
-                    <button onClick={() => handleUndo()}>Hoàn tác</button>
+                    <button onClick={() => handleUndo(id)}>Hoàn tác</button>
                 </div>
             ),
             {
                 position: "top-right",
-                autoClose: 5000,
+                autoClose: 3000,
                 hideProgressBar: false,
                 closeButton: false,
                 closeOnClick: true,
-                pauseOnHover: true,
+                pauseOnHover: false,
                 draggable: true,
                 progress: undefined,
                 theme: "light",
                 icon: <SupplierIconInfo />,
             },
         );
-    }
 
-    const handleUndo = () => {
-        dispatch({
-            type: supplierActions.UNDO_SUPPLIER_START,
-            payload: {
-                deletedSupplier: deletedSupplier,
+        timeoutId = setTimeout(() => {
+            if (!deleteDispatchedRef.current) {
+                dispatch({
+                    type: supplierActions.DELETE_SUPPLIER_START,
+                    payload: { id: id }
+                });
             }
-        })
-
-        toast.success("Hoàn tác", {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-        });
+        }, 4000);
     };
 
     useEffect(() => {
@@ -349,10 +398,12 @@ export default function SupplierContainer() {
     };
 
     const calculateIndexes = () => {
-        const firstIndex = currentPage * itemsPerPage + 1;
-        const lastIndex = Math.min((currentPage + 1) * itemsPerPage, supplierListRedux.length);
-        setFirstItemIndex(firstIndex);
-        setLastItemIndex(lastIndex);
+        if (supplierListRedux.length > 0) {
+            const firstIndex = currentPage * itemsPerPage + 1;
+            const lastIndex = Math.min((currentPage + 1) * itemsPerPage, supplierListRedux.length);
+            setFirstItemIndex(firstIndex);
+            setLastItemIndex(lastIndex);
+        }
     };
     useEffect(() => {
         calculateIndexes();
@@ -455,7 +506,6 @@ export default function SupplierContainer() {
                                         onChange={handleSelectAll}
                                     />
                                 </th>
-                                <th className={styles['th2']}>Mã NCC</th>
                                 <th className={styles['th3']}>Tên nhà cung cấp</th>
                                 <th className={styles['th4']}>Danh mục</th>
                                 <th className={styles['th5']}>Mã code</th>
@@ -472,12 +522,12 @@ export default function SupplierContainer() {
                             {supplierListRedux
                                 .slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage)
                                 .map((item, index) => {
-                                    const addressArr = [item.items.address, item.items.ward, item.items.district, item.items.city]
+                                    const addressArr = [item.address, item.ward, item.district, item.province]
 
-                                    const filteredOptions = changeStatus.filter((option) => {
-                                        if (item.items.status === 1) {
+                                    const filteredOptions = optionStatus.filter((option) => {
+                                        if (item.status === 1) {
                                             return option.value === 2;
-                                        } else if (item.items.status === 2) {
+                                        } else if (item.status === 2) {
                                             return option.value === 1;
                                         }
                                         return false;
@@ -486,41 +536,40 @@ export default function SupplierContainer() {
                                     return (
                                         <tr
                                             className={styles['tr-normal']}
-                                            key={item.items.id}
+                                            key={item.id}
                                         >
                                             <td className={styles['td1']}>
                                                 <input
                                                     className={styles['checkbox-td']}
                                                     type="checkbox"
-                                                    value={item.items.id}
-                                                    checked={selectedItems.includes(item.items.id)}
-                                                    onChange={() => handleSelect(item.items.id)}
+                                                    value={item.id}
+                                                    checked={selectedItems.includes(item.id)}
+                                                    onChange={() => handleSelect(item.id)}
                                                 />
                                             </td>
-                                            <td className={styles['td2']}>
+                                            <td className={styles['td3']}>
                                                 <Link
-                                                    to={`/supplier/list/detail/${item.items.id}`}
+                                                    to={`/supplier/list/detail/${item.id}`}
                                                 >
-                                                    {item.items.supplierCode}
+                                                    {item.supplierName}
                                                 </Link>
                                             </td>
-                                            <td className={styles['td3']}>{item.items.supplierName}</td>
                                             <CategoryTooltip
-                                                title={item.items.category}
+                                                title={item.categoryName}
                                                 arrow
                                                 placement="top"
                                             >
-                                                <td className={styles['td4']}>{item.items.category}</td>
+                                                <td className={styles['td4']}>{item.categoryName}</td>
                                             </CategoryTooltip>
-                                            <td className={styles['td5']}>{item.items.code}</td>
-                                            <td className={styles['td6']}>{item.items.deptCode}</td>
-                                            <td className={styles['td7']}>{item.items.phone}</td>
+                                            <td className={styles['td5']}>{item.code}</td>
+                                            <td className={styles['td6']}>{item.deptCode}</td>
+                                            <td className={styles['td7']}>{item.phone}</td>
                                             <EmailTooltip
-                                                title={item.items.email}
+                                                title={item.email}
                                                 arrow
                                                 placement="top"
                                             >
-                                                <td className={styles['td8']}>{item.items.email}</td>
+                                                <td className={styles['td8']}>{item.email}</td>
                                             </EmailTooltip>
 
                                             <AddressTooltip
@@ -535,12 +584,12 @@ export default function SupplierContainer() {
                                                 <div className={styles['div-select']}>
                                                     <DropdownSelect
                                                         options={filteredOptions}
-                                                        onChange={(event) => handleChangeStatus(item.items.id, event)}
-                                                        placeholder={item.items.status == 1 ? 'Giao dịch' : item.items.status == 2 ? 'Tạm dừng' : ''}
+                                                        onChange={(event) => handleChangeStatus(item.id, event)}
+                                                        placeholder={item.status == 1 ? 'Giao dịch' : item.status == 2 ? 'Tạm dừng' : ''}
                                                         arrowOpen={<SupplierIconArrow />}
                                                         arrowClosed={<SupplierIconArrow />}
 
-                                                        controlClassName={item.items.status}
+                                                        controlClassName={item.status}
                                                     />
                                                 </div>
                                             </td>
@@ -573,7 +622,7 @@ export default function SupplierContainer() {
                                                                     className={styles['btn-delete']}
                                                                     onMouseDown={(event) => {
                                                                         event.preventDefault();
-                                                                        handleDelete(item.items.id);
+                                                                        handleDelete(item.id);
                                                                     }}
                                                                 >
                                                                     <SupplierIconDelete />

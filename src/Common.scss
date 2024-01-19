@@ -14,17 +14,17 @@ $green-select: #008A5A;
 $black: black;
 $progressBarColor-info: #3078F1;
 $text-success-color: #1BA103;
-// $fontFamily:Roboto;
+$fontFamily:Roboto;
 $roboto-medium-font: 'Roboto-Medium';
 $roboto-medium-font-path: 'assets/fonts/Roboto-Medium.woff2';
-$roboto-regular-font: 'Roboto-Regular';
+$roboto-regular-font: 'assets/fonts/Roboto-Regular.woff';
 $roboto-regular-font-path: 'assets/fonts/Roboto-Regular.woff2';
 $roboto-light-font: 'Roboto-Light';
 $roboto-light-font-path: 'assets/fonts/Roboto-Light.woff2';
 
 @font-face {
-    font-family: 'Roboto-Regular';
-    src: url($roboto-regular-font-path) format('woff2');
+    font-family: 'Roboto';
+    src: url($roboto-regular-font) format('woff2');
     font-weight: normal;
     font-style: normal;
 }

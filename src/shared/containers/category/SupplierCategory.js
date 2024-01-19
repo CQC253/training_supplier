@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, createRef } from 'react'
-import useOnClickOutside from 'hooks/use-onclick-outside'
 
 import ReactPaginate from 'react-paginate';
 
@@ -13,31 +12,22 @@ import SupplierIconPrev from '../icons/iconsSupplierList/SupplierIconPrev'
 import IconCreate from '../icons/iconCategory/IconCreate';
 import IconCloseRow from '../icons/iconCategory/IconCloseRow';
 import IconOpenRow from '../icons/iconCategory/IconOpenRow';
-import SupplierIconInfo from '../icons/iconsSupplierList/SuppliericonInfo';
 
 import { useDispatch, useSelector } from 'react-redux';
 import SupplierCategoryAction from "redux/category/action"
-import { useLocation, useHistory, Link } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
+import { useLocation, useHistory } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import PopupCreate from './popupCreate/PopupCreate';
 import PopupUpdate from './popupUpdate/PopupUpdate';
 
-import { getLocalStorageData, setLocalStorageData } from 'redux/supplier/localStorageUtils';
-import { fetchSupplierList } from 'redux/supplier/fetchSupplierList'
-
 export default function SupplierCategory() {
-    const rows = [
-        { id: 1, categorization: 'Ngành', supplierCode: '--', note: 'Ghi chú' },
-        { id: 2, categorization: 'Nhóm', supplierCode: '--', note: 'Ghi chú' },
-        { id: 3, categorization: 'Mục', supplierCode: '--', note: 'Ghi chú' },
-    ]
-    let deletedCategory = null;
-
     const history = useHistory();
     const location = useLocation();
     const dispatch = useDispatch();
+
     const { supplierCategoryList } = useSelector((state) => state.SupplierCategoryReducer);
+    const [categoryListRedux, setCategoryListRedux] = useState([])
+    const [parentArray, setParentArray] = useState([])
 
     const queryParams = new URLSearchParams(location.search);
     const [searchParams, setSearchParams] = useState({
@@ -49,7 +39,6 @@ export default function SupplierCategory() {
     const [action, setAction] = useState([])
     const [actionCD, setActionCD] = useState([])
     const [parentRefs, setParentRefs] = useState([]);
-    const [subRefs, setSubRefs] = useState([]);
     const actionParentRef = useRef(null);
     const actionSubRef = useRef(null);
     const tableRef = useRef(null);
@@ -67,16 +56,19 @@ export default function SupplierCategory() {
     const [lastItemIndex, setLastItemIndex] = useState(0);
     const [displayedSupplierList, setDisplayedSupplierList] = useState([]);
 
-    const existingSupplierList = getLocalStorageData('supplierList');
-    if (!existingSupplierList) {
-        setLocalStorageData('supplierList', fetchSupplierList);
-    }
-
     useEffect(() => {
         dispatch({
             type: SupplierCategoryAction.FETCH_SEARCH_CATEGORY_START,
+            payload: {
+                inputValue: '',
+            }
         });
     }, []);
+
+    useEffect(() => {
+        setCategoryListRedux(supplierCategoryList?.all)
+        setParentArray(supplierCategoryList?.parent)
+    }, [supplierCategoryList]);
 
     const handleInputValueChange = (event) => {
         setInputValue(event.target.value);
@@ -92,12 +84,10 @@ export default function SupplierCategory() {
         })
     };
 
-
     const handleSearchHistory = () => {
         const searchParamsString = new URLSearchParams(searchParams).toString();
         history.push(`${location.pathname}?${searchParamsString}`);
     };
-
     useEffect(() => {
         handleSearchHistory()
     }, [searchParams]);
@@ -107,7 +97,12 @@ export default function SupplierCategory() {
         setSearchParams({
             input: ''
         })
-        dispatch({ type: SupplierCategoryAction.RESET_CATEGORY_START })
+        dispatch({
+            type: SupplierCategoryAction.FETCH_SEARCH_CATEGORY_START,
+            payload: {
+                inputValue: '',
+            }
+        })
     };
 
     useEffect(() => {
@@ -116,31 +111,31 @@ export default function SupplierCategory() {
         })
     }, [])
 
-    const handleRowClick = (indexCD) => {
-        const isOpen = openRows.includes(indexCD);
+    const handleRowClick = (indexPr) => {
+        const isOpen = openRows.includes(indexPr);
         if (isOpen) {
-            setOpenRows(openRows.filter((row) => row !== indexCD));
+            setOpenRows(openRows.filter((row) => row !== indexPr));
         } else {
-            setOpenRows([...openRows, indexCD]);
+            setOpenRows([...openRows, indexPr]);
         }
     };
 
     useEffect(() => {
-        setActionCD(Array(rows.length).fill(false));
-    }, [rows.length]);
+        setActionCD(Array(parentArray?.length).fill(false));
+    }, [parentArray?.length]);
 
-    const handleActionCD = (indexCD) => {
-        const newActionCD = actionCD.map((value, i) => (i === indexCD ? !value : false));
+    const handleActionCD = (indexPr) => {
+        const newActionCD = actionCD?.map((value, i) => (i === indexPr ? !value : false));
         setActionCD(newActionCD);
     };
 
     useEffect(() => {
         const initActions = {};
-        supplierCategoryList.forEach(item => {
-            initActions[item.items.id] = false;
+        categoryListRedux?.forEach(item => {
+            initActions[item.id] = false;
         });
         setAction(initActions);
-    }, [supplierCategoryList]);
+    }, [categoryListRedux]);
 
     const handleAction = (id) => {
         setAction(prevActions => ({
@@ -151,63 +146,29 @@ export default function SupplierCategory() {
 
     useEffect(() => {
         setParentRefs((parentRefs) =>
-            Array(rows.length)
+            Array(parentArray?.length)
                 .fill()
-                .map((_, i) => parentRefs[i] || createRef()),
+                ?.map((_, i) => parentRefs[i] || createRef()),
         );
-    }, [rows.length]);
-    const handleClickOutsideParent = (event) => {
-        parentRefs.forEach((ref, indexCD) => {
-            if (ref.current && ref.current.contains(event.target)) {
-                return;
-            } else {
-                setActionCD(prevActionCDs => prevActionCDs.map((value, i) => (i === indexCD ? false : value)));
-            }
-        });
-    };
+    }, [parentArray?.length]);
     useEffect(() => {
+        const handleClickOutsideParent = (event) => {
+            parentRefs.forEach((ref, indexPr) => {
+                if (ref.current && ref.current.contains(event.target)) {
+                    return;
+                } else {
+                    setActionCD(prevActionCDs => prevActionCDs?.map((value, i) => (i === indexPr ? false : value)));
+                }
+            });
+        };
+
         document.addEventListener('mousedown', handleClickOutsideParent);
         return () => {
             document.removeEventListener('mousedown', handleClickOutsideParent);
         };
     }, [parentRefs]);
 
-
-
     useEffect(() => {
-        setSubRefs((subRefs) =>
-            Array(supplierCategoryList.length)
-                .fill()
-                .map((_, i) => subRefs[i] || createRef()),
-        );
-    }, [supplierCategoryList.length]);
-    const handleClickOutsideSub = (event) => {
-        let isClickedOnActionButton = false;
-        subRefs.forEach((ref, index) => {
-            if (ref.current && ref.current.contains(event.target)) {
-                isClickedOnActionButton = true;
-            }
-        });
-
-        if (!isClickedOnActionButton) {
-            setAction(prevActions => {
-                const updatedActions = { ...prevActions };
-                Object.keys(updatedActions).forEach(key => {
-                    updatedActions[key] = false;
-                });
-                return updatedActions;
-            });
-        }
-    };
-    useEffect(() => {
-        document.addEventListener('mousedown', handleClickOutsideSub);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutsideSub);
-        };
-    }, [subRefs]);
-
-    useEffect(() => {
-        console.log();
         function handleActionListPosition() {
             if (action) {
                 const actionParentElement = actionParentRef.current;
@@ -242,58 +203,23 @@ export default function SupplierCategory() {
     }, [action, actionCD]);
 
     const handleDelete = (id) => {
-        const supplierList = getLocalStorageData('supplierList');
-        deletedCategory = supplierList.find(item => item.items.id === id);
-
+        const updatedList = categoryListRedux?.filter((item) => item.id !== id);
+        setCategoryListRedux(updatedList)
         dispatch({ type: SupplierCategoryAction.DELETE_CATEGORY_START, payload: { id: id } })
-
-        toast.info(
-            (
-                <div className={styles['div-undo']}>
-                    <p>Đang xóa danh mục</p>
-                    <button onClick={() => handleUndo()}>Hoàn tác</button>
-                </div>
-            ),
-            {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeButton: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-                icon: <SupplierIconInfo />,
-            },
-        );
     }
-
-    const handleUndo = () => {
-        dispatch({
-            type: SupplierCategoryAction.UNDO_CATEGORY_START,
-            payload: {
-                deletedCategory: deletedCategory,
-            }
-        })
-
-        toast.success("Hoàn tác", {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-        });
-    };
 
     const handleClickOpenCreate = (id) => {
         setIdParent(id)
         setOpenCreate(true);
     };
     const handleClickCloseCreate = () => {
+        dispatch({
+            type: SupplierCategoryAction.FETCH_SEARCH_CATEGORY_START,
+            payload: {
+                inputValue: '',
+            }
+        });
+
         setOpenCreate(false);
     };
 
@@ -302,16 +228,23 @@ export default function SupplierCategory() {
         setOpenUpdate(true);
     };
     const handleClickCloseUpdate = () => {
+        dispatch({
+            type: SupplierCategoryAction.FETCH_SEARCH_CATEGORY_START,
+            payload: {
+                inputValue: '',
+            }
+        });
+        
         setOpenUpdate(false);
     };
 
     useEffect(() => {
-        const totalPages = Math.ceil(rows.length / itemsPerPage);
+        const totalPages = Math.ceil(categoryListRedux?.length / itemsPerPage);
         setTotalPages(totalPages);
 
         const startIndex = 0;
         const endIndex = itemsPerPage;
-        const updatedDisplayedSupplierList = rows.slice(startIndex, endIndex);
+        const updatedDisplayedSupplierList = categoryListRedux?.slice(startIndex, endIndex);
         setDisplayedSupplierList(updatedDisplayedSupplierList);
     }, [itemsPerPage]);
 
@@ -320,7 +253,7 @@ export default function SupplierCategory() {
 
         const startIndex = selectedPage.selected * itemsPerPage;
         const endIndex = (selectedPage.selected + 1) * itemsPerPage;
-        const updatedDisplayedSupplierList = rows.slice(startIndex, endIndex);
+        const updatedDisplayedSupplierList = categoryListRedux?.slice(startIndex, endIndex);
         setDisplayedSupplierList(updatedDisplayedSupplierList);
     };
 
@@ -331,13 +264,13 @@ export default function SupplierCategory() {
 
     const calculateIndexes = () => {
         const firstIndex = currentPage * itemsPerPage + 1;
-        const lastIndex = Math.min((currentPage + 1) * itemsPerPage, rows.length);
+        const lastIndex = Math.min((currentPage + 1) * itemsPerPage, categoryListRedux?.length);
         setFirstItemIndex(firstIndex);
         setLastItemIndex(lastIndex);
     };
     useEffect(() => {
         calculateIndexes();
-    }, [currentPage, itemsPerPage, displayedSupplierList]);
+    }, [currentPage, itemsPerPage, displayedSupplierList,categoryListRedux]);
 
     return (
         <>
@@ -358,20 +291,6 @@ export default function SupplierCategory() {
             }
 
             <div className={styles['div-supplier']}>
-                <ToastContainer
-                    position="top-right"
-                    className={styles['custom-toast-container']}
-                    autoClose={5000}
-                    hideProgressBar={false}
-                    newestOnTop
-                    closeOnClick
-                    rtl={false}
-                    pauseOnFocusLoss
-                    draggable
-                    pauseOnHover
-                    theme="light"
-                />
-
                 <div className={styles['form-search-setting']}>
                     <div className={styles['form-search']}>
                         <div className={styles['input-search']}>
@@ -382,7 +301,7 @@ export default function SupplierCategory() {
                                 placeholder='Tìm kiếm danh mục nhà cung cấp, tên nhà cung cấp'
                                 className={styles['input-field']}
                                 value={inputValue}
-                                onChange={handleInputValueChange}
+                                onChange={(e) => handleInputValueChange(e)}
                             />
                         </div>
                     </div>
@@ -411,41 +330,37 @@ export default function SupplierCategory() {
                                 <tr className={styles['paren-tr-title']}>
                                     <th className={styles['parent-th0']}></th>
                                     <th className={styles['parent-th1']}>Danh mục</th>
-                                    <th className={styles['parent-th2']}>Mã NCC</th>
-                                    <th className={styles['parent-th3']}>Ghi chú</th>
-                                    <th className={styles['parent-th4']}>Tác vụ</th>
+                                    <th className={styles['parent-th2']}>Ghi chú</th>
+                                    <th className={styles['parent-th3']}>Tác vụ</th>
                                 </tr>
                             </thead>
 
                             <tbody className={styles['parent-tbody']}>
-                                {rows.map((row, indexCD) => {
-                                    const filteredSubRows = supplierCategoryList.filter(item => item.categorization === row.categorization);
-
+                                {parentArray?.map((parent, indexPr) => {
                                     return (
-                                        <React.Fragment key={row.id}>
-                                            <tr className={`${styles['parent-tr-normal']} ${openRows.includes(indexCD) == true ? styles['actionCD-open'] : ''}`}>
+                                        <React.Fragment key={parent.id}>
+                                            <tr className={`${styles['parent-tr-normal']} ${openRows.includes(indexPr) == true ? styles['actionPr-open'] : ''}`}>
                                                 <td
-                                                    onClick={() => handleRowClick(indexCD)}
+                                                    onClick={() => handleRowClick(indexPr)}
                                                     className={styles['parent-td0']}
                                                 >
-                                                    {openRows.includes(indexCD) ? <IconCloseRow /> : <IconOpenRow />}
+                                                    {openRows.includes(indexPr) ? <IconCloseRow /> : <IconOpenRow />}
                                                 </td>
-                                                <td className={styles['parent-td1']}>{row.categorization}</td>
-                                                <td className={styles['parent-td2']}>{row.supplierCode}</td>
-                                                <td className={styles['parent-td3']}>{row.note}</td>
-                                                <td className={styles['parent-td4']}>
+                                                <td className={styles['parent-td1']}>{parent.categoryName}</td>
+                                                <td className={styles['parent-td2']}>{parent.note}</td>
+                                                <td className={styles['parent-td3']}>
                                                     <div
                                                         className={styles['action-button-parent']}
-                                                        ref={parentRefs[indexCD]}
+                                                        ref={parentRefs[indexPr]}
                                                     >
                                                         <button
                                                             className={styles['custom-action-button']}
-                                                            onClick={() => handleActionCD(indexCD)}
+                                                            onClick={() => handleActionCD(indexPr)}
                                                         >
                                                             <SupplierIconAction />
                                                         </button>
 
-                                                        {actionCD[indexCD] &&
+                                                        {actionCD[indexPr] &&
                                                             <ul
                                                                 className={styles['action-list']}
                                                                 ref={actionParentRef}
@@ -453,7 +368,7 @@ export default function SupplierCategory() {
                                                                 <li className={styles['action-item-create']}>
                                                                     <button
                                                                         className={styles['btn-create']}
-                                                                        onClick={() => handleClickOpenCreate(row.id)}
+                                                                        onClick={() => handleClickOpenCreate(parent.id)}
                                                                     >
                                                                         <IconCreate />
                                                                         Thêm mới danh mục
@@ -464,79 +379,73 @@ export default function SupplierCategory() {
                                                     </div>
                                                 </td>
                                             </tr>
-                                            {openRows.includes(indexCD) && (
+                                            {openRows.includes(indexPr) && (
                                                 <tr className={styles['sub-tr']}>
                                                     <td>
                                                         <table className={styles['sub-table']}>
                                                             <tbody className={styles['sub-tbody']}>
                                                                 {
-                                                                    filteredSubRows.map((item, index) => {
-                                                                        return (
-                                                                            <tr
-                                                                                className={styles['sub-tr-normal']}
-                                                                                key={item.items.id}
-                                                                            >
-                                                                                <td className={styles['sub-td0']}></td>
-                                                                                <td className={styles['sub-td1']}>{item.items.category}</td>
-                                                                                <td className={styles['sub-td2']}>
-                                                                                    <Link
-                                                                                        to={`/supplier/list/detail/${item.items.id}`}
-                                                                                    >
-                                                                                        {item.items.supplierCode}
-                                                                                    </Link>
-                                                                                </td>
-                                                                                <td className={styles['sub-td3']}>Ghi chú</td>
-                                                                                <td className={styles['sub-td4']}>
-                                                                                    <div
-                                                                                        className={styles['action-button-sub']}
-                                                                                        ref={subRefs[item.items.id]}
-                                                                                    >
-                                                                                        <button
-                                                                                            className={styles['custom-action-button']}
-                                                                                            onClick={() => handleAction(item.items.id)}
+                                                                    categoryListRedux
+                                                                        .filter(category => category.parent_id === parent.id)
+                                                                        ?.map((sub) => {
+                                                                            return (
+                                                                                <tr
+                                                                                    className={styles['sub-tr-normal']}
+                                                                                    key={sub.id}
+                                                                                >
+                                                                                    <td className={styles['sub-td0']}></td>
+                                                                                    <td className={styles['sub-td1']}>{sub.categoryName}</td>
+                                                                                    <td className={styles['sub-td2']}>{sub.note}</td>
+                                                                                    <td className={styles['sub-td3']}>
+                                                                                        <div
+                                                                                            className={styles['action-button-sub']}
                                                                                         >
-                                                                                            <SupplierIconAction />
-                                                                                        </button>
-
-                                                                                        {action[item.items.id] &&
-                                                                                            <ul
-                                                                                                className={styles['action-list']}
-                                                                                                ref={actionSubRef}
+                                                                                            <button
+                                                                                                className={styles['custom-action-button']}
+                                                                                                onClick={() => handleAction(sub.id)}
                                                                                             >
-                                                                                                <li className={styles['action-item-create']}>
-                                                                                                    <button
-                                                                                                        className={styles['btn-create']}
-                                                                                                        onClick={() => handleClickOpenCreate(row.id)}
-                                                                                                    >
-                                                                                                        <IconCreate />
-                                                                                                        Thêm mới danh mục
-                                                                                                    </button>
-                                                                                                </li>
-                                                                                                <li className={styles['action-item']}>
-                                                                                                    <button
-                                                                                                        className={styles['btn-edit']}
-                                                                                                        onClick={() => handleClickOpenUpdate(item.items.id)}
-                                                                                                    >
-                                                                                                        <SupplierIconEdit />
-                                                                                                        Sửa
-                                                                                                    </button>
-                                                                                                </li>
-                                                                                                <li className={styles['action-item']}>
-                                                                                                    <button
-                                                                                                        className={styles['btn-delete']}
-                                                                                                        onClick={() => handleDelete(item.items.id)}
-                                                                                                    >
-                                                                                                        <SupplierIconDelete />
-                                                                                                        Xóa
-                                                                                                    </button>
-                                                                                                </li>
-                                                                                            </ul>
-                                                                                        }
-                                                                                    </div>
-                                                                                </td>
-                                                                            </tr>
-                                                                        )
-                                                                    })}
+                                                                                                <SupplierIconAction />
+                                                                                            </button>
+
+                                                                                            {action[sub.id] &&
+                                                                                                <ul
+                                                                                                    className={styles['action-list']}
+                                                                                                    ref={actionSubRef}
+                                                                                                >
+                                                                                                    <li className={styles['action-item-create']}>
+                                                                                                        <button
+                                                                                                            className={styles['btn-create']}
+                                                                                                            onClick={() => handleClickOpenCreate(parent.id)}
+                                                                                                        >
+                                                                                                            <IconCreate />
+                                                                                                            Thêm mới danh mục
+                                                                                                        </button>
+                                                                                                    </li>
+                                                                                                    <li className={styles['action-item']}>
+                                                                                                        <button
+                                                                                                            className={styles['btn-edit']}
+                                                                                                            onClick={() => handleClickOpenUpdate(sub.id)}
+                                                                                                        >
+                                                                                                            <SupplierIconEdit />
+                                                                                                            Sửa
+                                                                                                        </button>
+                                                                                                    </li>
+                                                                                                    <li className={styles['action-item']}>
+                                                                                                        <button
+                                                                                                            className={styles['btn-delete']}
+                                                                                                            onClick={() => handleDelete(sub.id)}
+                                                                                                        >
+                                                                                                            <SupplierIconDelete />
+                                                                                                            Xóa
+                                                                                                        </button>
+                                                                                                    </li>
+                                                                                                </ul>
+                                                                                            }
+                                                                                        </div>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            )
+                                                                        })}
                                                             </tbody>
                                                         </table>
                                                     </td>
@@ -554,8 +463,8 @@ export default function SupplierCategory() {
                     <div className={styles['div-itemsPerPage']}>
                         <div className={styles['div-selectItem']}>
                             <p>Hiển thị</p>
-                            <select value={itemsPerPage} onChange={() => handleChangeItemsPerPage()}>
-                                {selectItemsPerPage.map((option) => (
+                            <select value={itemsPerPage} onChange={(event) => handleChangeItemsPerPage(event)}>
+                                {selectItemsPerPage?.map((option) => (
                                     <option key={option} value={option}>
                                         {option}
                                     </option>
@@ -565,7 +474,7 @@ export default function SupplierCategory() {
 
                         <div className={styles['div-from-to']}>
                             <p>
-                                Hiển thị từ {firstItemIndex} - {lastItemIndex} trên tổng {rows.length}
+                                Hiển thị từ {firstItemIndex} - {lastItemIndex} trên tổng {categoryListRedux?.length}
                             </p>
                         </div>
 

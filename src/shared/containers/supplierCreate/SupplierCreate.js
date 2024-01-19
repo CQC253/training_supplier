@@ -6,8 +6,10 @@ import { useForm, Controller } from 'react-hook-form';
 import { useSelector, useDispatch } from 'react-redux';
 import supplierActions from "redux/supplier/action"
 import ProvincesActions from "redux/provinces/action";
+import SupplierCategoryAction from 'redux/category/action';
 
 import DropdownSelect from './dropdown/Dropdown';
+import DropdownGroup from './dropdown/DropdownGroup';
 import IconBack from '../icons/iconsSupplierCreate/IconBack';
 
 import Button from '@mui/material/Button';
@@ -15,13 +17,12 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
 
-import { getLocalStorageData, setLocalStorageData } from 'redux/supplier/localStorageUtils';
-import { fetchSupplierList } from 'redux/supplier/fetchSupplierList'
-
 export default function SupplierCreate() {
     const history = useHistory();
     const dispatch = useDispatch();
-    const { supplierList: supplierListRedux } = useSelector((state) => state.SupplierReducer);
+
+    const { supplierList } = useSelector((state) => state.SupplierReducer);
+    const { supplierCategoryList } = useSelector((state) => state.SupplierCategoryReducer);
     const {
         provinces,
         districts,
@@ -30,17 +31,48 @@ export default function SupplierCreate() {
 
     const { register, handleSubmit, control, clearErrors, formState: { errors }, setValue } = useForm();
 
+    const [supplierListRedux, setSupplierListRedux] = useState([])
+    const [categoryListRedux, setCategoryListRedux] = useState([])
+    const [selectedDeptCode, setSelectedDeptCode] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [groupCategory, setGroupCategory] = useState([]);
+    const [selectedProvince, setSelectedProvince] = useState(null);
+    const [selectedDistrict, setSelectedDistrict] = useState(null);
+    const [selectedWard, setSelectedWard] = useState(null);
+    const [selectedStatus, setSelectedStatus] = useState({
+        name: 'Giao dịch',
+        code: 1
+    });
     const [open, setOpen] = useState(false);
+    const [infoCreate, setInfoCreate] = useState(null)
 
-    const existingSupplierList = getLocalStorageData('supplierList');
-    if (!existingSupplierList) {
-        setLocalStorageData('supplierList', fetchSupplierList);
-    }
+    useEffect(() => {
+        if (Array.isArray(supplierList)) {
+            setSupplierListRedux(supplierList)
+        }
+    }, [supplierList]);
 
+    useEffect(() => {
+        setCategoryListRedux(supplierCategoryList?.all)
+    }, [supplierCategoryList]);
 
     useEffect(() => {
         dispatch({
             type: supplierActions.FETCH_SEARCH_SUPPLIER_LIST,
+            payload: {
+                statusValue: '',
+                inputValue: '',
+                addressValue: ''
+            }
+        });
+    }, []);
+
+    useEffect(() => {
+        dispatch({
+            type: SupplierCategoryAction.FETCH_SEARCH_CATEGORY_START,
+            payload: {
+                inputValue: '',
+            }
         });
     }, []);
 
@@ -50,26 +82,42 @@ export default function SupplierCreate() {
         });
     }, [dispatch]);
 
-    const getNextId = () => {
-        if (supplierListRedux.length > 0) {
-            const lastId = supplierListRedux[supplierListRedux.length - 1].items.id;
-            return lastId + 1;
-        } else {
-            return 1;
-        }
-    };
+    useEffect(() => {
+        setSelectedDistrict(null);
+        setSelectedWard(null);
+    }, [selectedProvince]);
 
-    const optionCity = provinces.map(province => ({
+    useEffect(() => {
+        const createGroupedCategory = () => {
+            const groupedCategories = categoryListRedux?.filter(item => !item.parent_id);
+
+            const groupCategoryData = groupedCategories.map(category => {
+                const items = categoryListRedux?.filter(item => item.parent_id === category.id).map(child => ({
+                    label: child.categoryName,
+                    value: child.id
+                }));
+
+                return {
+                    label: category.categoryName,
+                    code: category.id,
+                    items: items
+                };
+            });
+
+            setGroupCategory(groupCategoryData);
+        };
+
+        createGroupedCategory();
+    }, [categoryListRedux]);
+
+    const optionDeptCode = Array.from(new Set(supplierListRedux.map(item => item.deptCode))).map(deptCode => ({
+        name: deptCode,
+        code: deptCode
+    }));
+
+    const optionProvince = provinces.map(province => ({
         name: province.name,
         code: province.code
-    }));
-
-    const optionCategory = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.items.category))).map(category => ({
-        name: category
-    }));
-
-    const optionDeptCode = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.items.deptCode))).map(deptCode => ({
-        name: deptCode,
     }));
 
     const optionDistrict = districts.map(district => ({
@@ -77,61 +125,90 @@ export default function SupplierCreate() {
         code: district.code
     }));
 
-    const optionStatus = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.items.status))).map(status => ({
-        name: status && status == 1 ? 'Giao dịch' : 'Tạm dừng'
+    const optionWard = wards.map(ward => ({
+        name: ward.name,
+        code: ward.name
     }));
 
-    const optionWard = wards.map(ward => ({ name: ward.name }));
-
-    const optionSupplierCode = Array.from(new Set(getLocalStorageData('supplierList').map(item => item.items.supplierCode))).map(supplierCode => ({
-        name: supplierCode
+    const optionStatus = Array.from(new Set(supplierListRedux.map(item => item.status))).map(status => ({
+        name: status && status == 1 ? 'Giao dịch' : 'Tạm dừng',
+        code: status
     }));
+
+    const handleDeptCodeChange = (event) => {
+        if (event) {
+            clearErrors('deptCode')
+            setValue("deptCode", event.name)
+        }
+        setSelectedDeptCode(event);
+    };
+
+    const handleCategoryChange = (event) => {
+        if (event) {
+            clearErrors('category')
+            setValue("category", event)
+        }
+        setSelectedCategory(event);
+    };
 
     const handleProvinceChange = (event) => {
+        setSelectedProvince(event);
+
         if (event) {
-            clearErrors('city')
-            setValue("city", event.value.name)
-            setValue("district", [])
-            setValue("ward", [])
+            clearErrors('province')
+            setValue("province", event.name)
         }
 
         dispatch({
             type: ProvincesActions.FETCH_DISTRICTS_START,
-            payload: event.value.code
+            payload: event.code
         });
     };
 
     const handleDistrictChange = (event) => {
+        setSelectedDistrict(event)
         if (event) {
             clearErrors('district')
-            setValue("district", event.value.name)
-            setValue("ward", [])
+            setValue("district", event.name)
         }
 
         dispatch({
             type: ProvincesActions.FETCH_WARDS_START,
-            payload: event.value.code
+            payload: event.code
         });
     };
 
-    const [infoCreate, setInfoCreate] = useState(null)
+    const handleWardChange = (event) => {
+        setSelectedWard(event);
+        if (event) {
+            clearErrors('ward')
+            setValue("ward", event.name)
+        }
+    };
+
+    const handleStatusChange = (event) => {
+        setSelectedStatus(event)
+
+        if (event) {
+            setValue("status", event.name)
+        }
+    }
+
     const onSubmit = (data) => {
         handleClickOpen()
-        const id = getNextId()
+
         const getInfo = {
-            id: parseInt(id),
-            supplierCode: data.supplierCode.name,
+            category_id: data.category,
             supplierName: data.supplierName,
-            category: data.category.name,
             code: parseInt(data.code),
-            deptCode: parseInt(data.deptCode.name),
+            deptCode: parseInt(data.deptCode),
             phone: data.phone,
             email: data.email,
-            city: data.city,
+            province: data.province,
             district: data.district,
-            ward: data.ward.name,
+            ward: data.ward,
             address: data.address,
-            status: data.status.name && data.status.name == "Giao dịch" ? 1 : 2,
+            status: data.status ? (data.status == "Giao dịch" ? 1 : 2) : 1,
         }
 
         setInfoCreate(getInfo)
@@ -153,10 +230,17 @@ export default function SupplierCreate() {
     const handleGoBack = () => {
         history.goBack();
     };
+    
+    const isCreate = (rs) => {
+        history.push('/supplier/list');
+    }
 
     const handlAgree = () => {
-        dispatch({ type: supplierActions.CREATE_SUPPLIER_START, payload: { info: infoCreate } })
-        history.push('/supplier/list');
+        dispatch({
+            type: supplierActions.CREATE_SUPPLIER_START,
+            payload: { info: infoCreate },
+            callBack: isCreate,
+        })
     };
 
     return (
@@ -196,29 +280,29 @@ export default function SupplierCreate() {
                                     <label>Tỉnh/Thành phố<span className={styles['span-required']}>*</span></label>
                                     <Controller
                                         control={control}
-                                        name="city"
+                                        name="province"
                                         rules={{ required: true }}
                                         render={({ field }) => (
                                             <>
                                                 <DropdownSelect
                                                     {...field}
-                                                    option={optionCity}
+                                                    option={optionProvince}
+                                                    selectedOption={selectedProvince}
+                                                    onChange={handleProvinceChange}
                                                     placeholder={'Tỉnh/Thành phố'}
-                                                    onChange={(event) => handleProvinceChange(event)}
                                                 />
-                                                {errors.city && <span className={styles['error-message']}>Vui lòng chọn Tỉnh/Thành phố</span>}
+                                                {errors.province && <span className={styles['error-message']}>Vui lòng chọn Tỉnh/Thành phố</span>}
                                             </>
                                         )}
                                     />
                                 </div>
                                 <div className={styles['custom-label-input']}>
-                                    <label>Địa chỉ cụ thể<span className={styles['span-required']}>*</span></label>
+                                    <label>Địa chỉ cụ thể</label>
                                     <input
                                         type="text"
-                                        {...register('address', { required: true })}
+                                        {...register('address')}
                                         placeholder="Nhập địa chỉ cụ thể"
                                     />
-                                    {errors.address && <span className={styles['error-message']}>Địa chỉ là bắt buộc</span>}
                                 </div>
                             </div>
 
@@ -231,9 +315,11 @@ export default function SupplierCreate() {
                                         rules={{ required: true }}
                                         render={({ field }) => (
                                             <>
-                                                <DropdownSelect
+                                                <DropdownGroup
                                                     {...field}
-                                                    option={optionCategory}
+                                                    option={groupCategory}
+                                                    selectedOption={selectedCategory}
+                                                    onChange={handleCategoryChange}
                                                     placeholder={'Danh mục'}
                                                 />
                                                 {errors.category && <span className={styles['error-message']}>Vui lòng chọn danh mục</span>}
@@ -252,6 +338,8 @@ export default function SupplierCreate() {
                                                 <DropdownSelect
                                                     {...field}
                                                     option={optionDeptCode}
+                                                    selectedOption={selectedDeptCode}
+                                                    onChange={handleDeptCodeChange}
                                                     placeholder={'Nhập mã công nợ'}
                                                 />
                                                 {errors.deptCode && <span className={styles['error-message']}>Vui lòng chọn mã công nợ</span>}
@@ -270,8 +358,9 @@ export default function SupplierCreate() {
                                                 <DropdownSelect
                                                     {...field}
                                                     option={optionDistrict}
+                                                    selectedOption={selectedDistrict}
+                                                    onChange={handleDistrictChange}
                                                     placeholder={'Quận/Huyện'}
-                                                    onChange={(event) => handleDistrictChange(event)}
                                                     emptyMessage='Hãy chọn Tỉnh/Thành phố'
                                                 />
                                                 {errors.district && <span className={styles['error-message']}>Vui lòng chọn Quận/Huyện</span>}
@@ -280,19 +369,19 @@ export default function SupplierCreate() {
                                     />
                                 </div>
                                 <div className={styles['custom-label-input']}>
-                                    <label>Trạng thái<span className={styles['span-required']}>*</span></label>
+                                    <label>Trạng thái</label>
                                     <Controller
                                         control={control}
                                         name="status"
-                                        rules={{ required: true }}
                                         render={({ field }) => (
                                             <>
                                                 <DropdownSelect
                                                     {...field}
                                                     option={optionStatus}
-                                                    placeholder={'Trạng thái'}
+                                                    selectedOption={selectedStatus}
+                                                    onChange={handleStatusChange}
+                                                    placeholder={'Giao dịch'}
                                                 />
-                                                {errors.status && <span className={styles['error-message']}>Vui lòng chọn Trạng thái</span>}
                                             </>
                                         )}
                                     />
@@ -307,16 +396,21 @@ export default function SupplierCreate() {
                                         {...register('phone', { required: true })}
                                         placeholder="Nhập số điện thoại"
                                     />
-                                    {errors.phone && <span className={styles['error-message']}>Số Điện thoại là bắt buộc</span>}
+                                    {errors.phone && <span className={styles['error-message']}>Vui lòng nhập số điện thoại</span>}
                                 </div>
                                 <div className={styles['custom-label-input']}>
-                                    <label>Email<span className={styles['span-required']}>*</span></label>
+                                    <label>Email</label>
                                     <input
                                         type="email"
-                                        {...register('email', { required: true })}
+                                        {...register('email', {
+                                            pattern: {
+                                                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                                                message: 'Nhập đúng định dạng email',
+                                            },
+                                        })}
                                         placeholder="abc@gmail.com"
                                     />
-                                    {errors.email && <span className={styles['error-message']}>Email là bắt buộc</span>}
+                                    {errors.email && <span className={styles['error-message']}>{errors.email.message}</span>}
                                 </div>
                                 <div className={styles['custom-label-input']}>
                                     <label>Phường/Xã<span className={styles['span-required']}>*</span></label>
@@ -328,29 +422,13 @@ export default function SupplierCreate() {
                                             <>
                                                 <DropdownSelect
                                                     {...field}
-                                                    option={optionWard}
+                                                    option={selectedDistrict ? optionWard : []}
+                                                    selectedOption={selectedWard}
+                                                    onChange={handleWardChange}
                                                     placeholder={'Phường/Xã'}
                                                     emptyMessage='Hãy chọn Quận/Huyện'
                                                 />
                                                 {errors.ward && <span className={styles['error-message']}>Vui lòng chọn Phường/Xã</span>}
-                                            </>
-                                        )}
-                                    />
-                                </div>
-                                <div className={styles['custom-label-input']}>
-                                    <label>Mã nhà cung cấp<span className={styles['span-required']}>*</span></label>
-                                    <Controller
-                                        control={control}
-                                        name="supplierCode"
-                                        rules={{ required: true }}
-                                        render={({ field }) => (
-                                            <>
-                                                <DropdownSelect
-                                                    {...field}
-                                                    option={optionSupplierCode}
-                                                    placeholder={'Nhập mã nhà cung cấp'}
-                                                />
-                                                {errors.supplierCode && <span className={styles['error-message']}>Vui lòng chọn mã nhà cung cấp</span>}
                                             </>
                                         )}
                                     />
@@ -370,7 +448,6 @@ export default function SupplierCreate() {
                         <button
                             className={styles['btn-update']}
                             type='submit'
-                        // onClick={handleClickOpen}
                         >
                             Lưu
                         </button>

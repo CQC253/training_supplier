@@ -1,11 +1,12 @@
 import { getLocalStorageData, setLocalStorageData } from "./localStorageUtils";
 
+let deletedItemsList = [];
 const SupplierFactory = {
     fetchAndSearchData: (payload) => {
         // console.log('payload factory', payload);
         const supplierList = getLocalStorageData('supplierList');
         let filteredList = supplierList;
-    
+
         if (!payload || !payload.payload) {
             filteredList = filteredList.filter(item => (
                 item.items.supplierName !== "" &&
@@ -13,10 +14,13 @@ const SupplierFactory = {
                 item.items.deptCode !== "" &&
                 item.items.phone !== "" &&
                 item.items.email !== "" &&
-                item.items.address !== "" 
+                item.items.address !== "" &&
+                item.items.city !== "" &&
+                item.items.district !== "" &&
+                item.items.ward !== ""
             ));
         }
-    
+
         if (payload && payload.payload) {
             filteredList = filteredList.filter(item => {
                 const isEmptyField = (
@@ -25,13 +29,16 @@ const SupplierFactory = {
                     item.items.deptCode === "" ||
                     item.items.phone === "" ||
                     item.items.email === "" ||
-                    item.items.address === ""
+                    item.items.address === "" ||
+                    item.items.city === "" ||
+                    item.items.district === "" ||
+                    item.items.ward === ""
                 );
-                
+
                 if (isEmptyField) {
-                    return false; 
+                    return false;
                 }
-    
+
                 const searchFields = [
                     item.items.supplierCode,
                     item.items.supplierName,
@@ -41,32 +48,39 @@ const SupplierFactory = {
                     item.items.phone,
                     item.items.email,
                     item.items.address,
+                    item.items.city,
+                    item.items.district,
+                    item.items.ward,
                     item.items.status
                 ];
-    
+
                 const isInputValueMatch = payload.payload.inputValue ? searchFields.some(field => {
                     const regex = new RegExp(`${payload.payload.inputValue}`, 'i');
                     return regex.test(field);
                 }) : true;
                 const isStatusValueMatch = payload.payload.statusValue ? item.items.status === payload.payload.statusValue : true;
                 const isAddressValueMatch = payload.payload.addressValue ? item.items.address === payload.payload.addressValue : true;
-    
+
                 return isInputValueMatch && isStatusValueMatch && isAddressValueMatch;
             });
         }
 
         filteredList.sort((a, b) => a.items.id - b.items.id);
-    
+
         return {
             Data: filteredList
         };
-    },    
+    },
     deleteSupplierList: (payload) => {
         const supplierList = getLocalStorageData('supplierList');
-        const id = parseInt(payload.payload.id)
-        const updatedList = supplierList.filter((item) => item.items.id !== id);
 
+        const id = parseInt(payload.payload.id)
+        const deletedSupplierInfo = payload.payload.deletedSupplierInfo
+        deletedItemsList.push({ id, deletedSupplierInfo });
+
+        const updatedList = supplierList.filter((item) => item.items.id !== id);
         updatedList.sort((a, b) => a.items.id - b.items.id);
+
         setLocalStorageData("supplierList", updatedList);
         return {
             Data: updatedList
@@ -74,17 +88,20 @@ const SupplierFactory = {
     },
     undoSupplierList: (payload) => {
         const supplierList = getLocalStorageData('supplierList');
-        const updatedList = [...supplierList];
-        const deletedSupplier = payload.payload.deletedSupplier
-        if (deletedSupplier) {
-            updatedList.push(deletedSupplier);
+        const id = parseInt(payload.payload.id)
+        const itemToUndo = deletedItemsList.find(item => item.id === id);
+
+        if (itemToUndo) {
+            const { deletedSupplierInfo } = itemToUndo;
+            supplierList.push(deletedSupplierInfo);
+            supplierList.sort((a, b) => a.items.id - b.items.id);
+            setLocalStorageData('supplierList', supplierList);
+
+            deletedItemsList = deletedItemsList.filter(item => item.id !== id);
         }
 
-        updatedList.sort((a, b) => a.items.id - b.items.id);
-        setLocalStorageData('supplierList', updatedList);
-
         return {
-            Data: updatedList
+            Data: supplierList
         };
     },
     createSupplierList: (payload) => {
@@ -149,7 +166,7 @@ const SupplierFactory = {
             }
             return item
         });
-        
+
         updateList.sort((a, b) => a.items.id - b.items.id);
         setLocalStorageData("supplierList", updateList);
 
