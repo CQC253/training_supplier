@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom';
 import styles from './SupplierCreate.module.scss'
 import { useForm, Controller } from 'react-hook-form';
+import Constants from 'utils/Constants';
 
 import { useSelector, useDispatch } from 'react-redux';
 import supplierActions from "redux/supplier/action"
@@ -11,6 +12,7 @@ import SupplierCategoryAction from 'redux/category/action';
 import DropdownSelect from './dropdown/Dropdown';
 import DropdownGroup from './dropdown/DropdownGroup';
 import IconBack from '../icons/iconsSupplierCreate/IconBack';
+import { useTranslation } from 'react-i18next';
 
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -18,6 +20,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
 
 export default function SupplierCreate() {
+    const { t } = useTranslation();
     const history = useHistory();
     const dispatch = useDispatch();
 
@@ -33,15 +36,15 @@ export default function SupplierCreate() {
 
     const [supplierListRedux, setSupplierListRedux] = useState([])
     const [categoryListRedux, setCategoryListRedux] = useState([])
-    const [selectedDeptCode, setSelectedDeptCode] = useState(null);
+    const [selectedDebtCode, setSelectedDebtCode] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [groupCategory, setGroupCategory] = useState([]);
     const [selectedProvince, setSelectedProvince] = useState(null);
     const [selectedDistrict, setSelectedDistrict] = useState(null);
     const [selectedWard, setSelectedWard] = useState(null);
     const [selectedStatus, setSelectedStatus] = useState({
-        name: 'Giao dịch',
-        code: 1
+        name: Constants.COMMON.STATUS.TRANSACTION.VALUE,
+        code: Constants.COMMON.STATUS.TRANSACTION.KEY
     });
     const [open, setOpen] = useState(false);
     const [infoCreate, setInfoCreate] = useState(null)
@@ -91,8 +94,8 @@ export default function SupplierCreate() {
         const createGroupedCategory = () => {
             const groupedCategories = categoryListRedux?.filter(item => !item.parent_id);
 
-            const groupCategoryData = groupedCategories.map(category => {
-                const items = categoryListRedux?.filter(item => item.parent_id === category.id).map(child => ({
+            const groupCategoryData = groupedCategories?.map(category => {
+                const items = categoryListRedux?.filter(item => item.parent_id === category.id)?.map(child => ({
                     label: child.categoryName,
                     value: child.id
                 }));
@@ -110,37 +113,37 @@ export default function SupplierCreate() {
         createGroupedCategory();
     }, [categoryListRedux]);
 
-    const optionDeptCode = Array.from(new Set(supplierListRedux.map(item => item.deptCode))).map(deptCode => ({
-        name: deptCode,
-        code: deptCode
+    const optionDebtCode = Array.from(new Set(supplierListRedux?.map(item => item.debtCode)))?.map(debtCode => ({
+        name: debtCode,
+        code: debtCode
     }));
 
-    const optionProvince = provinces.map(province => ({
+    const optionProvince = provinces?.map(province => ({
         name: province.name,
         code: province.code
     }));
 
-    const optionDistrict = districts.map(district => ({
+    const optionDistrict = districts?.map(district => ({
         name: district.name,
         code: district.code
     }));
 
-    const optionWard = wards.map(ward => ({
+    const optionWard = wards?.map(ward => ({
         name: ward.name,
         code: ward.name
     }));
 
-    const optionStatus = Array.from(new Set(supplierListRedux.map(item => item.status))).map(status => ({
-        name: status && status == 1 ? 'Giao dịch' : 'Tạm dừng',
+    const optionStatus = Array.from(new Set(supplierListRedux?.map(item => item.status)))?.map(status => ({
+        name: status && status == Constants.COMMON.STATUS.TRANSACTION.KEY ? Constants.COMMON.STATUS.TRANSACTION.VALUE : Constants.COMMON.STATUS.PAUSE.VALUE,
         code: status
     }));
 
-    const handleDeptCodeChange = (event) => {
+    const handleDebtCodeChange = (event) => {
         if (event) {
-            clearErrors('deptCode')
-            setValue("deptCode", event.name)
+            clearErrors('debtCode')
+            setValue("debtCode", event.name)
         }
-        setSelectedDeptCode(event);
+        setSelectedDebtCode(event);
     };
 
     const handleCategoryChange = (event) => {
@@ -201,14 +204,14 @@ export default function SupplierCreate() {
             category_id: data.category,
             supplierName: data.supplierName,
             code: parseInt(data.code),
-            deptCode: parseInt(data.deptCode),
+            debtCode: parseInt(data.debtCode),
             phone: data.phone,
             email: data.email,
             province: data.province,
             district: data.district,
             ward: data.ward,
             address: data.address,
-            status: data.status ? (data.status == "Giao dịch" ? 1 : 2) : 1,
+            status: data.status ? (data.status == Constants.COMMON.STATUS.TRANSACTION.VALUE ? Constants.COMMON.STATUS.TRANSACTION.KEY : Constants.COMMON.STATUS.PAUSE.KEY) : Constants.COMMON.STATUS.TRANSACTION.KEY,
         }
 
         setInfoCreate(getInfo)
@@ -230,7 +233,7 @@ export default function SupplierCreate() {
     const handleGoBack = () => {
         history.goBack();
     };
-    
+
     const isCreate = (rs) => {
         history.push('/supplier/list');
     }
@@ -249,35 +252,35 @@ export default function SupplierCreate() {
                 <div className={styles['div-top']}>
                     <div className={styles['div-create']}>
                         <p className={styles['p-info']}>
-                            Thông tin nhà cung cấp
+                            {t('createSupplier.info')}
                         </p>
 
                         <div className={styles['div-info-supp']}>
                             <div className={styles['div-create-left']}>
                                 <div className={styles['custom-label-input']}>
-                                    <label>Tên nhà cung cấp<span className={styles['span-required']}>*</span></label>
+                                    <label>{t('createSupplier.infoSupplier.supplierName')}<span className={styles['span-required']}>*</span></label>
                                     <input
                                         type="text"
                                         {...register('supplierName', { required: true })}
-                                        placeholder="Nhập tên nhà cung cấp"
+                                        placeholder={t('createSupplier.placeholder.supplierName')}
                                     />
-                                    {errors.supplierName && <span className={styles['error-message']}>Tên nhà cung cấp là bắt buộc</span>}
+                                    {errors.supplierName && <span className={styles['error-message']}>{t('createSupplier.error.supplierName')}</span>}
                                 </div>
                                 <div className={styles['custom-label-input']}>
-                                    <label>Mã code<span className={styles['span-required']}>*</span></label>
+                                    <label>{t('createSupplier.infoSupplier.code')}<span className={styles['span-required']}>*</span></label>
                                     <input
                                         type="number"
                                         {...register('code', {
-                                            required: 'Mã code là bắt buộc',
-                                            min: { value: 251, message: 'Mã code phải từ 251 đến 253' },
-                                            max: { value: 253, message: 'Mã code phải từ 251 đến 253' }
+                                            required: `${t('createSupplier.error.code.required')}`,
+                                            min: { value: 251, message: `${t('createSupplier.error.code.min')}` },
+                                            max: { value: 253, message: `${t('createSupplier.error.code.max')}` }
                                         })}
-                                        placeholder="Nhập mã code"
+                                        placeholder={t('createSupplier.placeholder.code')}
                                     />
                                     {errors.code && <span className={styles['error-message']}>{errors.code.message}</span>}
                                 </div>
                                 <div className={styles['custom-label-input']}>
-                                    <label>Tỉnh/Thành phố<span className={styles['span-required']}>*</span></label>
+                                    <label>{t('createSupplier.infoSupplier.province')}<span className={styles['span-required']}>*</span></label>
                                     <Controller
                                         control={control}
                                         name="province"
@@ -289,26 +292,26 @@ export default function SupplierCreate() {
                                                     option={optionProvince}
                                                     selectedOption={selectedProvince}
                                                     onChange={handleProvinceChange}
-                                                    placeholder={'Tỉnh/Thành phố'}
+                                                    placeholder={t('createSupplier.placeholder.province')}
                                                 />
-                                                {errors.province && <span className={styles['error-message']}>Vui lòng chọn Tỉnh/Thành phố</span>}
+                                                {errors.province && <span className={styles['error-message']}>{t('createSupplier.error.province')}</span>}
                                             </>
                                         )}
                                     />
                                 </div>
                                 <div className={styles['custom-label-input']}>
-                                    <label>Địa chỉ cụ thể</label>
+                                    <label>{t('createSupplier.infoSupplier.address')}</label>
                                     <input
                                         type="text"
                                         {...register('address')}
-                                        placeholder="Nhập địa chỉ cụ thể"
+                                        placeholder={t('createSupplier.placeholder.address')}
                                     />
                                 </div>
                             </div>
 
                             <div className={styles['div-create-middle']}>
                                 <div className={styles['custom-label-input']}>
-                                    <label>Danh mục<span className={styles['span-required']}>*</span></label>
+                                    <label>{t('createSupplier.infoSupplier.category')}<span className={styles['span-required']}>*</span></label>
                                     <Controller
                                         control={control}
                                         name="category"
@@ -320,35 +323,35 @@ export default function SupplierCreate() {
                                                     option={groupCategory}
                                                     selectedOption={selectedCategory}
                                                     onChange={handleCategoryChange}
-                                                    placeholder={'Danh mục'}
+                                                    placeholder={t('createSupplier.placeholder.category')}
                                                 />
-                                                {errors.category && <span className={styles['error-message']}>Vui lòng chọn danh mục</span>}
+                                                {errors.category && <span className={styles['error-message']}>{t('createSupplier.error.category')}</span>}
                                             </>
                                         )}
                                     />
                                 </div>
                                 <div className={styles['custom-label-input']}>
-                                    <label>Công nợ<span className={styles['span-required']}>*</span></label>
+                                    <label>{t('createSupplier.infoSupplier.debtCode')}<span className={styles['span-required']}>*</span></label>
                                     <Controller
                                         control={control}
-                                        name="deptCode"
+                                        name="debtCode"
                                         rules={{ required: true }}
                                         render={({ field }) => (
                                             <>
                                                 <DropdownSelect
                                                     {...field}
-                                                    option={optionDeptCode}
-                                                    selectedOption={selectedDeptCode}
-                                                    onChange={handleDeptCodeChange}
-                                                    placeholder={'Nhập mã công nợ'}
+                                                    option={optionDebtCode}
+                                                    selectedOption={selectedDebtCode}
+                                                    onChange={handleDebtCodeChange}
+                                                    placeholder={t('createSupplier.placeholder.debtCode')}
                                                 />
-                                                {errors.deptCode && <span className={styles['error-message']}>Vui lòng chọn mã công nợ</span>}
+                                                {errors.debtCode && <span className={styles['error-message']}>{t('createSupplier.error.debtCode')}</span>}
                                             </>
                                         )}
                                     />
                                 </div>
                                 <div className={styles['custom-label-input']}>
-                                    <label>Quận/Huyện<span className={styles['span-required']}>*</span></label>
+                                    <label>{t('createSupplier.infoSupplier.district')}<span className={styles['span-required']}>*</span></label>
                                     <Controller
                                         control={control}
                                         name="district"
@@ -360,16 +363,16 @@ export default function SupplierCreate() {
                                                     option={optionDistrict}
                                                     selectedOption={selectedDistrict}
                                                     onChange={handleDistrictChange}
-                                                    placeholder={'Quận/Huyện'}
-                                                    emptyMessage='Hãy chọn Tỉnh/Thành phố'
+                                                    placeholder={t('createSupplier.placeholder.district')}
+                                                    emptyMessage={t('createSupplier.error.emptyMessage.district')}
                                                 />
-                                                {errors.district && <span className={styles['error-message']}>Vui lòng chọn Quận/Huyện</span>}
+                                                {errors.district && <span className={styles['error-message']}>{t('createSupplier.error.district')}</span>}
                                             </>
                                         )}
                                     />
                                 </div>
                                 <div className={styles['custom-label-input']}>
-                                    <label>Trạng thái</label>
+                                    <label>{t('createSupplier.infoSupplier.status')}</label>
                                     <Controller
                                         control={control}
                                         name="status"
@@ -380,7 +383,7 @@ export default function SupplierCreate() {
                                                     option={optionStatus}
                                                     selectedOption={selectedStatus}
                                                     onChange={handleStatusChange}
-                                                    placeholder={'Giao dịch'}
+                                                    placeholder={t('createSupplier.placeholder.status')}
                                                 />
                                             </>
                                         )}
@@ -390,30 +393,30 @@ export default function SupplierCreate() {
 
                             <div className={styles['div-create-right']}>
                                 <div className={styles['custom-label-input']}>
-                                    <label>Số Điện thoại<span className={styles['span-required']}>*</span></label>
+                                    <label>{t('createSupplier.infoSupplier.phone')}<span className={styles['span-required']}>*</span></label>
                                     <input
                                         type="tel"
                                         {...register('phone', { required: true })}
-                                        placeholder="Nhập số điện thoại"
+                                        placeholder={t('createSupplier.placeholder.phone')}
                                     />
-                                    {errors.phone && <span className={styles['error-message']}>Vui lòng nhập số điện thoại</span>}
+                                    {errors.phone && <span className={styles['error-message']}>{t('createSupplier.error.phone')}</span>}
                                 </div>
                                 <div className={styles['custom-label-input']}>
-                                    <label>Email</label>
+                                    <label>{t('createSupplier.infoSupplier.email')}</label>
                                     <input
                                         type="email"
                                         {...register('email', {
                                             pattern: {
                                                 value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                                                message: 'Nhập đúng định dạng email',
+                                                message: `${t('createSupplier.error.email')}`,
                                             },
                                         })}
-                                        placeholder="abc@gmail.com"
+                                        placeholder={t('createSupplier.placeholder.email')}
                                     />
                                     {errors.email && <span className={styles['error-message']}>{errors.email.message}</span>}
                                 </div>
                                 <div className={styles['custom-label-input']}>
-                                    <label>Phường/Xã<span className={styles['span-required']}>*</span></label>
+                                    <label>{t('createSupplier.infoSupplier.ward')}<span className={styles['span-required']}>*</span></label>
                                     <Controller
                                         control={control}
                                         name="ward"
@@ -425,10 +428,10 @@ export default function SupplierCreate() {
                                                     option={selectedDistrict ? optionWard : []}
                                                     selectedOption={selectedWard}
                                                     onChange={handleWardChange}
-                                                    placeholder={'Phường/Xã'}
-                                                    emptyMessage='Hãy chọn Quận/Huyện'
+                                                    placeholder={t('createSupplier.placeholder.ward')}
+                                                    emptyMessage={t('createSupplier.error.emptyMessage.ward')}
                                                 />
-                                                {errors.ward && <span className={styles['error-message']}>Vui lòng chọn Phường/Xã</span>}
+                                                {errors.ward && <span className={styles['error-message']}>{t('createSupplier.error.ward')}</span>}
                                             </>
                                         )}
                                     />
@@ -441,7 +444,7 @@ export default function SupplierCreate() {
                 <div className={styles['div-bottom']}>
                     <div className={styles['div-bottom-left']} onClick={handleGoBack}>
                         <IconBack />
-                        <p>Quay lại</p>
+                        <p>{t('createSupplier.action.back')}</p>
                     </div>
 
                     <div className={styles['div-bottom-right']}>
@@ -449,13 +452,13 @@ export default function SupplierCreate() {
                             className={styles['btn-update']}
                             type='submit'
                         >
-                            Lưu
+                            {t('createSupplier.action.save')}
                         </button>
                         <button
                             className={styles['button-delete']}
                             onClick={handleGoBack}
                         >
-                            Hủy bỏ
+                            {t('createSupplier.action.delete')}
                         </button>
                         <Dialog
                             open={open}
@@ -464,14 +467,14 @@ export default function SupplierCreate() {
                             aria-describedby="alert-dialog-description"
                         >
                             <DialogTitle id="alert-dialog-title">
-                                {"Bạn có muốn tạo NCC không"}
+                                {t('createSupplier.action.confirm')}
                             </DialogTitle>
                             <DialogActions>
-                                <Button onClick={handleClickClose}>Hủy bỏ</Button>
+                                <Button onClick={handleClickClose}>{t('createSupplier.action.cancel')}</Button>
                                 <Button
                                     onClick={handlAgree}
                                 >
-                                    Đồng ý
+                                    {t('createSupplier.action.agree')}
                                 </Button>
                             </DialogActions>
                         </Dialog>

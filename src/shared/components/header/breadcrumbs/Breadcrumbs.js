@@ -2,35 +2,33 @@ import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import styles from './Breadcrumbs.module.scss'
 import HeaderIconBreadcrumb from '../../icons/HeaderIconBreadcrumb'
+import { useTranslation } from 'react-i18next';
 
 export default function Breadcrumbs() {
     const location = useLocation()
-    // console.log(location);
+    const { t } = useTranslation();
 
     let currLink = ''
     function mapCrumb(crumb, index, array) {
         switch (crumb) {
             case 'overview':
-                return 'Tổng quan'
+                return t('header.breadcrumbs.overview');
             case 'category':
-                return 'Loại nhà cung cấp'
+                return t('header.breadcrumbs.category');
             case 'supplier':
-                return 'Nhà cung cấp';
+                return t('header.breadcrumbs.supplier');
             case 'list':
-                if (array.length >= 3) {
-                    return 'Danh sách NCC';
-                }
-                return 'Danh sách nhà cung cấp';
+                return array.length >= 3 ? t('header.breadcrumbs.supplierList') : t('header.breadcrumbs.supplierListShort');
             case 'order_history':
-                return 'Lịch sử đặt hàng'
+                return t('header.breadcrumbs.orderHistory');
             case 'quotation':
-                return 'Bảng báo giá'
+                return t('header.breadcrumbs.quotation');
             case 'tracking_history':
-                return 'Lịch sử theo dõi'
+                return t('header.breadcrumbs.trackingHistory');
             case 'detail':
-                return 'Chi tiết thông tin'
+                return t('header.breadcrumbs.detailInfo');
             case 'create':
-                return 'Tạo mới nhà cung cấp'
+                return t('header.breadcrumbs.createSupplier');
             default:
                 return crumb;
         }
@@ -57,7 +55,6 @@ export default function Breadcrumbs() {
 
     return (
         <div className={styles['breadcrumbs']}>
-            {/* {console.log(crumbs)} */}
             {crumbs.filter(crumb => crumb !== null)}
         </div>
     )

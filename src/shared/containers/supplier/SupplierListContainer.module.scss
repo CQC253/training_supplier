@@ -211,6 +211,7 @@
             display: flex;
             width: 100%;
             box-sizing: border-box;
+            overflow: auto;
 
             table {
                 display: flex;
@@ -218,7 +219,6 @@
                 align-items: flex-start;
                 width: 100%;
                 min-width: 1024px;
-                overflow: auto;
                 position: relative;
 
                 tr {

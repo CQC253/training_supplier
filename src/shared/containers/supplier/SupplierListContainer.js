@@ -19,6 +19,7 @@ import SupplierIconPrev from '../icons/iconsSupplierList/SupplierIconPrev'
 import SupplierIconArrow from '../icons/iconsSupplierList/SupplierIconArrow';
 import SupplierIconInfo from '../icons/iconsSupplierList/SuppliericonInfo';
 
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import supplierActions from "redux/supplier/action"
 import { useLocation, useHistory, Link } from 'react-router-dom';
@@ -29,6 +30,7 @@ export default function SupplierContainer() {
     const dispatch = useDispatch();
     const location = useLocation();
     const history = useHistory();
+    const { t } = useTranslation();
 
     const { supplierList } = useSelector((state) => state.SupplierReducer);
     const [supplierListRedux, setSupplierListRedux] = useState([])
@@ -105,7 +107,7 @@ export default function SupplierContainer() {
     const optionStatus = Array.from(new Set(supplierListRedux.map(item => item.status)))
         .map(status => ({
             value: status,
-            label: status === 1 ? 'Giao dịch' : 'Tạm dừng'
+            label: status === Constants.COMMON.STATUS.TRANSACTION.KEY ? Constants.COMMON.STATUS.TRANSACTION.VALUE : Constants.COMMON.STATUS.PAUSE.VALUE
         }));
     const optionAddress = Array.from(new Set(supplierListRedux.map((item) => {
         const fullAddress = `${item.address}, ${item.ward}, ${item.district}, ${item.province}`;
@@ -182,7 +184,7 @@ export default function SupplierContainer() {
         setAddressValue(event.value)
         const queryParams = new URLSearchParams(location.search);
         const inputValue = queryParams.get('input') || '';
-        const statusValue = queryParams.get('status') ? (queryParams.get('status') == 'Giao dịch' ? 1 : 2) : '' || '';
+        const statusValue = queryParams.get('status') ? (queryParams.get('status') == Constants.COMMON.STATUS.TRANSACTION.VALUE ? Constants.COMMON.STATUS.TRANSACTION.KEY : Constants.COMMON.STATUS.PAUSE.KEY) : '' || '';
         dispatch({
             type: supplierActions.FETCH_SEARCH_SUPPLIER_LIST,
             payload: {
@@ -211,7 +213,7 @@ export default function SupplierContainer() {
 
         setSearchParams({ ...searchParams, input: inputValue })
         const queryParams = new URLSearchParams(location.search);
-        const statusValue = queryParams.get('status') ? (queryParams.get('status') == 'Giao dịch' ? 1 : 2) : '' || '';
+        const statusValue = queryParams.get('status') ? (queryParams.get('status') == Constants.COMMON.STATUS.TRANSACTION.VALUE ? Constants.COMMON.STATUS.TRANSACTION.KEY : Constants.COMMON.STATUS.PAUSE.KEY) : '' || '';
         const addressValue = queryParams.get('address') || '';
         dispatch({
             type: supplierActions.FETCH_SEARCH_SUPPLIER_LIST,
@@ -332,7 +334,7 @@ export default function SupplierContainer() {
 
             clearTimeout(timeoutId);
 
-            toast.success("Hoàn tác", {
+            toast.success(Constants.SUPPLIER.UNDO.VALUE, {
                 position: "top-right",
                 autoClose: 3000,
                 hideProgressBar: false,
@@ -347,8 +349,8 @@ export default function SupplierContainer() {
         toast.info(
             (
                 <div className={styles['div-undo']}>
-                    <p>Đang xóa nhà cung cấp</p>
-                    <button onClick={() => handleUndo(id)}>Hoàn tác</button>
+                    <p>{Constants.SUPPLIER.DELETING.VALUE}</p>
+                    <button onClick={() => handleUndo(id)}>{Constants.SUPPLIER.UNDO.VALUE}</button>
                 </div>
             ),
             {
@@ -432,7 +434,7 @@ export default function SupplierContainer() {
                             <SupplierIcon1 />
                         </div>
                         <input
-                            placeholder='Tìm kiếm mã NCC, tên NCC, email'
+                            placeholder={t('supplier.formSearchSet.searchAll')}
                             className={styles['input-field']}
                             value={inputValue}
                             onChange={handleInputValueChange}
@@ -444,7 +446,7 @@ export default function SupplierContainer() {
                             options={optionStatus}
                             onChange={handleStatus}
                             value={statusValue}
-                            placeholder={'Trạng thái'}
+                            placeholder={t('supplier.formSearchSet.status')}
                             arrowOpen={<SupplierIcon2 />}
                             arrowClosed={<SupplierIcon2 />}
 
@@ -458,7 +460,7 @@ export default function SupplierContainer() {
                             options={optionAddress}
                             value={addressValue}
                             onChange={handleAddress}
-                            placeholder={'Địa chỉ'}
+                            placeholder={t('supplier.formSearchSet.address')}
                             arrowOpen={<SupplierIcon2 />}
                             arrowClosed={<SupplierIcon2 />}
 
@@ -473,14 +475,14 @@ export default function SupplierContainer() {
                         className={styles['btn-re-setting']}
                         onClick={handleReset}
                     >
-                        <p className={styles['p-re-setting']}>Thiết lập lại</p>
+                        <p className={styles['p-re-setting']}>{t('supplier.formSearchSet.resetBtn')}</p>
                     </button>
 
                     <button
                         className={styles['btn-search']}
                         onClick={handleSearch}
                     >
-                        <p className={styles['p-search']}>Tìm kiếm</p>
+                        <p className={styles['p-search']}>{t('supplier.formSearchSet.searchBtn')}</p>
                     </button>
 
                     <button className={styles['btn-setting']}>
@@ -506,15 +508,15 @@ export default function SupplierContainer() {
                                         onChange={handleSelectAll}
                                     />
                                 </th>
-                                <th className={styles['th3']}>Tên nhà cung cấp</th>
-                                <th className={styles['th4']}>Danh mục</th>
-                                <th className={styles['th5']}>Mã code</th>
-                                <th className={styles['th6']}>Mã công nợ</th>
-                                <th className={styles['th7']}>Điện thoại</th>
-                                <th className={styles['th8']}>Email</th>
-                                <th className={styles['th9']}>Địa chỉ</th>
-                                <th className={styles['th10']}>Trạng thái</th>
-                                <th className={styles['th11']}>Tác vụ</th>
+                                <th className={styles['th3']}>{t('supplier.th.supplierName')}</th>
+                                <th className={styles['th4']}>{t('supplier.th.category')}</th>
+                                <th className={styles['th5']}>{t('supplier.th.code')}</th>
+                                <th className={styles['th6']}>{t('supplier.th.debtCode')}</th>
+                                <th className={styles['th7']}>{t('supplier.th.phone')}</th>
+                                <th className={styles['th8']}>{t('supplier.th.email')}</th>
+                                <th className={styles['th9']}>{t('supplier.th.address')}</th>
+                                <th className={styles['th10']}>{t('supplier.th.status')}</th>
+                                <th className={styles['th11']}>{t('supplier.th.action')}</th>
                             </tr>
                         </thead>
 
@@ -562,7 +564,7 @@ export default function SupplierContainer() {
                                                 <td className={styles['td4']}>{item.categoryName}</td>
                                             </CategoryTooltip>
                                             <td className={styles['td5']}>{item.code}</td>
-                                            <td className={styles['td6']}>{item.deptCode}</td>
+                                            <td className={styles['td6']}>{item.debtCode}</td>
                                             <td className={styles['td7']}>{item.phone}</td>
                                             <EmailTooltip
                                                 title={item.email}
@@ -585,7 +587,7 @@ export default function SupplierContainer() {
                                                     <DropdownSelect
                                                         options={filteredOptions}
                                                         onChange={(event) => handleChangeStatus(item.id, event)}
-                                                        placeholder={item.status == 1 ? 'Giao dịch' : item.status == 2 ? 'Tạm dừng' : ''}
+                                                        placeholder={item.status == Constants.COMMON.STATUS.TRANSACTION.KEY ? 'Giao dịch' : item.status == Constants.COMMON.STATUS.PAUSE.KEY ? 'Tạm dừng' : ''}
                                                         arrowOpen={<SupplierIconArrow />}
                                                         arrowClosed={<SupplierIconArrow />}
 
@@ -614,7 +616,7 @@ export default function SupplierContainer() {
                                                             <li className={styles['action-item']}>
                                                                 <button className={styles['btn-edit']}>
                                                                     <SupplierIconEdit />
-                                                                    Sửa
+                                                                    {t('supplier.td.update')}
                                                                 </button>
                                                             </li>
                                                             <li className={styles['action-item']}>
@@ -626,7 +628,7 @@ export default function SupplierContainer() {
                                                                     }}
                                                                 >
                                                                     <SupplierIconDelete />
-                                                                    Xóa
+                                                                    {t('supplier.td.delete')}
                                                                 </button>
                                                             </li>
                                                         </ul>
@@ -645,7 +647,7 @@ export default function SupplierContainer() {
             <div className={styles['div-paginate']}>
                 <div className={styles['div-itemsPerPage']}>
                     <div className={styles['div-selectItem']}>
-                        <p>Hiển thị</p>
+                        <p>{t('supplier.paginate.display')}</p>
                         <select value={itemsPerPage} onChange={handleChangeItemsPerPage}>
                             {selectItemsPerPage.map((option) => (
                                 <option key={option} value={option}>
@@ -657,7 +659,7 @@ export default function SupplierContainer() {
 
                     <div className={styles['div-from-to']}>
                         <p>
-                            Hiển thị từ {firstItemIndex} - {lastItemIndex} trên tổng {supplierListRedux.length}
+                            {t('supplier.paginate.showing')} {firstItemIndex} - {lastItemIndex} {t('supplier.paginate.outOf')} {supplierListRedux.length}
                         </p>
                     </div>
 

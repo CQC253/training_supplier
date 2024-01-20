@@ -19,8 +19,10 @@ import { useLocation, useHistory } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import PopupCreate from './popupCreate/PopupCreate';
 import PopupUpdate from './popupUpdate/PopupUpdate';
+import { useTranslation } from 'react-i18next';
 
 export default function SupplierCategory() {
+    const { t } = useTranslation();
     const history = useHistory();
     const location = useLocation();
     const dispatch = useDispatch();
@@ -234,7 +236,7 @@ export default function SupplierCategory() {
                 inputValue: '',
             }
         });
-        
+
         setOpenUpdate(false);
     };
 
@@ -270,7 +272,7 @@ export default function SupplierCategory() {
     };
     useEffect(() => {
         calculateIndexes();
-    }, [currentPage, itemsPerPage, displayedSupplierList,categoryListRedux]);
+    }, [currentPage, itemsPerPage, displayedSupplierList, categoryListRedux]);
 
     return (
         <>
@@ -298,7 +300,7 @@ export default function SupplierCategory() {
                                 <SupplierIcon1 />
                             </div>
                             <input
-                                placeholder='Tìm kiếm danh mục nhà cung cấp, tên nhà cung cấp'
+                                placeholder={t('category.formSearchSet.searchAll')}
                                 className={styles['input-field']}
                                 value={inputValue}
                                 onChange={(e) => handleInputValueChange(e)}
@@ -311,14 +313,14 @@ export default function SupplierCategory() {
                             className={styles['btn-re-setting']}
                             onClick={handleReset}
                         >
-                            <p className={styles['p-re-setting']}>Thiết lập lại</p>
+                            <p className={styles['p-re-setting']}>{t('category.formSearchSet.resetBtn')}</p>
                         </button>
 
                         <button
                             className={styles['btn-search']}
                             onClick={handleSearch}
                         >
-                            <p className={styles['p-search']}>Tìm kiếm</p>
+                            <p className={styles['p-search']}>{t('category.formSearchSet.searchBtn')}</p>
                         </button>
                     </div>
                 </div>
@@ -329,9 +331,9 @@ export default function SupplierCategory() {
                             <thead className={styles['parent-thead']}>
                                 <tr className={styles['paren-tr-title']}>
                                     <th className={styles['parent-th0']}></th>
-                                    <th className={styles['parent-th1']}>Danh mục</th>
-                                    <th className={styles['parent-th2']}>Ghi chú</th>
-                                    <th className={styles['parent-th3']}>Tác vụ</th>
+                                    <th className={styles['parent-th1']}>{t('category.th.category')}</th>
+                                    <th className={styles['parent-th2']}>{t('category.th.note')}</th>
+                                    <th className={styles['parent-th3']}>{t('category.th.action')}</th>
                                 </tr>
                             </thead>
 
@@ -371,7 +373,7 @@ export default function SupplierCategory() {
                                                                         onClick={() => handleClickOpenCreate(parent.id)}
                                                                     >
                                                                         <IconCreate />
-                                                                        Thêm mới danh mục
+                                                                        {t('category.td.create')}
                                                                     </button>
                                                                 </li>
                                                             </ul>
@@ -418,7 +420,7 @@ export default function SupplierCategory() {
                                                                                                             onClick={() => handleClickOpenCreate(parent.id)}
                                                                                                         >
                                                                                                             <IconCreate />
-                                                                                                            Thêm mới danh mục
+                                                                                                            {t('category.td.create')}
                                                                                                         </button>
                                                                                                     </li>
                                                                                                     <li className={styles['action-item']}>
@@ -427,7 +429,7 @@ export default function SupplierCategory() {
                                                                                                             onClick={() => handleClickOpenUpdate(sub.id)}
                                                                                                         >
                                                                                                             <SupplierIconEdit />
-                                                                                                            Sửa
+                                                                                                            {t('category.td.update')}
                                                                                                         </button>
                                                                                                     </li>
                                                                                                     <li className={styles['action-item']}>
@@ -436,7 +438,7 @@ export default function SupplierCategory() {
                                                                                                             onClick={() => handleDelete(sub.id)}
                                                                                                         >
                                                                                                             <SupplierIconDelete />
-                                                                                                            Xóa
+                                                                                                            {t('category.td.delete')}
                                                                                                         </button>
                                                                                                     </li>
                                                                                                 </ul>
@@ -462,7 +464,7 @@ export default function SupplierCategory() {
                 <div className={styles['div-paginate']}>
                     <div className={styles['div-itemsPerPage']}>
                         <div className={styles['div-selectItem']}>
-                            <p>Hiển thị</p>
+                            <p>{t('category.paginate.display')}</p>
                             <select value={itemsPerPage} onChange={(event) => handleChangeItemsPerPage(event)}>
                                 {selectItemsPerPage?.map((option) => (
                                     <option key={option} value={option}>
@@ -474,7 +476,7 @@ export default function SupplierCategory() {
 
                         <div className={styles['div-from-to']}>
                             <p>
-                                Hiển thị từ {firstItemIndex} - {lastItemIndex} trên tổng {categoryListRedux?.length}
+                                {t('category.paginate.showing')} {firstItemIndex} - {lastItemIndex} {t('category.paginate.outOf')} {categoryListRedux?.length}
                             </p>
                         </div>
 

@@ -9,14 +9,15 @@ import DropdownSelect from '../dropdown/Dropdown';
 import { useForm, Controller } from 'react-hook-form';
 
 import IconClose from 'shared/containers/icons/iconPopupCreate/IconClose';
+import { useTranslation } from 'react-i18next';
 
 export default function PopupUpdate({ open, handleClose, id }) {
+    const { t } = useTranslation();
     const dispatch = useDispatch();
     const { supplierCategoryList, listById } = useSelector((state) => state.SupplierCategoryReducer);
     const { register, handleSubmit, control, formState: { errors }, setValue, clearErrors } = useForm();
 
     const [parentArray, setParentArray] = useState([])
-    const [itemId, setItemId] = useState([])
     const [selectedParentName, setSelectedParentName] = useState(null);
 
     const [openAgree, setOpenAgree] = useState(false);
@@ -42,8 +43,6 @@ export default function PopupUpdate({ open, handleClose, id }) {
     }, []);
 
     useEffect(() => {
-        setItemId(listById);
-
         if (listById) {
             setValue('parentName', listById.parent_id);
             setValue('category', listById.categoryName);
@@ -55,6 +54,11 @@ export default function PopupUpdate({ open, handleClose, id }) {
         name: item.categoryName,
         code: item.id
     }))
+
+    const optionGetId = {
+        name: parentArray?.find(item => item.id === listById?.parent_id)?.categoryName,
+        code: listById?.parent_id
+    }
 
     const handleParentNameChange = (event) => {
         if (event) {
@@ -72,7 +76,7 @@ export default function PopupUpdate({ open, handleClose, id }) {
             } else {
                 setOpenAgree(false);
             }
-        }else{
+        } else {
             setOpenAgree(true);
         }
     };
@@ -100,7 +104,7 @@ export default function PopupUpdate({ open, handleClose, id }) {
 
     const handlAgree = () => {
         dispatch({
-            type: SupplierCategoryAction.UPDATE_CATEGORY_START, 
+            type: SupplierCategoryAction.UPDATE_CATEGORY_START,
             payload: { id: id, info: infoUpdate },
             callBack: isAgree,
         })
@@ -119,7 +123,7 @@ export default function PopupUpdate({ open, handleClose, id }) {
                 <div className={styles['div-title']}>
                     <div className={styles['div-p-close']}>
                         <div className={styles['div-p']}>
-                            <p>Tạo mới danh mục NCC</p>
+                            <p>{t('updateCategory.title')}</p>
                         </div>
                         <div className={styles['div-close']}>
                             <button onClick={handleClose}>
@@ -132,7 +136,7 @@ export default function PopupUpdate({ open, handleClose, id }) {
                     <DialogContent className={styles['div-dialog-content']}>
                         <div className={styles['label-select']}>
                             <div className={styles['custom-label-select']}>
-                                <label>Thuộc danh mục</label>
+                                <label>{t('updateCategory.infoCategory.category')}</label>
                                 <Controller
                                     control={control}
                                     rules={{ required: false }}
@@ -145,6 +149,7 @@ export default function PopupUpdate({ open, handleClose, id }) {
                                                 selectedOption={selectedParentName}
                                                 onChange={handleParentNameChange}
                                                 placeholder={optionParentName[0]?.name}
+                                                optionGetId={optionGetId}
                                             />
                                         </>
                                     )}
@@ -152,24 +157,24 @@ export default function PopupUpdate({ open, handleClose, id }) {
                             </div>
 
                             <div className={styles['custom-label-category']}>
-                                <label>Tên danh mục<span className={styles['span-required']}>*</span>:</label>
+                                <label>{t('updateCategory.infoCategory.categoryName')}<span className={styles['span-required']}>*</span>:</label>
                                 <div className={styles['div-input']}>
                                     <input
                                         type="text"
                                         {...register('category', { required: true })}
-                                        placeholder="Nhập tên danh mục"
+                                        placeholder={t('updateCategory.placeholder.categoryName')}
                                     />
-                                    {errors.category && <span className={styles['error-message']}>Tên danh mục là bắt buộc</span>}
+                                    {errors.category && <span className={styles['error-message']}>{t('updateCategory.error.categoryName')}</span>}
                                 </div>
                             </div>
                         </div>
 
                         <div className={styles['custom-label-note']}>
-                            <label>Ghi chú</label>
+                            <label>{t('updateCategory.infoCategory.note')}</label>
                             <input
                                 type="text"
                                 {...register('note')}
-                                placeholder="Nhập ghi chú"
+                                placeholder={t('updateCategory.placeholder.note')}
                             />
                         </div>
 
@@ -178,19 +183,19 @@ export default function PopupUpdate({ open, handleClose, id }) {
                         <button
                             className={styles['btn-close']}
                             onClick={handleClose}>
-                            Đóng
+                            {t('updateCategory.action.close')}
                         </button>
                         <button
                             className={styles['btn-save-out']}
                             type='submit'
                         >
-                            Lưu & Thoát
+                            {t('updateCategory.action.saveExit')}
                         </button>
                         <button
                             className={styles['btn-save-continue']}
                             type='submit'
                         >
-                            Lưu & Tiếp tục
+                            {t('updateCategory.action.saveContinue')}
                         </button>
                     </DialogActions>
                 </form>
@@ -202,14 +207,14 @@ export default function PopupUpdate({ open, handleClose, id }) {
                 aria-describedby="alert-dialog-description"
             >
                 <DialogTitle id="alert-dialog-title">
-                    {"Bạn có muốn cập nhật NCC không"}
+                    {t('updateCategory.action.confirm')}
                 </DialogTitle>
                 <DialogActions>
-                    <Button onClick={handleCloseAgree}>Hủy bỏ</Button>
+                    <Button onClick={handleCloseAgree}>{t('updateCategory.action.cancel')}</Button>
                     <Button
                         onClick={handlAgree}
                     >
-                        Đồng ý
+                        {t('updateCategory.action.agree')}
                     </Button>
                 </DialogActions>
             </Dialog>

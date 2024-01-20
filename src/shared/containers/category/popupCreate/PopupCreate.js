@@ -9,8 +9,10 @@ import DropdownSelect from '../dropdown/Dropdown';
 import { useForm, Controller } from 'react-hook-form';
 
 import IconClose from 'shared/containers/icons/iconPopupCreate/IconClose';
+import { useTranslation } from 'react-i18next';
 
 export default function PopupCreate({ open, handleClose, id }) {
+    const { t } = useTranslation();
     const dispatch = useDispatch();
     const { supplierCategoryList } = useSelector((state) => state.SupplierCategoryReducer);
     const { register, handleSubmit, control, formState: { errors }, setValue, clearErrors } = useForm();
@@ -76,7 +78,7 @@ export default function PopupCreate({ open, handleClose, id }) {
     }
 
     const handlAgree = () => {
-        dispatch({ 
+        dispatch({
             type: SupplierCategoryAction.CREATE_CATEGORY_START,
             payload: { info: infoCreate },
             callBack: isAgree,
@@ -96,7 +98,7 @@ export default function PopupCreate({ open, handleClose, id }) {
                 <div className={styles['div-title']}>
                     <div className={styles['div-p-close']}>
                         <div className={styles['div-p']}>
-                            <p>Tạo mới danh mục NCC</p>
+                            <p>{t('createCategory.title')}</p>
                         </div>
                         <div className={styles['div-close']}>
                             <button onClick={handleClose}>
@@ -109,7 +111,7 @@ export default function PopupCreate({ open, handleClose, id }) {
                     <DialogContent className={styles['div-dialog-content']}>
                         <div className={styles['label-select']}>
                             <div className={styles['custom-label-select']}>
-                                <label>Thuộc danh mục</label>
+                                <label>{t('createCategory.infoCategory.category')}</label>
                                 <Controller
                                     control={control}
                                     rules={{ required: false }}
@@ -129,24 +131,24 @@ export default function PopupCreate({ open, handleClose, id }) {
                             </div>
 
                             <div className={styles['custom-label-category']}>
-                                <label>Tên danh mục<span className={styles['span-required']}>*</span>:</label>
+                                <label>{t('createCategory.infoCategory.categoryName')}<span className={styles['span-required']}>*</span>:</label>
                                 <div className={styles['div-input']}>
                                     <input
                                         type="text"
                                         {...register('category', { required: true })}
-                                        placeholder="Nhập tên danh mục"
+                                        placeholder={t('createCategory.placeholder.categoryName')}
                                     />
-                                    {errors.category && <span className={styles['error-message']}>Tên danh mục là bắt buộc</span>}
+                                    {errors.category && <span className={styles['error-message']}>{t('createCategory.error.categoryName')}</span>}
                                 </div>
                             </div>
                         </div>
 
                         <div className={styles['custom-label-note']}>
-                            <label>Ghi chú</label>
+                            <label>{t('createCategory.infoCategory.note')}</label>
                             <input
                                 type="text"
                                 {...register('note')}
-                                placeholder="Nhập ghi chú"
+                                placeholder={t('createCategory.placeholder.note')}
                             />
                         </div>
 
@@ -155,19 +157,19 @@ export default function PopupCreate({ open, handleClose, id }) {
                         <button
                             className={styles['btn-close']}
                             onClick={handleClose}>
-                            Đóng
+                            {t('createCategory.action.close')}
                         </button>
                         <button
                             className={styles['btn-save-out']}
                             type='submit'
                         >
-                            Lưu & Thoát
+                            {t('createCategory.action.saveExit')}
                         </button>
                         <button
                             className={styles['btn-save-continue']}
                             type='submit'
                         >
-                            Lưu & Tiếp tục
+                            {t('createCategory.action.saveContinue')}
                         </button>
                     </DialogActions>
                 </form>
@@ -179,14 +181,14 @@ export default function PopupCreate({ open, handleClose, id }) {
                 aria-describedby="alert-dialog-description"
             >
                 <DialogTitle id="alert-dialog-title">
-                    {"Bạn có muốn tạo NCC không"}
+                    {t('createCategory.action.confirm')}
                 </DialogTitle>
                 <DialogActions>
-                    <Button onClick={handleCloseAgree}>Hủy bỏ</Button>
+                    <Button onClick={handleCloseAgree}>{t('createCategory.action.cancel')}</Button>
                     <Button
                         onClick={handlAgree}
                     >
-                        Đồng ý
+                        {t('createCategory.action.agree')}
                     </Button>
                 </DialogActions>
             </Dialog>

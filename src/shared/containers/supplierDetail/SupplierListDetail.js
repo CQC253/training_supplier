@@ -5,6 +5,8 @@ import IconBack from '../icons/iconsSupplierListDetail/IconBack';
 import { useSelector, useDispatch } from 'react-redux';
 import supplierActions from "redux/supplier/action"
 import { useParams, Link, useHistory } from 'react-router-dom';
+import Constants from 'utils/Constants';
+import { useTranslation } from 'react-i18next';
 
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -12,6 +14,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
 
 export default function SupplierListDetail() {
+    const { t } = useTranslation();
     const { id } = useParams();
 
     const { supplierList } = useSelector((state) => state.SupplierReducer);
@@ -25,7 +28,7 @@ export default function SupplierListDetail() {
     useEffect(() => {
         dispatch({
             type: supplierActions.GET_SUPPLIER_BY_ID_START,
-            payload: {id: id}
+            payload: { id: id }
         });
     }, []);
 
@@ -65,10 +68,10 @@ export default function SupplierListDetail() {
     }
 
     const handleDelete = () => {
-        dispatch({ 
-            type: supplierActions.DELETE_SUPPLIER_START, 
+        dispatch({
+            type: supplierActions.DELETE_SUPPLIER_START,
             payload: { id: id },
-            callBack:isDeleted,
+            callBack: isDeleted,
         })
     }
 
@@ -85,21 +88,21 @@ export default function SupplierListDetail() {
                             <IconStatus />
                         </button>
                         <p onClick={handleStatus}>
-                            Trạng thái
+                            {t('supplierDetail.status')}
                         </p>
                     </div>
 
                     {isDropdown &&
                         <ul className={styles['dropdown-list']} >
                             <li
-                                className={`${styles['dropdown-item']} ${supplierList ? (supplierList.item?.status === 1 ? styles['active'] : '') : ''}`}
-                                onClick={() => handleChangeStatus(id, 1)}
+                                className={`${styles['dropdown-item']} ${supplierList ? (supplierList.item?.status === Constants.COMMON.STATUS.TRANSACTION.KEY ? styles['active'] : '') : ''}`}
+                                onClick={() => handleChangeStatus(id, Constants.COMMON.STATUS.TRANSACTION.KEY)}
                             >
                                 <p>Giao dịch</p>
                             </li>
                             <li
-                                className={`${styles['dropdown-item']} ${supplierList ? (supplierList.item?.status === 2 ? styles['active'] : '') : ''}`}
-                                onClick={() => handleChangeStatus(id, 2)}
+                                className={`${styles['dropdown-item']} ${supplierList ? (supplierList.item?.status === Constants.COMMON.STATUS.PAUSE.KEY ? styles['active'] : '') : ''}`}
+                                onClick={() => handleChangeStatus(id, Constants.COMMON.STATUS.PAUSE.KEY)}
                             >
                                 <p>Tạm dừng</p>
                             </li>
@@ -109,43 +112,43 @@ export default function SupplierListDetail() {
 
                 <div className={styles['div-detail']}>
                     <p className={styles['p-info']}>
-                        Thông tin nhà cung cấp
+                        {t('supplierDetail.info')}
                     </p>
 
                     <div className={styles['div-info-supp']}>
                         <div className={styles['div-detail-left']}>
                             <div className={styles['custom-p-span']}>
-                                <p>Tên nhà cung cấp</p>
+                                <p>{t('supplierDetail.infoSupplier.supplierName')}</p>
                                 <span>
                                     : {supplierList ? supplierList?.item?.supplierName : ''}
                                 </span>
                             </div>
                             <div className={styles['custom-p-span']}>
-                                <p>Danh mục</p>
+                                <p>{t('supplierDetail.infoSupplier.category')}</p>
                                 <span>
                                     : {supplierList ? supplierList?.item?.category?.categoryName : ''}
                                 </span>
                             </div>
                             <div className={styles['custom-p-span']}>
-                                <p>Điện thoại</p>
+                                <p>{t('supplierDetail.infoSupplier.phone')}</p>
                                 <span>
                                     : {supplierList ? supplierList?.item?.phone : ''}
                                 </span>
                             </div>
                             <div className={styles['custom-p-span']}>
-                                <p>Email</p>
+                                <p>{t('supplierDetail.infoSupplier.email')}</p>
                                 <span>
                                     : {supplierList ? supplierList?.item?.email : ''}
                                 </span>
                             </div>
                             <div className={styles['custom-p-span']}>
-                                <p>Công nợ</p>
+                                <p>{t('supplierDetail.infoSupplier.debtCode')}</p>
                                 <span>
-                                    : {supplierList ? supplierList?.item?.deptCode : ''}
+                                    : {supplierList ? supplierList?.item?.debtCode : ''}
                                 </span>
                             </div>
                             <div className={styles['custom-p-span']}>
-                                <p>Mã code</p>
+                                <p>{t('supplierDetail.infoSupplier.code')}</p>
                                 <span>
                                     : {supplierList ? supplierList?.item?.code : ''}
                                 </span>
@@ -154,33 +157,33 @@ export default function SupplierListDetail() {
 
                         <div className={styles['div-detail-right']}>
                             <div className={styles['custom-p-span']}>
-                                <p>Trạng thái</p>
+                                <p>{t('supplierDetail.infoSupplier.status')}</p>
                                 <span
-                                    className={supplierList ? (supplierList.item?.status === 1 ? styles['transaction'] : styles['pause']) : ''}
+                                    className={supplierList ? (supplierList.item?.status === Constants.COMMON.STATUS.TRANSACTION.KEY ? styles['transaction'] : styles['pause']) : ''}
                                 >
-                                    : {supplierList ? (supplierList.item?.status === 1 ? 'Giao dịch' : 'Tạm dừng') : ''}
+                                    : {supplierList ? (supplierList.item?.status === Constants.COMMON.STATUS.TRANSACTION.KEY ? Constants.COMMON.STATUS.TRANSACTION.VALUE : Constants.COMMON.STATUS.PAUSE.VALUE) : ''}
                                 </span>
                             </div>
                             <div className={styles['custom-p-span']}>
-                                <p>Tỉnh/Thành phố</p>
+                                <p>{t('supplierDetail.infoSupplier.province')}</p>
                                 <span>
                                     : {supplierList ? supplierList?.item?.province : ''}
                                 </span>
                             </div>
                             <div className={styles['custom-p-span']}>
-                                <p>Quận/Huyện</p>
+                                <p>{t('supplierDetail.infoSupplier.district')}</p>
                                 <span>
                                     : {supplierList ? supplierList?.item?.district : ''}
                                 </span>
                             </div>
                             <div className={styles['custom-p-span']}>
-                                <p>Phường/Xã</p>
+                                <p>{t('supplierDetail.infoSupplier.ward')}</p>
                                 <span>
                                     : {supplierList ? supplierList?.item?.ward : ''}
                                 </span>
                             </div>
                             <div className={styles['custom-p-span']}>
-                                <p>Địa chỉ cụ thể</p>
+                                <p>{t('supplierDetail.infoSupplier.address')}</p>
                                 <span>
                                     : {supplierList ? supplierList?.item?.address : ''}
                                 </span>
@@ -198,7 +201,7 @@ export default function SupplierListDetail() {
                     >
                         <IconBack />
                     </button>
-                    <p  onClick={handleClickBack}>Quay lại</p>
+                    <p onClick={handleClickBack}>{t('supplierDetail.action.back')}</p>
                 </div>
 
                 <div className={styles['div-bottom-right']}>
@@ -208,14 +211,14 @@ export default function SupplierListDetail() {
                         <button
                             className={styles['btn-update']}
                         >
-                            Sửa
+                            {t('supplierDetail.action.update')}
                         </button>
                     </Link>
                     <button
                         className={styles['button-delete']}
                         onClick={handleClickOpen}
                     >
-                        Xóa
+                        {t('supplierDetail.action.delete')}
                     </button>
                     <Dialog
                         open={open}
@@ -224,12 +227,14 @@ export default function SupplierListDetail() {
                         aria-describedby="alert-dialog-description"
                     >
                         <DialogTitle id="alert-dialog-title">
-                            {"Bạn có muốn xóa hay không"}
+                            {t('supplierDetail.action.confirm')}
                         </DialogTitle>
                         <DialogActions>
-                            <Button onClick={handleClickClose}>Hủy bỏ</Button>
+                            <Button onClick={handleClickClose}>
+                                {t('supplierDetail.action.cancel')}
+                            </Button>
                             <Button onClick={handleDelete} autoFocus>
-                                Đồng ý
+                                {t('supplierDetail.action.agree')}
                             </Button>
                         </DialogActions>
                     </Dialog>

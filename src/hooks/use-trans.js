@@ -1,5 +1,5 @@
 import i18n, { resources } from "i18nextInit";
-import Permission from "utils/Permission";
+// import Permission from "utils/Permission";
 
 export default function useTrans () {
     const { t } = i18n

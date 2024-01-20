@@ -1,3 +1,207 @@
 {
-    "demo": "abc vi"
+    "header": {
+        "createCategory": "Tạo danh mục",
+        "createSupplier": "Tạo nhà cung cấp",
+        "sell": "BÁN HÀNG",
+        "breadcrumbs": {
+            "overview": "Tổng quan",
+            "category": "Loại nhà cung cấp",
+            "supplier": "Nhà cung cấp",
+            "supplierList": "Danh sách nhà cung cấp",
+            "supplierListShort": "Danh sách NCC",
+            "orderHistory": "Lịch sử đặt hàng",
+            "quotation": "Bảng báo giá",
+            "trackingHistory": "Lịch sử theo dõi",
+            "detailInfo": "Chi tiết thông tin",
+            "createSupplier": "Tạo mới Nhà cung cấp"
+        }
+    },
+    "menu": {
+        "overview": "Tổng quan",
+        "categoryList": "Danh mục NCC",
+        "supplierList": "Danh sách NCC",
+        "orderHistory": "Lịch sử đặt hàng",
+        "quotation": "Bảng báo giá",
+        "trackingHistory": "Lịch sử theo dõi"
+    },
+    "supplier": {
+        "formSearchSet": {
+            "searchAll": "Tìm kiếm mã NCC, tên NCC, email",
+            "status": "Trạng thái",
+            "address": "Địa chỉ",
+            "resetBtn": "Thiết lập lại",
+            "searchBtn": "Tìm kiếm"
+        },
+        "th": {
+            "supplierName": "Tên nhà cung cấp",
+            "category": "Danh mục",
+            "code": "Mã code",
+            "debtCode": "Mã công nợ",
+            "phone": "Điện thoại",
+            "email": "Email",
+            "address": "Địa chỉ",
+            "status": "Trạng thái",
+            "action": "Tác vụ"
+        },
+        "td": {
+            "update": "Sửa",
+            "delete": "Xóa"
+        },
+        "paginate": {
+            "display": "Hiển thị",
+            "showing": "Hiển thị từ",
+            "outOf": "trên tổng"
+        }
+    },
+    "supplierDetail": {
+        "status": "Trạng thái",
+        "transaction": "Giao dịch",
+        "pause": "Tạm dừng",
+        "info": "Thông tin nhà cung cấp",
+        "infoSupplier": {
+            "supplierName": "Tên nhà cung cấp",
+            "category": "Danh mục",
+            "code": "Mã code",
+            "debtCode": "Mã công nợ",
+            "phone": "Điện thoại",
+            "email": "Email",
+            "address": "Địa chỉ cụ thể",
+            "province": "Tỉnh/Thành phố",
+            "district": "Quận/Huyện",
+            "ward": "Phường/Xã",
+            "status": "Trạng thái"
+        },
+        "action": {
+            "back": "Quay lại",
+            "delete": "Xóa",
+            "update": "Sửa",
+            "confirm": "Bạn có muốn xóa hay không?",
+            "agree": "Đồng ý",
+            "cancel": "Hủy bỏ"
+        }
+    },
+    "createSupplier": {
+        "info": "Thông tin nhà cung cấp",
+        "infoSupplier": {
+            "supplierName": "Tên nhà cung cấp",
+            "category": "Danh mục",
+            "code": "Mã code",
+            "debtCode": "Mã công nợ",
+            "phone": "Số điện thoại",
+            "email": "Email",
+            "address": "Địa chỉ cụ thể",
+            "province": "Tỉnh/Thành phố",
+            "district": "Quận/Huyện",
+            "ward": "Phường/Xã",
+            "status": "Trạng thái"
+        },
+        "placeholder": {
+            "supplierName": "Nhập tên nhà cung cấp",
+            "category": "Danh mục",
+            "code": "Nhập mã code",
+            "debtCode": "Nhập mã công nợ",
+            "phone": "Nhập số điện thoại",
+            "email": "abc@gmail.com",
+            "address": "Nhập địa chỉ cụ thể",
+            "province": "Tỉnh/Thành phố",
+            "district": "Quận/Huyện",
+            "ward": "Phường/Xã",
+            "status": "Giao dịch"
+        },
+        "error": {
+            "supplierName": "Tên nhà cung cấp là bắt buộc",
+            "category": "Vui lòng chọn danh mục",
+            "code": {
+                "required": "Mã code là bắt buộc",
+                "min": "Mã code phải từ 251 đến 253",
+                "max": "Mã code phải từ 251 đến 253"
+            },
+            "debtCode": "Vui lòng chọn mã công nợ",
+            "phone": "Vui lòng nhập số điện thoại",
+            "email": "Nhập đúng định dạng email",
+            "province": "Vui lòng chọn Tỉnh/Thành phố",
+            "district": "Vui lòng chọn Quận/Huyện",
+            "ward": "Vui lòng chọn Phường/Xã",
+            "emptyMessage": {
+                "district": "Hãy chọn Tỉnh/Thành phố",
+                "ward": "Hãy chọn Quận/Huyện"
+            }
+        },
+        "action": {
+            "back": "Quay lại",
+            "delete": "Hủy bỏ",
+            "save": "Lưu",
+            "confirm": "Bạn có muốn tạo nhà cung cấp không?",
+            "agree": "Đồng ý",
+            "cancel": "Hủy bỏ"
+        }
+    },
+    "category": {
+        "formSearchSet": {
+            "searchAll": "Tìm kiếm danh mục nhà cung cấp, tên nhà cung cấp",
+            "resetBtn": "Thiết lập lại",
+            "searchBtn": "Tìm kiếm"
+        },
+        "th": {
+            "category": "Danh mục",
+            "note": "Ghi chú",
+            "action": "Tác vụ"
+        },
+        "td": {
+            "create": "Thêm mới danh mục",
+            "update": "Sửa",
+            "delete": "Xóa"
+        },
+        "paginate": {
+            "display": "Hiển thị",
+            "showing": "Hiển thị từ",
+            "outOf": "trên tổng"
+        }
+    },
+    "createCategory": {
+        "title": "Tạo mới danh mục NCC",
+        "infoCategory": {
+            "category": "Thuộc danh mục",
+            "categoryName": "Tên danh mục",
+            "note": "Ghi chú"
+        },
+        "placeholder": {
+            "categoryName": "Nhập tên danh mục",
+            "note": "Nhập ghi chú"
+        },
+        "error": {
+            "categoryName": "Tên danh mục là bắt buộc"
+        },
+        "action": {
+            "close": "Đóng",
+            "saveExit": "Lưu & Thoát",
+            "saveContinue": "Lưu & Tiếp tục",
+            "confirm": "Bạn có muốn tạo danh mục không?",
+            "agree": "Đồng ý",
+            "cancel": "Hủy bỏ"
+        }
+    },
+    "updateCategory": {
+        "title": "Chỉnh sửa danh mục NCC",
+        "infoCategory": {
+            "category": "Thuộc danh mục",
+            "categoryName": "Tên danh mục",
+            "note": "Ghi chú"
+        },
+        "placeholder": {
+            "categoryName": "Nhập tên danh mục",
+            "note": "Nhập ghi chú"
+        },
+        "error": {
+            "categoryName": "Tên danh mục là bắt buộc"
+        },
+        "action": {
+            "close": "Đóng",
+            "saveExit": "Lưu & Thoát",
+            "saveContinue": "Lưu & Tiếp tục",
+            "confirm": "Bạn có muốn cập nhật danh mục không?",
+            "agree": "Đồng ý",
+            "cancel": "Hủy bỏ"
+        }
+    }
 }

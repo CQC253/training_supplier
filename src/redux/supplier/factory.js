@@ -11,7 +11,7 @@ const SupplierFactory = {
             filteredList = filteredList.filter(item => (
                 item.items.supplierName !== "" &&
                 item.items.code !== "" &&
-                item.items.deptCode !== "" &&
+                item.items.debtCode !== "" &&
                 item.items.phone !== "" &&
                 item.items.email !== "" &&
                 item.items.address !== "" &&
@@ -26,7 +26,7 @@ const SupplierFactory = {
                 const isEmptyField = (
                     item.items.supplierName === "" ||
                     item.items.code === "" ||
-                    item.items.deptCode === "" ||
+                    item.items.debtCode === "" ||
                     item.items.phone === "" ||
                     item.items.email === "" ||
                     item.items.address === "" ||
@@ -44,7 +44,7 @@ const SupplierFactory = {
                     item.items.supplierName,
                     item.items.category,
                     item.items.code,
-                    item.items.deptCode,
+                    item.items.debtCode,
                     item.items.phone,
                     item.items.email,
                     item.items.address,

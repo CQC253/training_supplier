@@ -1,3 +1,205 @@
 {
-    "demo": "abc en"
+    "header": {
+        "createCategory": "Create Category",
+        "createSupplier": "Create Supplier",
+        "sell": "SELL",
+        "breadcrumbs": {
+            "overview": "Overview",
+            "category": "Supplier Categories",
+            "supplier": "Supplier",
+            "supplierList": "Supplier List",
+            "supplierListShort": "Supplier List",
+            "orderHistory": "Order History",
+            "quotation": "Quotation",
+            "trackingHistory": "Tracking History",
+            "detailInfo": "Detail Information",
+            "createSupplier": "Create Supplier"
+        }
+    },
+    "menu": {
+        "overview": "Overview",
+        "categoryList": "Supplier Categories",
+        "supplierList": "Supplier List",
+        "orderHistory": "Order History",
+        "quotation": "Quotation",
+        "trackingHistory": "Tracking History"
+    },
+    "supplier": {
+        "formSearchSet": {
+            "searchAll": "Search for supplier code, supplier name, email",
+            "status": "Status",
+            "address": "Address",
+            "resetBtn": "Reset",
+            "searchBtn": "Search"
+        },
+        "td": {
+            "update": "Update",
+            "delete": "Delete"
+        },
+        "th": {
+            "supplierName": "Supplier name",
+            "category": "Category",
+            "code": "Code",
+            "debtCode": "Debt Code",
+            "phone": "Phone",
+            "email": "Email",
+            "address": "Address",
+            "status": "Status",
+            "action": "Action"
+        },
+        "paginate": {
+            "display": "Display",
+            "showing": "Showing",
+            "outOf": "out of"
+        }
+    },
+    "supplierDetail": {
+        "status":"Status",
+        "info":"Supplier information",
+        "infoSupplier": {
+            "supplierName": "Supplier name",
+            "category": "Category",
+            "code": "Code",
+            "debtCode": "Debt Code",
+            "phone": "Phone",
+            "email": "Email",
+            "address": "Address",
+            "province": "Province",
+            "district": "District",
+            "ward": "Ward",
+            "status": "Status"
+        },
+        "action": {
+            "back": "Back",
+            "delete": "Delete",
+            "update": "Update",
+            "confirm": "Do you want to delete or not?",
+            "agree": "Agree",
+            "cancel": "Cancel"
+        }
+    },
+    "createSupplier": {
+        "info": "Supplier information",
+        "infoSupplier": {
+            "supplierName": "Supplier name",
+            "category": "Category",
+            "code": "Code",
+            "debtCode": "Debt Code",
+            "phone": "Phone",
+            "email": "Email",
+            "address": "Address",
+            "province": "Province",
+            "district": "District",
+            "ward": "Ward",
+            "status": "Status"
+        },
+        "placeholder": {
+            "supplierName": "Enter the supplier name",
+            "category": "Category",
+            "code": "Enter the code",
+            "debtCode": "Enter the debtCode",
+            "phone": "Enter the phone",
+            "email": "abc@gmail.com",
+            "address": "Enter the address",
+            "province": "Province",
+            "district": "District",
+            "ward": "Ward",
+            "status": "Giao dịch"
+        },
+        "error": {
+            "supplierName": "Supplier name is required",
+            "category": "Please select a category",
+            "code": {
+                "required": "Code is required",
+                "min": "Code must be from 251 to 253",
+                "max": "Code must be from 251 to 253"
+            },
+            "debtCode": "Please select debt code",
+            "phone": "Please enter the phone number",
+            "email": "Enter the correct email format",
+            "province": "Please select Province",
+            "district": "Please select District",
+            "ward": "Please select Ward",
+            "emptyMessage": {
+                "district": "Please select Province",
+                "ward": "Please select District"
+            }
+        },
+        "action": {
+            "back": "Back",
+            "delete": "Cancel",
+            "save": "Save",
+            "confirm": "Do you want to create a supplier?",
+            "agree": "Agree",
+            "cancel": "Cancel"
+        }
+    },
+    "category": {
+        "formSearchSet": {
+            "searchAll": "Search supplier category, supplier name",
+            "resetBtn": "Reset",
+            "searchBtn": "Search"
+        },
+        "th": {
+            "category": "Category",
+            "note": "Note",
+            "action": "Action"
+        },
+        "td": {
+            "create": "Create category",
+            "update": "Update",
+            "delete": "Delete"
+        },
+        "paginate": {
+            "display": "Display",
+            "showing": "Showing",
+            "outOf": "out of"
+        }
+    },
+    "createCategory": {
+        "title": "Create a new supplier category",
+        "infoCategory": {
+            "category": "Belongs to the category",
+            "categoryName": "Category Name",
+            "note": "Notes"
+        },
+        "placeholder": {
+            "categoryName": "Enter a category name",
+            "note": "Enter notes"
+        },
+        "error": {
+            "categoryName": "Category name is required"
+        },
+        "action": {
+            "close": "Close",
+            "saveExit": "Save & Exit",
+            "saveContinue": "Save & Continue",
+            "confirm": "Do you want to create a category?",
+            "agree": "Agree",
+            "cancel": "Cancel"
+        }
+    },
+    "updateCategory": {
+        "title": "Update supplier category",
+        "infoCategory": {
+            "category": "Belongs to the category",
+            "categoryName": "Category Name",
+            "note": "Notes"
+        },
+        "placeholder": {
+            "categoryName": "Enter a category name",
+            "note": "Enter notes"
+        },
+        "error": {
+            "categoryName": "Category name is required"
+        },
+        "action": {
+            "close": "Close",
+            "saveExit": "Save & Exit",
+            "saveContinue": "Save & Continue",
+            "confirm": "Would you like to update the category?",
+            "agree": "Agree",
+            "cancel": "Cancel"
+        }
+    }
 }

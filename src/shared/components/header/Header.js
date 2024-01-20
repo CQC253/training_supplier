@@ -10,11 +10,14 @@ import HeaderIconRight4 from '../icons/HeaderIconRight4'
 import HeaderIconRight5 from '../icons/HeaderIconRight5'
 import HeaderIconAccount from '../icons/HeaderIconAccount'
 import Breadcrumbs from './breadcrumbs/Breadcrumbs';
+import TransLanguage from './transLanguage/TransLanguage';
+import { useTranslation } from 'react-i18next';
 
 import PopupCreate from 'shared/containers/category/popupCreate/PopupCreate';
 
 export default function Header() {
-    //Dropdown create
+    const {t} = useTranslation();
+    
     const [isDropdown, setIsDropdown] = useState(false)
     const dropdownRef = useRef(null);
     const [openCreate, setOpenCreate] = useState(false);
@@ -34,7 +37,7 @@ export default function Header() {
         return () => {
             document.removeEventListener('click', handleClickOutside);
         };
-    }, []); //Xử lí blur
+    }, []); 
 
     const handleCreateCategory = () => {
         setOpenCreate(true);
@@ -69,13 +72,13 @@ export default function Header() {
                                     className={styles['dropdown-item']}
                                     onClick={() => handleCreateCategory()}
                                 >
-                                    <p>Tạo danh mục</p>
+                                    <p>{t('header.createCategory')}</p>
                                 </li>
                                 <Link
                                     to={'/supplier/list/create'}
                                 >
                                     <li className={styles['dropdown-item']}>
-                                        <p>Tạo nhà cung cấp</p>
+                                        <p>{t('header.createSupplier')}</p>
                                     </li>
                                 </Link>
 
@@ -83,8 +86,9 @@ export default function Header() {
                         }
                     </div>
 
-                    <div className={styles['div-sell']}>
-                        <a href='/' className={styles['a-sell']}>BÁN HÀNG</a>
+                    <div className={
+                        styles['div-sell']}>
+                        <a href='/' className={styles['a-sell']}>{t('header.sell')}</a>
                         <HeaderIconSell />
                     </div>
 
@@ -94,6 +98,9 @@ export default function Header() {
                 </div>
 
                 <div className={styles['header-right']}>
+                    <div className={styles['div-transLanguage']}>
+                        <TransLanguage />
+                    </div>
                     <div className={styles['div-icon']}>
                         <HeaderIconRight1 />
                         <HeaderIconRight2 />

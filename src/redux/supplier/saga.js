@@ -1,6 +1,7 @@
 import { all, call, fork, put, takeEvery } from '@redux-saga/core/effects';
 import actions from './action';
 import SupplierService from './supplierService';
+import Constants from 'utils/Constants';
 
 function* fetchSearchSupplierListSaga() {
     yield takeEvery(actions.FETCH_SEARCH_SUPPLIER_LIST, function* (payload) {
@@ -79,7 +80,7 @@ function* changeStatusSupplierSaga() {
 
             const queryParams = new URLSearchParams(location.search);
             const inputValue = queryParams.get('input') || "";
-            const statusValue = queryParams.get('status') ? (queryParams.get('status') == 'Giao dịch' ? 1 : 2) : "" || "";
+            const statusValue = queryParams.get('status') ? (queryParams.get('status') == Constants.COMMON.STATUS.TRANSACTION.VALUE ? Constants.COMMON.STATUS.TRANSACTION.KEY : Constants.COMMON.STATUS.PAUSE.KEY) : "" || "";
             const addressValue = queryParams.get('address') || "";
 
             payload = {
