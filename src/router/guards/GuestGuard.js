@@ -12,6 +12,9 @@
 * ****************************************************************************
 */ 
 export const GuestGuard = async () => {
-    //TODO
-    return true
+    const isLogin = localStorage.getItem("token");
+    if (isLogin) {
+        return false;
+    }
+    return true;
 };

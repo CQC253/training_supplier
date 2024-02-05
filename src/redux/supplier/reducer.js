@@ -2,6 +2,7 @@ import SupplierAction from './action';
 
 let initialState = {
     supplierList: [],
+    supplierListById: [],
 };
 
 const SupplierReducer = (state = initialState, action) => {
@@ -14,9 +15,14 @@ const SupplierReducer = (state = initialState, action) => {
         case SupplierAction.GET_SUPPLIER_BY_ID_SUCCESS:
             return {
                 ...state,
-                supplierList: action.payload
+                supplierListById: action.payload
             };
         case SupplierAction.CREATE_SUPPLIER_SUCCESS:
+            return {
+                ...state,
+                supplierList: action.payload
+            };
+        case SupplierAction.UPDATE_SUPPLIER_SUCCESS:
             return {
                 ...state,
                 supplierList: action.payload

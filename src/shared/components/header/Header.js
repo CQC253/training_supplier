@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
+import { useDispatch } from 'react-redux';
 import styles from './Header.module.scss'
 import HeaderButtonCreate from '../icons/HeaderButtonCreate'
 import HeaderIconSell from '../icons/HeaderIconSell'
@@ -12,13 +13,17 @@ import HeaderIconAccount from '../icons/HeaderIconAccount'
 import Breadcrumbs from './breadcrumbs/Breadcrumbs';
 import TransLanguage from './transLanguage/TransLanguage';
 import { useTranslation } from 'react-i18next';
-
+import AccountAction from 'redux/account/action';
 import PopupCreate from 'shared/containers/category/popupCreate/PopupCreate';
 
 export default function Header() {
-    const {t} = useTranslation();
-    
+    const { t } = useTranslation();
+
+    const dispatch = useDispatch();
+    const history = useHistory()
+
     const [isDropdown, setIsDropdown] = useState(false)
+    const [openAccount, setOpenAccount] = useState(false)
     const dropdownRef = useRef(null);
     const [openCreate, setOpenCreate] = useState(false);
 
@@ -37,7 +42,21 @@ export default function Header() {
         return () => {
             document.removeEventListener('click', handleClickOutside);
         };
-    }, []); 
+    }, []);
+
+    const handleAccount = () => {
+        setOpenAccount(!openAccount);
+    };
+
+    const handleLogout = () => {
+        dispatch({
+            type: AccountAction.LOGOUT_START,
+            callBack: () => {
+                localStorage.removeItem("token")
+                history.push('/login');
+            }
+        })
+    }
 
     const handleCreateCategory = () => {
         setOpenCreate(true);
@@ -52,7 +71,6 @@ export default function Header() {
                 <PopupCreate
                     open={openCreate}
                     handleClose={handleCloseCategory}
-                    id={1}
                 />
             }
 
@@ -107,7 +125,26 @@ export default function Header() {
                         <HeaderIconRight3 />
                         <HeaderIconRight4 />
                         <HeaderIconRight5 />
-                        <HeaderIconAccount />
+                        <div
+                            className={styles['header-account']}
+                            onClick={() => handleAccount()}
+                        >
+                            <HeaderIconAccount />
+
+                            {openAccount &&
+                                <ul className={styles['dropdown-list']}>
+                                    <li
+                                        className={styles['dropdown-item']}
+                                        onMouseDown={(event) => {
+                                            event.preventDefault();
+                                            handleLogout()
+                                        }}
+                                    >
+                                        <p>{t('header.logout')}</p>
+                                    </li>
+                                </ul>
+                            }
+                        </div>
                     </div>
                 </div>
 

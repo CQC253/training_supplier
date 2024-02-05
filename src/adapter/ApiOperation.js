@@ -5,7 +5,7 @@ const ApiOperation = new ApiCore({
     fetchSingle: true,
     post: true,
     patch: true,
-    remove: true,
+    remove: true, 
     url: '',
     request: true,
 })

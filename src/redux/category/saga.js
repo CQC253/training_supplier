@@ -10,7 +10,7 @@ function* fetchAndSearchCategorySaga() {
             );
             yield put({
                 type: actions.FETCH_SEARCH_CATEGORY_SUCCESS,
-                payload: response.data
+                payload: response
             });
         } catch (error) {
             yield put({
@@ -31,7 +31,7 @@ function* getCategoryByIdSaga() {
             );
             yield put({
                 type: actions.GET_CATEGORY_BY_ID_SUCCESS,
-                payload: response.data.data.item
+                payload: response.data.item
             });
             payload.callBack && payload.callBack();
         } catch (error) {
@@ -47,13 +47,14 @@ function* getCategoryByIdSaga() {
 
 function* createCategorySaga() {
     yield takeEvery(actions.CREATE_CATEGORY_START, function* (payload) {
+        console.log(payload);
         try {
             const response = yield call(() =>
                 CategoryService.createCategory(payload)
             );
             yield put({
                 type: actions.CREATE_CATEGORY_SUCCESS,
-                payload: response.data.data
+                payload: response.data
             });
             payload.callBack && payload.callBack();
         } catch (error) {
@@ -75,7 +76,7 @@ function* updateCategorySaga() {
             );
             yield put({
                 type: actions.UPDATE_CATEGORY_SUCCESS,
-                payload: response.data.data
+                payload: response.data
             });
             payload.callBack && payload.callBack();
         } catch (error) {
@@ -95,9 +96,11 @@ function* deleteCategorySaga() {
             const response = yield call(() =>
                 CategoryService.deleteCategory(payload)
             );
+            console.log('response', response);
+
             yield put({
                 type: actions.DELETE_CATEGORY_SUCCESS,
-                payload: response.data.data
+                payload: response.data
             });
         } catch (error) {
             yield put({

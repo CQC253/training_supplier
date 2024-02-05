@@ -3,6 +3,7 @@ import SupplierSaga from './supplier/saga'
 import AppSaga from './app/saga'
 import CategorySaga from './category/saga'
 import ProvincesSaga from './provinces/saga'
+import AccountSaga from './account/saga'
 
 export default function* rootSaga () {
     yield all([
@@ -10,5 +11,6 @@ export default function* rootSaga () {
         SupplierSaga(),
         CategorySaga(),
         ProvincesSaga(),
+        AccountSaga(),
     ])
 }

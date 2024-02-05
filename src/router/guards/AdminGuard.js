@@ -10,7 +10,12 @@
 * copyright			:	Copyright (c) DungNT 
 * version			:	1.0.0 
 * ****************************************************************************
-*/ 
+*/
+
 export const AdminGuard = async (guardArgs, route) => {
-    return true;
+    const isLogin = localStorage.getItem("token");
+    if (isLogin) {
+        return true;
+    }
+    return false;
 };

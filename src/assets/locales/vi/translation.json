@@ -1,4 +1,27 @@
 {
+    "login": {
+        "header": "Đăng Nhập Tài Khoản",
+        "body": {
+            "email": "Email",
+            "password": "Mật khẩu",
+            "err": {
+                "email": {
+                    "required": "Vui lòng nhập email",
+                    "pattern": "Email không hợp lệ"
+                },
+                "password": {
+                    "required": "Vui lòng nhập mật khẩu",
+                    "minLength": "Mật khẩu phải có ít nhất 6 ký tự",
+                    "pattern": "Mật khẩu phải có ít nhất một chữ hoa đầu tiên"
+                }
+            },
+            "placeholder": {
+                "email": "Nhập email",
+                "password": "Nhập password"
+            }
+        },
+        "footer": "Đăng nhập"
+    },
     "header": {
         "createCategory": "Tạo danh mục",
         "createSupplier": "Tạo nhà cung cấp",
@@ -13,8 +36,10 @@
             "quotation": "Bảng báo giá",
             "trackingHistory": "Lịch sử theo dõi",
             "detailInfo": "Chi tiết thông tin",
-            "createSupplier": "Tạo mới Nhà cung cấp"
-        }
+            "createSupplier": "Tạo mới nhà cung cấp",
+            "updateSupplier": "Chỉnh sửa nhà cung cấp"
+        },
+        "logout": "Đăng xuất"
     },
     "menu": {
         "overview": "Tổng quan",
@@ -25,6 +50,8 @@
         "trackingHistory": "Lịch sử theo dõi"
     },
     "supplier": {
+        "undo": "Hoàn tác",
+        "deleting": "Đang xóa nhà cung cấp",
         "formSearchSet": {
             "searchAll": "Tìm kiếm mã NCC, tên NCC, email",
             "status": "Trạng thái",

@@ -30,7 +30,7 @@ export default function SupplierCategory() {
     const { supplierCategoryList } = useSelector((state) => state.SupplierCategoryReducer);
     const [categoryListRedux, setCategoryListRedux] = useState([])
     const [parentArray, setParentArray] = useState([])
-
+    
     const queryParams = new URLSearchParams(location.search);
     const [searchParams, setSearchParams] = useState({
         input: queryParams.get('input') || ''
@@ -388,7 +388,7 @@ export default function SupplierCategory() {
                                                             <tbody className={styles['sub-tbody']}>
                                                                 {
                                                                     categoryListRedux
-                                                                        .filter(category => category.parent_id === parent.id)
+                                                                        ?.filter(category => category.parent_id === parent.id)
                                                                         ?.map((sub) => {
                                                                             return (
                                                                                 <tr

@@ -17,12 +17,14 @@ import SupplierReducer from './supplier/reducer';
 import AppReducer from './app/reducer'
 import SupplierCategoryReducer from './category/reducer'
 import ProvincesReducer from './provinces/reducer'
+import AccountReducer from './account/reducer';
 
 const rootReducer = combineReducers({
     SupplierReducer,
     App: AppReducer,
     SupplierCategoryReducer,
     ProvincesReducer,
+    AccountReducer
 });
 
 export default rootReducer;

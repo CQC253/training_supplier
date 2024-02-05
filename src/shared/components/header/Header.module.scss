@@ -149,29 +149,89 @@
 
         .div-icon {
             display: flex;
+            align-items: center;
             gap: 0 8px;
         }
 
-        .icon-account {
+        .header-account {
             display: flex;
-            width: 40px;
-            position: relative;
-            border: none;
-            background-color: #fff;
+            align-items: center;
 
-            .custom-icon-account1 {
-                flex-grow: 1;
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
+            .icon-account {
+                display: flex;
+                width: 40px;
+                position: relative;
+                border: none;
+                background-color: #fff;
+    
+                .custom-icon-account1 {
+                    flex-grow: 1;
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                }
+    
+                .custom-icon-account2 {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                }
             }
 
-            .custom-icon-account2 {
+            .dropdown-list {
+                display: flex;
+                z-index: 99;
+                flex-direction: column;
+                gap: 10px;
+                align-items: center;
                 position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
+                top: 35px;
+                right: 20px;
+                padding: 10px;
+                border-radius: 3px;
+                border-top: 2px solid var(--other-1, #def8e2);
+                background: var(--default-white, #fff);
+                box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.15),
+                    0px 2px 6px 0px rgba(0, 0, 0, 0.05),
+                    0px 4px 12px 0px rgba(0, 0, 0, 0.08);
+
+                
+                a {
+                    display: flex;
+                    text-decoration: none;
+                    align-items: center;
+                }
+
+                .dropdown-item {
+                    display: flex;
+                    height: 40px;
+                    justify-content: center;
+                    align-items: center;
+                    border-radius: 3px;
+                    background: var(--neutral-1-f-6, #f6f6f6);
+                    transition: all 0.4s cubic-bezier(0.93, 0.88, 0.1, 0.8);
+                    cursor: pointer;
+
+                    p {
+                        padding: 0 10px;
+                        text-decoration: none;
+                        width: 150px;
+                        color: var(--neutral-8-text, #333);
+                        font-family: Roboto;
+                        font-size: 16px;
+                        font-style: normal;
+                        font-weight: 400;
+                        line-height: 20px;
+                        letter-spacing: 0.14px;
+                    }
+                }
+
+                .dropdown-item:hover {
+                    transform: scale(1.05);
+                    background-color: var(--neutral-2-f-7, #f2f2f2);
+                }
             }
         }
     }

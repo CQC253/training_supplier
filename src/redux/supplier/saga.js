@@ -11,7 +11,7 @@ function* fetchSearchSupplierListSaga() {
             );
             yield put({
                 type: actions.FETCH_SEARCH_SUPPLIER_SUCCESS,
-                payload: response.data.data
+                payload: response.data
             });
         } catch (error) {
             yield put({
@@ -32,8 +32,9 @@ function* getSupplierByIdSaga() {
             );
             yield put({
                 type: actions.GET_SUPPLIER_BY_ID_SUCCESS,
-                payload: response.data.data
+                payload: response.data.item
             });
+            // payload.callBack && payload.callBack();
         } catch (error) {
             yield put({
                 type: actions.GET_SUPPLIER_BY_ID_ERROR,
@@ -53,12 +54,34 @@ function* createSupplierSaga() {
             );
             yield put({
                 type: actions.CREATE_SUPPLIER_SUCCESS,
-                payload: response.data.data.item
+                payload: response.data.item
             });
             payload.callBack && payload.callBack();
         } catch (error) {
             yield put({
                 type: actions.CREATE_SUPPLIER_ERROR,
+                payload: error
+            });
+        } finally {
+
+        }
+    });
+}
+
+function* updateSupplierSaga() {
+    yield takeEvery(actions.UPDATE_SUPPLIER_START, function* (payload) {
+        try {
+            const response = yield call(() =>
+                SupplierService.updateSupplier(payload)
+            );
+            yield put({
+                type: actions.UPDATE_SUPPLIER_SUCCESS,
+                payload: response.data
+            });
+            payload.callBack && payload.callBack();
+        } catch (error) {
+            yield put({
+                type: actions.UPDATE_SUPPLIER_ERROR,
                 payload: error
             });
         } finally {
@@ -75,7 +98,7 @@ function* changeStatusSupplierSaga() {
             );
             yield put({
                 type: actions.CHANGE_STATUS_SUPPLIER_SUCCESS,
-                payload: response.data.data
+                payload: response.data.item
             });
 
             const queryParams = new URLSearchParams(location.search);
@@ -95,7 +118,7 @@ function* changeStatusSupplierSaga() {
             );
             yield put({
                 type: actions.FETCH_SEARCH_SUPPLIER_SUCCESS,
-                payload: search.data.data
+                payload: search.data
             });
 
         } catch (error) {
@@ -116,7 +139,14 @@ function* updateStatusSuppDetailSaga() {
             );
             yield put({
                 type: actions.UPDATE_STATUS_SUPP_DETAIL_SUCCESS,
-                payload: response.data.data
+                payload: response.data
+            });
+            const getById = yield call(() =>
+                SupplierService.getSupplierById(payload)
+            );
+            yield put({
+                type: actions.GET_SUPPLIER_BY_ID_SUCCESS,
+                payload: getById.data.item
             });
         } catch (error) {
             yield put({
@@ -135,7 +165,7 @@ function* deleteSupplierSaga() {
             );
             yield put({
                 type: actions.DELETE_SUPPLIER_SUCCESS,
-                payload: response.data.data
+                payload: response.data
             });
             payload.callBack && payload.callBack();
         } catch (error) {
@@ -154,6 +184,7 @@ export default function* SupplierSaga() {
         fork(fetchSearchSupplierListSaga),
         fork(getSupplierByIdSaga),
         fork(createSupplierSaga),
+        fork(updateSupplierSaga),
         fork(changeStatusSupplierSaga),
         fork(updateStatusSuppDetailSaga),
         fork(deleteSupplierSaga),

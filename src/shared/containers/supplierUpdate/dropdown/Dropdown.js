@@ -7,9 +7,8 @@ import 'primereact/resources/primereact.css';
 import './Dropdown.css'
 import IconDropdown from 'shared/containers/icons/iconsSupplierCreate/IconDropdown'
 
-const DropdownSelect = forwardRef(({ selectedOption, option, placeholder, onChange, optionGetId, ...rest }, ref) => {
+const DropdownSelect = forwardRef(({ selectedOption, option, placeholder, onChange, emptyMessage, option_get_id, ...rest }, ref) => {
     const dropdownRef = useRef(null);
-
     return (
         <>
             <Dropdown
@@ -25,7 +24,7 @@ const DropdownSelect = forwardRef(({ selectedOption, option, placeholder, onChan
                     }
                 }}
 
-                value={selectedOption ? selectedOption : optionGetId}
+                value={selectedOption ? selectedOption : option_get_id}
                 onChange={(e) => onChange(e.value)}
                 options={option}
                 optionLabel="name"
@@ -33,6 +32,7 @@ const DropdownSelect = forwardRef(({ selectedOption, option, placeholder, onChan
 
                 className="dropdownSelect-primereact"
                 dropdownIcon={<IconDropdown />}
+                emptyMessage={emptyMessage}
             />
         </>
     );

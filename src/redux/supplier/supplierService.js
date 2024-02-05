@@ -1,27 +1,54 @@
-import axios from "axios"
+import ApiConstants from 'adapter/ApiConstants';
+import ApiOperation from 'adapter/ApiOperation';
 
 const SupplierService = {
     getSuppliers: (payload) => {
-        return axios.get(`http://127.0.0.1:8000/api/v1/supplier?input=${payload.payload.inputValue}&status=${payload.payload.statusValue}&addressDetail=${payload.payload.addressValue}`);
+        return ApiOperation.fetchAll({
+            url: ApiConstants.GET_SUPPLIERS,
+            params: { 
+                input: payload.payload.inputValue, 
+                status: payload.payload.statusValue, 
+                addressDetail: payload.payload.addressValue 
+            },
+        });
     },
     getSupplierById: (payload) => {
-        return axios.get(`http://127.0.0.1:8000/api/v1/supplier/${payload.payload.id}`);
+        const id = payload.payload.id;
+        return ApiOperation.fetchSingle({
+            url: ApiConstants.GET_SUPPLIER_BY_ID(id),
+        })
     },
     createSupplier: (payload) => {
-        const response = axios.post(`http://127.0.0.1:8000/api/v1/supplier`, payload.payload.info);
-        return response;
+        const info = payload.payload.info;
+        return ApiOperation.post({
+            url: ApiConstants.CREATE_SUPPLIER,
+            info: info,
+        });
     },
     updateSupplier: (payload) => {
-        const response = axios.put(`http://127.0.0.1:8000/api/v1/supplier/${payload.payload.id}`, payload.payload);
-        return response;
+        const id = payload.payload.id;
+        const data= payload.payload.info;
+        return ApiOperation.request({
+            url: ApiConstants.UPDATE_SUPPLIER(id),
+            data: data,
+            method: 'PUT',
+        });
     },
     updateSupplierStatus: (payload) => {
-        const response = axios.put(`http://127.0.0.1:8000/api/v1/supplier/${payload.payload.id}/status`, { status: payload.payload.status});
-        return response
+        const id = payload.payload.id;
+        const status= payload.payload.status;
+        return ApiOperation.request({
+            url: ApiConstants.UPDATE_SUPPLIER_STATUS(id),
+            data: { status: status },
+            method: 'PUT',
+        });
     },
     deleteSupplier: (payload) => {
-        return axios.delete(`http://127.0.0.1:8000/api/v1/supplier/${payload.payload.id}`);
+        const id = payload.payload.id;
+        return ApiOperation.remove({
+            url: ApiConstants.DELETE_SUPPLIER(id),
+        });
     },
-}
+};
 
-export default SupplierService
+export default SupplierService;

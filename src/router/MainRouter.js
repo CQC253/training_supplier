@@ -38,10 +38,11 @@ const Layout = ({ layout: LayoutComponent, routes }) => {
 * version			:	1.0.0 
 * ****************************************************************************
 */ 
-function MainRouter (props) {
+function MainRouter (props) {   
+
     return (
         <Router>
-            <Suspense fallback={<div>Loading</div>}>
+            <Suspense fallback={<div >Loading ...</div>}>
                 <Route path={[...Routes].reduce((total, value) => {
                     return total.concat(value.routes);
                 }, []).map(x => RouterPath[x.id])} >

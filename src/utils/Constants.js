@@ -11,27 +11,24 @@ const Constants = {
             },
         },
         RESET: {
-            KEY: 1,
             VALUE: 'Thiết lập lại'
         },
         SEARCH: {
-            KEY: 1,
             VALUE: 'Tìm kiếm'
         },
         
     },
     SUPPLIER: {
-        DELETING: {
-            KEY: 1,
-            VALUE: 'Đang xóa nhà cung cấp'
-        },
-        UNDO: {
-            KEY: 1,
-            VALUE: 'Hoàn tác'
-        },
+        
     },
     CATEGORY: {
 
+    },
+    MAIN_LAYOUT: {
+        TOKEN: {
+            INVALID: "Token is invalid.",
+            EXPIRED: "Token is expired."
+        }
     },
 }
 export default Constants;

@@ -1,4 +1,27 @@
 {
+    "login": {
+        "header": "Login Account",
+        "body": {
+            "email": "Email",
+            "password": "Password",
+            "err": {
+                "email": {
+                    "required": "Please enter email",
+                    "pattern": "Invalid email"
+                },
+                "password": {
+                    "required": "Please enter password",
+                    "minLength": "Passwords must be at least 6 characters",
+                    "pattern": "Password must have at least one uppercase letter first"
+                }
+            },
+            "placeholder": {
+                "email": "Enter email",
+                "password": "Enter password"
+            }
+        },
+        "footer": "Login"
+    },
     "header": {
         "createCategory": "Create Category",
         "createSupplier": "Create Supplier",
@@ -13,8 +36,10 @@
             "quotation": "Quotation",
             "trackingHistory": "Tracking History",
             "detailInfo": "Detail Information",
-            "createSupplier": "Create Supplier"
-        }
+            "createSupplier": "Create Supplier",
+            "updateSupplier": "Edit Supplier"
+        },
+        "logout": "Logout"
     },
     "menu": {
         "overview": "Overview",
@@ -25,6 +50,8 @@
         "trackingHistory": "Tracking History"
     },
     "supplier": {
+        "undo": "Undo",
+        "deleting": "Deleting supplier",
         "formSearchSet": {
             "searchAll": "Search for supplier code, supplier name, email",
             "status": "Status",

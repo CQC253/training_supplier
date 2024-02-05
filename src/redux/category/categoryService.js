@@ -1,23 +1,42 @@
-import axios from "axios"
+import ApiConstants from 'adapter/ApiConstants';
+import ApiOperation from 'adapter/ApiOperation';
 
 const CategoryService = {
     getCategories: (payload) => {
-        const response = axios.get(`http://127.0.0.1:8000/api/v1/category?input=${payload.payload.inputValue}`)
-        return response;
+        return ApiOperation.fetchAll({
+            url: ApiConstants.GET_CATEGORIES,
+            params: { 
+                input: payload.payload.inputValue
+            },
+        });
     },
     getCategoryById: (payload) => {
-        return axios.get(`http://127.0.0.1:8000/api/v1/category/${payload.payload.id}`);
+        const id = payload.payload.id;
+        return ApiOperation.fetchSingle({
+            url: ApiConstants.GET_CATEGORY_BY_ID(id),
+        })
     },
     createCategory: (payload) => {
-        const response = axios.post(`http://127.0.0.1:8000/api/v1/category`, payload.payload.info);
-        return response;
+        const info = payload.payload.info;
+        return ApiOperation.post({
+            url: ApiConstants.CREATE_CATEGORY,
+            info: info,
+        });
     },
     updateCategory: (payload) => {
-        const response = axios.put(`http://127.0.0.1:8000/api/v1/category/${payload.payload.id}`, payload.payload.info);
-        return response;
+        const id = payload.payload.id;
+        const info= payload.payload.info;
+        return ApiOperation.request({
+            url: ApiConstants.UPDATE_CATEGORY(id),
+            data: info,
+            method: 'PUT',
+        });
     },
     deleteCategory: (payload) => {
-        return axios.delete(`http://127.0.0.1:8000/api/v1/category/${payload.payload.id}`);
+        const id = payload.payload.id;
+        return ApiOperation.remove({
+            url: ApiConstants.DELETE_CATEGORY(id),
+        });
     },
 }
 

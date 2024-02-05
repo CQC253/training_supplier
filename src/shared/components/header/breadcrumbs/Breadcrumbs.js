@@ -29,6 +29,8 @@ export default function Breadcrumbs() {
                 return t('header.breadcrumbs.detailInfo');
             case 'create':
                 return t('header.breadcrumbs.createSupplier');
+            case 'update':
+                return t('header.breadcrumbs.updateSupplier');
             default:
                 return crumb;
         }

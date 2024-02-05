@@ -9,6 +9,9 @@ import SupplierListPage from "pages/supplier/SupplierListPage";
 import SupplierListDetail from "shared/containers/supplierDetail/SupplierListDetail";
 import SupplierCreate from "shared/containers/supplierCreate/SupplierCreate"
 import SupplierCategory from "shared/containers/category/SupplierCategory"
+import SupplierUpdate from "shared/containers/supplierUpdate/SupplierUpdate";
+import { Redirect } from "react-router-dom/cjs/react-router-dom";
+import RouterPath from "./RouterPath";
 /**
 * ****************************************************************************
 * DUNGNT ADD
@@ -22,20 +25,8 @@ import SupplierCategory from "shared/containers/category/SupplierCategory"
 * version			:	1.0.0 
 * ****************************************************************************
 */
+
 const Routes = [
-    {
-        layout: MainLayout,
-        routes: [
-            {
-                id: 'HOME',
-                guards: [AdminGuard],
-                component: <HomePage />,
-                fallback: () => {
-                    return null;
-                }
-            }
-        ]
-    },
     {
         layout: LoginLayout,
         routes: [
@@ -44,61 +35,9 @@ const Routes = [
                 guards: [GuestGuard],
                 component: <LoginPage />,
                 fallback: () => {
-                    return null;
+                    return <Redirect to={RouterPath.HOME}/>;
                 }
             }
-        ]
-    },
-    {
-        layout: MainLayout,
-        routes: [
-            {
-                id: 'SUPPLIER',
-                guards: [GuestGuard],
-                component: <HomePage />,
-                fallback: () => {
-                    return null;
-                }
-            }
-        ]
-    },
-    {
-        layout: MainLayout,
-        routes: [
-            {
-                id: 'SUPPLIER_OVERVIEW',
-                guards: [GuestGuard],
-                component: <HomePage />,
-                fallback: () => {
-                    return null;
-                }
-            }
-        ]
-    },
-    {
-        layout: MainLayout,
-        routes: [
-            {
-                id: 'SUPPLIER_CATEGORY',
-                guards: [GuestGuard],
-                component: <SupplierCategory />,
-                fallback: () => {
-                    return null;
-                }
-            }
-        ]
-    },
-    {
-        layout: MainLayout,
-        routes: [
-            {
-                id: 'SUPPLIER_LIST',
-                guards: [GuestGuard],
-                component: <SupplierListPage />,
-                fallback: () => {
-                    return null;
-                }
-            },
         ]
     },
     {
@@ -106,62 +45,90 @@ const Routes = [
         routes: [
             {
                 id: 'SUPPLIER_LIST_DETAIL',
-                guards: [GuestGuard],
+                guards: [AdminGuard],
                 component: <SupplierListDetail />,
                 fallback: () => {
-                    return null;
+                    return <Redirect to={RouterPath.LOGIN}/>;
                 }
-            }
-        ]
-    },
-    {
-        layout: MainLayout,
-        routes: [
+            },
+            {
+                id: 'SUPPLIER_LIST_UPDATE',
+                guards: [AdminGuard],
+                component: <SupplierUpdate />,
+                fallback: () => {
+                    return <Redirect to={RouterPath.LOGIN}/>;
+                }
+            },
             {
                 id: 'SUPPLIER_LIST_CREATE',
-                guards: [GuestGuard],
+                guards: [AdminGuard],
                 component: <SupplierCreate />,
                 fallback: () => {
-                    return null;
+                    return <Redirect to={RouterPath.LOGIN}/>;
                 }
-            }
-        ]
-    },
-    {
-        layout: MainLayout,
-        routes: [
+            },
+            {
+                id: 'SUPPLIER_CATEGORY',
+                guards: [AdminGuard],
+                component: <SupplierCategory />,
+                fallback: () => {
+                    return <Redirect to={RouterPath.LOGIN}/>;
+                }
+            },
+            {
+                id: 'SUPPLIER_LIST',
+                guards: [AdminGuard],
+                component: <SupplierListPage />,
+                fallback: () => {
+                    return <Redirect to={RouterPath.LOGIN}/>;
+                }
+            },
+            {
+                id: 'SUPPLIER_OVERVIEW',
+                guards: [AdminGuard],
+                component: <HomePage />,
+                fallback: () => {
+                    return <Redirect to={RouterPath.LOGIN}/>;
+                }
+            },
             {
                 id: 'SUPPLIER_ORDER_HISTORY',
-                guards: [GuestGuard],
+                guards: [AdminGuard],
                 component: <HomePage />,
                 fallback: () => {
-                    return null;
+                    return <Redirect to={RouterPath.LOGIN}/>;
                 }
-            }
-        ]
-    },
-    {
-        layout: MainLayout,
-        routes: [
+            },
             {
                 id: 'SUPPLIER_QUOTATION',
-                guards: [GuestGuard],
+                guards: [AdminGuard],
                 component: <HomePage />,
                 fallback: () => {
-                    return null;
+                    return <Redirect to={RouterPath.LOGIN}/>;
                 }
-            }
-        ]
-    },
-    {
-        layout: MainLayout,
-        routes: [
+            },
             {
                 id: 'SUPPLIER_TRACKING_HISTORY',
-                guards: [GuestGuard],
+                guards: [AdminGuard],
                 component: <HomePage />,
                 fallback: () => {
-                    return null;
+                    return <Redirect to={RouterPath.LOGIN}/>;
+                }
+            },
+            {
+                id: 'SUPPLIER',
+                guards: [AdminGuard],
+                component: <HomePage />,
+                fallback: () => {
+                    return <Redirect to={RouterPath.LOGIN}/>;
+                }
+            },
+            {
+                id: 'HOME',
+                guards: [AdminGuard],
+                component: <HomePage />,
+                fallback: () => {
+                    return <Redirect to={RouterPath.LOGIN}/>;
                 }
             }
         ]

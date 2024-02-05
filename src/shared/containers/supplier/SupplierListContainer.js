@@ -104,12 +104,12 @@ export default function SupplierContainer() {
         handleActionListPosition();
     }, [action]);
 
-    const optionStatus = Array.from(new Set(supplierListRedux.map(item => item.status)))
+    const optionStatus = Array.from(new Set(supplierListRedux?.map(item => item.status)))
         .map(status => ({
             value: status,
             label: status === Constants.COMMON.STATUS.TRANSACTION.KEY ? Constants.COMMON.STATUS.TRANSACTION.VALUE : Constants.COMMON.STATUS.PAUSE.VALUE
         }));
-    const optionAddress = Array.from(new Set(supplierListRedux.map((item) => {
+    const optionAddress = Array.from(new Set(supplierListRedux?.map((item) => {
         const fullAddress = `${item.address}, ${item.ward}, ${item.district}, ${item.province}`;
         return fullAddress;
     })))
@@ -258,7 +258,7 @@ export default function SupplierContainer() {
         setSelectAll(!selectAll);
 
         if (!selectAll) {
-            const allItemIds = supplierListRedux.map((item) => item.id);
+            const allItemIds = supplierListRedux?.map((item) => item.id);
             setSelectedItems(allItemIds);
         } else {
             setSelectedItems([]);
@@ -281,8 +281,8 @@ export default function SupplierContainer() {
     };
 
     useEffect(() => {
-        setAction(Array(supplierListRedux.length).fill(false));
-    }, [supplierListRedux.length]);
+        setAction(Array(supplierListRedux?.length).fill(false));
+    }, [supplierListRedux?.length]);
 
     const handleAction = (index) => {
         const newAction = action.map((value, i) => (i === index ? !value : false));
@@ -321,20 +321,20 @@ export default function SupplierContainer() {
     const handleDelete = (id) => {
         let timeoutId;
 
-        const updatedList = supplierListRedux.filter((item) => item.id !== id);
+        const updatedList = supplierListRedux?.filter((item) => item.id !== id);
         setSupplierListRedux(updatedList)
 
         const handleUndo = (id) => {
             const itemUndo = supplierList.find(item => item.id === id)
             if (itemUndo) {
-                const undoList = [...supplierListReduxRef.current, itemUndo];
+                const undoList = [...supplierListReduxRef?.current, itemUndo];
                 undoList.sort((a, b) => a.id - b.id)
                 setSupplierListRedux(undoList)
             }
 
             clearTimeout(timeoutId);
 
-            toast.success(Constants.SUPPLIER.UNDO.VALUE, {
+            toast.success(t('supplier.undo'), {
                 position: "top-right",
                 autoClose: 3000,
                 hideProgressBar: false,
@@ -349,8 +349,8 @@ export default function SupplierContainer() {
         toast.info(
             (
                 <div className={styles['div-undo']}>
-                    <p>{Constants.SUPPLIER.DELETING.VALUE}</p>
-                    <button onClick={() => handleUndo(id)}>{Constants.SUPPLIER.UNDO.VALUE}</button>
+                    <p>{t('supplier.deleting')}</p>
+                    <button onClick={() => handleUndo(id)}>{t('supplier.undo')}</button>
                 </div>
             ),
             {
@@ -374,15 +374,15 @@ export default function SupplierContainer() {
                     payload: { id: id }
                 });
             }
-        }, 4000);
+        }, 3500);
     };
 
     useEffect(() => {
-        const totalPages = Math.ceil(supplierListRedux.length / itemsPerPage);
+        const totalPages = Math.ceil(supplierListRedux?.length / itemsPerPage);
         setTotalPages(totalPages);
         const startIndex = 0;
         const endIndex = itemsPerPage;
-        const updatedDisplayedSupplierList = supplierListRedux.slice(startIndex, endIndex);
+        const updatedDisplayedSupplierList = supplierListRedux?.slice(startIndex, endIndex);
         setDisplayedSupplierList(updatedDisplayedSupplierList);
     }, [supplierListRedux, itemsPerPage]);
 
@@ -390,7 +390,7 @@ export default function SupplierContainer() {
         setCurrentPage(selectedPage.selected);
         const startIndex = selectedPage.selected * itemsPerPage;
         const endIndex = (selectedPage.selected + 1) * itemsPerPage;
-        const updatedDisplayedSupplierList = supplierListRedux.slice(startIndex, endIndex);
+        const updatedDisplayedSupplierList = supplierListRedux?.slice(startIndex, endIndex);
         setDisplayedSupplierList(updatedDisplayedSupplierList);
     };
 
@@ -400,9 +400,9 @@ export default function SupplierContainer() {
     };
 
     const calculateIndexes = () => {
-        if (supplierListRedux.length > 0) {
+        if (supplierListRedux?.length > 0) {
             const firstIndex = currentPage * itemsPerPage + 1;
-            const lastIndex = Math.min((currentPage + 1) * itemsPerPage, supplierListRedux.length);
+            const lastIndex = Math.min((currentPage + 1) * itemsPerPage, supplierListRedux?.length);
             setFirstItemIndex(firstIndex);
             setLastItemIndex(lastIndex);
         }
@@ -522,8 +522,8 @@ export default function SupplierContainer() {
 
                         <tbody>
                             {supplierListRedux
-                                .slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage)
-                                .map((item, index) => {
+                                ?.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage)
+                                ?.map((item, index) => {
                                     const addressArr = [item.address, item.ward, item.district, item.province]
 
                                     const filteredOptions = optionStatus.filter((option) => {
@@ -613,12 +613,21 @@ export default function SupplierContainer() {
                                                             className={styles['action-list']}
                                                             ref={actionListRef}
                                                         >
-                                                            <li className={styles['action-item']}>
-                                                                <button className={styles['btn-edit']}>
-                                                                    <SupplierIconEdit />
-                                                                    {t('supplier.td.update')}
-                                                                </button>
-                                                            </li>
+                                                            <Link
+                                                                to={`/supplier/list/update/${item.id}`}
+                                                            >
+                                                                <li className={styles['action-item']}>
+                                                                    <button
+                                                                        className={styles['btn-edit']}
+                                                                        onMouseDown={(event) => {
+                                                                            event.preventDefault();
+                                                                        }}
+                                                                    >
+                                                                        <SupplierIconEdit />
+                                                                        {t('supplier.td.update')}
+                                                                    </button>
+                                                                </li>
+                                                            </Link>
                                                             <li className={styles['action-item']}>
                                                                 <button
                                                                     className={styles['btn-delete']}
@@ -659,7 +668,7 @@ export default function SupplierContainer() {
 
                     <div className={styles['div-from-to']}>
                         <p>
-                            {t('supplier.paginate.showing')} {firstItemIndex} - {lastItemIndex} {t('supplier.paginate.outOf')} {supplierListRedux.length}
+                            {t('supplier.paginate.showing')} {firstItemIndex} - {lastItemIndex} {t('supplier.paginate.outOf')} {supplierListRedux?.length}
                         </p>
                     </div>
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { useHistory } from 'react-router-dom';
-import styles from './SupplierCreate.module.scss'
+import { useHistory, useParams } from 'react-router-dom';
+import styles from './SupplierUpdate.module.scss'
 import { useForm, Controller } from 'react-hook-form';
 import Constants from 'utils/Constants';
 
@@ -19,12 +19,14 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
 
-export default function SupplierCreate() {
+export default function SupplierUpdate() {
     const { t } = useTranslation();
+
+    const { id } = useParams();
     const history = useHistory();
     const dispatch = useDispatch();
 
-    const { supplierList } = useSelector((state) => state.SupplierReducer);
+    const { supplierList, supplierListById } = useSelector((state) => state.SupplierReducer);
     const { supplierCategoryList } = useSelector((state) => state.SupplierCategoryReducer);
     const {
         provinces,
@@ -47,7 +49,7 @@ export default function SupplierCreate() {
         code: Constants.COMMON.STATUS.TRANSACTION.KEY
     });
     const [open, setOpen] = useState(false);
-    const [infoCreate, setInfoCreate] = useState(null)
+    const [infoUpdate, setInfoUpdate] = useState(null)
 
     useEffect(() => {
         if (Array.isArray(supplierList)) {
@@ -96,12 +98,12 @@ export default function SupplierCreate() {
 
             const groupCategoryData = groupedCategories?.map(category => {
                 const items = categoryListRedux?.filter(item => item.parent_id === category.id)?.map(child => ({
-                    label: child.categoryName,
-                    value: child.id
+                    label: child?.categoryName,
+                    value: child?.id
                 }));
 
                 return {
-                    label: category.categoryName,
+                    label: category?.categoryName,
                     code: category.id,
                     items: items
                 };
@@ -113,30 +115,88 @@ export default function SupplierCreate() {
         createGroupedCategory();
     }, [categoryListRedux]);
 
+    useEffect(() => {
+        dispatch({
+            type: supplierActions.GET_SUPPLIER_BY_ID_START,
+            payload: { id: id }
+        });
+    }, []);
+
+    useEffect(() => {
+        if (supplierListById) {
+            setValue('supplierName', supplierListById.supplierName);
+            setValue('code', supplierListById.code);
+            setValue('province', supplierListById.province);
+            setValue('address', supplierListById.address);
+            setValue('category', supplierListById.category?.categoryName);
+            setValue('debtCode', supplierListById.debtCode);
+            setValue('district', supplierListById.district);
+            setValue('status', supplierListById.status);
+            setValue('phone', supplierListById.phone);
+            setValue('email', supplierListById.email);
+            setValue('ward', supplierListById.ward);
+        }
+    }, [supplierListById]);
+
     const optionDebtCode = Array.from(new Set(supplierListRedux?.map(item => item.debtCode)))?.map(debtCode => ({
         name: debtCode,
         code: debtCode
     }));
 
     const optionProvince = provinces?.map(province => ({
-        name: province.province_name,
-        code: province.province_id
+        name: province.name,
+        code: province.code
     }));
 
     const optionDistrict = districts?.map(district => ({
-        name: district.district_name,
-        code: district.district_id
+        name: district.name,
+        code: district.code
     }));
 
     const optionWard = wards?.map(ward => ({
-        name: ward.ward_name,
-        code: ward.ward_id
+        name: ward.name,
+        code: ward.name
     }));
 
     const optionStatus = Array.from(new Set(supplierListRedux?.map(item => item.status)))?.map(status => ({
         name: status && status == Constants.COMMON.STATUS.TRANSACTION.KEY ? Constants.COMMON.STATUS.TRANSACTION.VALUE : Constants.COMMON.STATUS.PAUSE.VALUE,
         code: status
     }));
+
+    const optionProvinceId = {
+        name: supplierListById?.province,
+        code: supplierListById?.province
+    }
+
+    const optionCategoryId = {
+        // label: supplierListById?.category?.categoryName,
+        // code: supplierListById?.category?.id,
+        // items: {
+        //     label: supplierListById?.category?.categoryName,
+        //     value: supplierListById?.category?.id
+        // }
+        value: supplierListById?.category?.id
+    }
+
+    const optionDebtCodeId = {
+        name: supplierListById?.debtCode,
+        code: supplierListById?.debtCode
+    }
+
+    const optionDistrictId = {
+        name: supplierListById?.district,
+        code: supplierListById?.district
+    }
+
+    const optionStatusId = {
+        name: supplierListById?.status && supplierListById?.status == Constants.COMMON.STATUS.TRANSACTION.KEY ? Constants.COMMON.STATUS.TRANSACTION.VALUE : Constants.COMMON.STATUS.PAUSE.VALUE,
+        code: supplierListById?.status
+    }
+
+    const optionWardId = {
+        name: supplierListById?.ward,
+        code: supplierListById?.ward
+    }
 
     const handleDebtCodeChange = (event) => {
         if (event) {
@@ -214,7 +274,7 @@ export default function SupplierCreate() {
             status: data.status ? (data.status == Constants.COMMON.STATUS.TRANSACTION.VALUE ? Constants.COMMON.STATUS.TRANSACTION.KEY : Constants.COMMON.STATUS.PAUSE.KEY) : Constants.COMMON.STATUS.TRANSACTION.KEY,
         }
 
-        setInfoCreate(getInfo)
+        setInfoUpdate(getInfo)
     };
 
     const handleClickOpen = () => {
@@ -234,16 +294,16 @@ export default function SupplierCreate() {
         history.goBack();
     };
 
-    const isCreate = (rs) => {
+    const isUpdate = (rs) => {
         history.push('/supplier/list');
     }
 
     const handlAgree = () => {
-        dispatch({
-            type: supplierActions.CREATE_SUPPLIER_START,
-            payload: { info: infoCreate },
-            callBack: isCreate,
-        })
+        // dispatch({
+        //     type: supplierActions.UPDATE_SUPPLIER_START,
+        //     payload: { info: infoUpdate },
+        //     callBack: isUpdate,
+        // })
     };
 
     return (
@@ -293,6 +353,7 @@ export default function SupplierCreate() {
                                                     selectedOption={selectedProvince}
                                                     onChange={handleProvinceChange}
                                                     placeholder={t('createSupplier.placeholder.province')}
+                                                    option_get_id={optionProvinceId}
                                                 />
                                                 {errors.province && <span className={styles['error-message']}>{t('createSupplier.error.province')}</span>}
                                             </>
@@ -324,6 +385,7 @@ export default function SupplierCreate() {
                                                     selectedOption={selectedCategory}
                                                     onChange={handleCategoryChange}
                                                     placeholder={t('createSupplier.placeholder.category')}
+                                                    option_get_id={optionCategoryId}
                                                 />
                                                 {errors.category && <span className={styles['error-message']}>{t('createSupplier.error.category')}</span>}
                                             </>
@@ -344,6 +406,7 @@ export default function SupplierCreate() {
                                                     selectedOption={selectedDebtCode}
                                                     onChange={handleDebtCodeChange}
                                                     placeholder={t('createSupplier.placeholder.debtCode')}
+                                                    option_get_id={optionDebtCodeId}
                                                 />
                                                 {errors.debtCode && <span className={styles['error-message']}>{t('createSupplier.error.debtCode')}</span>}
                                             </>
@@ -365,6 +428,7 @@ export default function SupplierCreate() {
                                                     onChange={handleDistrictChange}
                                                     placeholder={t('createSupplier.placeholder.district')}
                                                     emptyMessage={t('createSupplier.error.emptyMessage.district')}
+                                                    option_get_id={optionDistrictId}
                                                 />
                                                 {errors.district && <span className={styles['error-message']}>{t('createSupplier.error.district')}</span>}
                                             </>
@@ -384,6 +448,7 @@ export default function SupplierCreate() {
                                                     selectedOption={selectedStatus}
                                                     onChange={handleStatusChange}
                                                     placeholder={t('createSupplier.placeholder.status')}
+                                                    option_get_id={optionStatusId}
                                                 />
                                             </>
                                         )}
@@ -430,6 +495,7 @@ export default function SupplierCreate() {
                                                     onChange={handleWardChange}
                                                     placeholder={t('createSupplier.placeholder.ward')}
                                                     emptyMessage={t('createSupplier.error.emptyMessage.ward')}
+                                                    option_get_id={optionWardId}
                                                 />
                                                 {errors.ward && <span className={styles['error-message']}>{t('createSupplier.error.ward')}</span>}
                                             </>

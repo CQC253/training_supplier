@@ -11,7 +11,7 @@ import { useForm, Controller } from 'react-hook-form';
 import IconClose from 'shared/containers/icons/iconPopupCreate/IconClose';
 import { useTranslation } from 'react-i18next';
 
-export default function PopupCreate({ open, handleClose, id }) {
+export default function PopupCreate({ open, handleClose}) {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const { supplierCategoryList } = useSelector((state) => state.SupplierCategoryReducer);
@@ -36,7 +36,7 @@ export default function PopupCreate({ open, handleClose, id }) {
         setParentArray(supplierCategoryList?.parent)
     }, [supplierCategoryList]);
 
-    const optionParentName = parentArray.map(item => ({
+    const optionParentName = parentArray?.map(item => ({
         name: item.categoryName,
         code: item.id
     }))

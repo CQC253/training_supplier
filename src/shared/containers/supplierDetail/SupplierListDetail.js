@@ -17,7 +17,7 @@ export default function SupplierListDetail() {
     const { t } = useTranslation();
     const { id } = useParams();
 
-    const { supplierList } = useSelector((state) => state.SupplierReducer);
+    const { supplierListById } = useSelector((state) => state.SupplierReducer);
     const dispatch = useDispatch();
 
     const [isDropdown, setIsDropdown] = useState(false)
@@ -95,13 +95,13 @@ export default function SupplierListDetail() {
                     {isDropdown &&
                         <ul className={styles['dropdown-list']} >
                             <li
-                                className={`${styles['dropdown-item']} ${supplierList ? (supplierList.item?.status === Constants.COMMON.STATUS.TRANSACTION.KEY ? styles['active'] : '') : ''}`}
+                                className={`${styles['dropdown-item']} ${supplierListById ? (supplierListById?.status === Constants.COMMON.STATUS.TRANSACTION.KEY ? styles['active'] : '') : ''}`}
                                 onClick={() => handleChangeStatus(id, Constants.COMMON.STATUS.TRANSACTION.KEY)}
                             >
                                 <p>Giao dịch</p>
                             </li>
                             <li
-                                className={`${styles['dropdown-item']} ${supplierList ? (supplierList.item?.status === Constants.COMMON.STATUS.PAUSE.KEY ? styles['active'] : '') : ''}`}
+                                className={`${styles['dropdown-item']} ${supplierListById ? (supplierListById?.status === Constants.COMMON.STATUS.PAUSE.KEY ? styles['active'] : '') : ''}`}
                                 onClick={() => handleChangeStatus(id, Constants.COMMON.STATUS.PAUSE.KEY)}
                             >
                                 <p>Tạm dừng</p>
@@ -120,37 +120,37 @@ export default function SupplierListDetail() {
                             <div className={styles['custom-p-span']}>
                                 <p>{t('supplierDetail.infoSupplier.supplierName')}</p>
                                 <span>
-                                    : {supplierList ? supplierList?.item?.supplierName : ''}
+                                    : {supplierListById ? supplierListById?.supplierName : ''}
                                 </span>
                             </div>
                             <div className={styles['custom-p-span']}>
                                 <p>{t('supplierDetail.infoSupplier.category')}</p>
                                 <span>
-                                    : {supplierList ? supplierList?.item?.category?.categoryName : ''}
+                                    : {supplierListById ? supplierListById?.category?.categoryName : ''}
                                 </span>
                             </div>
                             <div className={styles['custom-p-span']}>
                                 <p>{t('supplierDetail.infoSupplier.phone')}</p>
                                 <span>
-                                    : {supplierList ? supplierList?.item?.phone : ''}
+                                    : {supplierListById ? supplierListById?.phone : ''}
                                 </span>
                             </div>
                             <div className={styles['custom-p-span']}>
                                 <p>{t('supplierDetail.infoSupplier.email')}</p>
                                 <span>
-                                    : {supplierList ? supplierList?.item?.email : ''}
+                                    : {supplierListById ? supplierListById?.email : ''}
                                 </span>
                             </div>
                             <div className={styles['custom-p-span']}>
                                 <p>{t('supplierDetail.infoSupplier.debtCode')}</p>
                                 <span>
-                                    : {supplierList ? supplierList?.item?.debtCode : ''}
+                                    : {supplierListById ? supplierListById?.debtCode : ''}
                                 </span>
                             </div>
                             <div className={styles['custom-p-span']}>
                                 <p>{t('supplierDetail.infoSupplier.code')}</p>
                                 <span>
-                                    : {supplierList ? supplierList?.item?.code : ''}
+                                    : {supplierListById ? supplierListById?.code : ''}
                                 </span>
                             </div>
                         </div>
@@ -159,33 +159,33 @@ export default function SupplierListDetail() {
                             <div className={styles['custom-p-span']}>
                                 <p>{t('supplierDetail.infoSupplier.status')}</p>
                                 <span
-                                    className={supplierList ? (supplierList.item?.status === Constants.COMMON.STATUS.TRANSACTION.KEY ? styles['transaction'] : styles['pause']) : ''}
+                                    className={supplierListById ? (supplierListById.status === Constants.COMMON.STATUS.TRANSACTION.KEY ? styles['transaction'] : styles['pause']) : ''}
                                 >
-                                    : {supplierList ? (supplierList.item?.status === Constants.COMMON.STATUS.TRANSACTION.KEY ? Constants.COMMON.STATUS.TRANSACTION.VALUE : Constants.COMMON.STATUS.PAUSE.VALUE) : ''}
+                                    : {supplierListById ? (supplierListById.status === Constants.COMMON.STATUS.TRANSACTION.KEY ? Constants.COMMON.STATUS.TRANSACTION.VALUE : Constants.COMMON.STATUS.PAUSE.VALUE) : ''}
                                 </span>
                             </div>
                             <div className={styles['custom-p-span']}>
                                 <p>{t('supplierDetail.infoSupplier.province')}</p>
                                 <span>
-                                    : {supplierList ? supplierList?.item?.province : ''}
+                                    : {supplierListById ? supplierListById?.province : ''}
                                 </span>
                             </div>
                             <div className={styles['custom-p-span']}>
                                 <p>{t('supplierDetail.infoSupplier.district')}</p>
                                 <span>
-                                    : {supplierList ? supplierList?.item?.district : ''}
+                                    : {supplierListById ? supplierListById?.district : ''}
                                 </span>
                             </div>
                             <div className={styles['custom-p-span']}>
                                 <p>{t('supplierDetail.infoSupplier.ward')}</p>
                                 <span>
-                                    : {supplierList ? supplierList?.item?.ward : ''}
+                                    : {supplierListById ? supplierListById?.ward : ''}
                                 </span>
                             </div>
                             <div className={styles['custom-p-span']}>
                                 <p>{t('supplierDetail.infoSupplier.address')}</p>
                                 <span>
-                                    : {supplierList ? supplierList?.item?.address : ''}
+                                    : {supplierListById ? supplierListById?.address : ''}
                                 </span>
                             </div>
                         </div>
